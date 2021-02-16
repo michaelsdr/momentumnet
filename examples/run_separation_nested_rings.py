@@ -12,10 +12,13 @@ import torch.nn as nn
 import torch.optim as optim
 from momentumnet import MomentumNet
 from momentumnet.toy_datasets import make_data
-
+import os
 import numpy as np
 
-
+try:
+    os.mkdir('results')
+except:
+    pass
 ###########################################
 # Fix random seed for reproducible figures
 ###########################################

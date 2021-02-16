@@ -6,9 +6,11 @@ import torch.optim as optim
 from momentumnet import MomentumNet
 from momentumnet.toy_datasets import make_data_1D
 import os
-os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
-
+try:
+    os.mkdir('figures')
+except:
+    pass
 ###########################################
 # Fix random seed for reproducible figures
 ###########################################

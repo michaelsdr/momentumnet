@@ -9,6 +9,13 @@ Separtion of nested rings using a MomentumNet.
 import matplotlib.pyplot as plt
 import torch
 import imageio
+import os
+
+try:
+    os.mkdir('figures')
+except:
+    pass
+
 
 n_iters = 15
 y_ = torch.load('results/labels.pt')
