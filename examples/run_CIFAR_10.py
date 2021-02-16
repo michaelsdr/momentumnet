@@ -1,7 +1,7 @@
 import numpy as np
 import argparse
 from momentumnet.trainer_CIFAR_10 import train_resnet
-
+import os
 
 parser = argparse.ArgumentParser(description='test')
 parser.add_argument('-m', default='mresnet18', type=str)
@@ -19,6 +19,11 @@ save_adr = args.s
 gamma = args.g
 save = args.save
 seed = args.seed
+
+try:
+    os.mkdir(save_adr)
+except:
+    pass
 
 
 n_iters = 1
