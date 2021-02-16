@@ -4,8 +4,15 @@ from momentumnet import MomentumNet, Mom
 import matplotlib.pyplot as plt
 from memory_profiler import memory_usage
 import numpy as np
+import os
+
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+
+try:
+    os.mkdir('figures')
+except:
+    pass
 
 
 ###########################################
