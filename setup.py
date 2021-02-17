@@ -18,12 +18,12 @@ if version is None:
 
 DISTNAME = 'momentumnet'
 DESCRIPTION = descr
-MAINTAINER = 'XX XXXX'
-MAINTAINER_EMAIL = 'XX.XXXX@XX.fr'
+MAINTAINER = 'Michael E. Sander'
+MAINTAINER_EMAIL = 'michael.sander1295@yahoo.fr'
 LICENSE = 'MIT'
-DOWNLOAD_URL = 'https://github.com/XXX/XXX.git'
+DOWNLOAD_URL = 'https://github.com/michaelsdr/momentumnet.git'
 VERSION = version
-URL = 'https://github.com/XXX/XXXX'
+URL = 'https://github.com/michaelsdr/momentumnet'
 
 def get_requirements():
     """Return the requirements of the projects in requirements.txt"""
