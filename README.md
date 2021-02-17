@@ -77,6 +77,6 @@ If you use this code in your project, please cite:
 
 ```bash
 Michael E. Sander, Pierre Ablin, Mathieu Blondel, Gabriel Peyré
-Momentum Residual Neural Networks
+Momentum Residual Neural Networks, 2021
 https://arxiv.org/abs/2102.07870
 ```
