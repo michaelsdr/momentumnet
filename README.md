@@ -1,6 +1,6 @@
-#  Momentum Residual Neural Networks
+#  Momentum Residual Neural Networks 
 
-
+Paper: https://arxiv.org/abs/2102.07870
 
 ## Compat
 
