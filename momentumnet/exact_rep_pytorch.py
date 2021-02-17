@@ -1,6 +1,13 @@
 # Authors: Michael Sander, Pierre Ablin
 # License: MIT
 
+"""
+Original code from
+Maclaurin, Dougal, David Duvenaud, and Ryan Adams.
+"Gradient-based hyperparameter optimization through reversible learning."
+International conference on machine learning. PMLR, 2015.
+"""
+
 import numpy as np
 import torch
 
