@@ -1,3 +1,6 @@
+# Authors: Michael Sander, Pierre Ablin
+# License: MIT
+
 """Dataset utilities, for simulated examples
 """
 import torch

@@ -1,3 +1,6 @@
+# Authors: Michael Sander, Pierre Ablin
+# License: MIT
+
 import math
 import torch
 import torch.nn as nn

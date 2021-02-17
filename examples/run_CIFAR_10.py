@@ -1,3 +1,6 @@
+# Authors: Michael Sander, Pierre Ablin
+# License: MIT
+
 import numpy as np
 import argparse
 from momentumnet.trainer_CIFAR_10 import train_resnet

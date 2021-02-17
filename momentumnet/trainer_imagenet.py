@@ -1,3 +1,6 @@
+# Authors: Michael Sander, Pierre Ablin
+# License: MIT
+
 import os
 import datetime
 import time

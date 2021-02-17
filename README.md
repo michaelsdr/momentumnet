@@ -70,3 +70,13 @@ python examples/run_CIFAR_10.py -m [MODEL] -g [GAMMA]
 
 Available values for `[MODEL]` are `resnet18/34/101/152` for ResNets or `mresnet18/34/101/152` for MomentumNets
 (default `mresnet18`). Available values for `[GAMMA]` are floats between 0 and 1.
+
+## Cite
+
+If you use this code in your project, please cite:
+
+```bash
+Michael E. Sander, Pierre Ablin, Mathieu Blondel, Gabriel Peyré
+Momentum Residual Neural Networks
+https://arxiv.org/abs/2102.07870
+```

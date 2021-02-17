@@ -1,3 +1,5 @@
+# Authors: Michael Sander, Pierre Ablin
+# License: MIT
 """
 Illustration of the drop-in replacement aspect of MomentumNets.
 

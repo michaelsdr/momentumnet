@@ -1,3 +1,5 @@
+# Authors: Michael Sander, Pierre Ablin
+# License: MIT
 import torch
 import torch.nn as nn
 from torch.nn.parameter import Parameter

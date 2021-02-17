@@ -1,3 +1,6 @@
+# Authors: Michael Sander, Pierre Ablin
+# License: MIT
+
 import torch
 
 from momentumnet.exact_rep_pytorch import TorchExactRep
