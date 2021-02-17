@@ -29,9 +29,9 @@ except:
     pass
 
 
-n_iters = 1
+n_iters = 220
 lr = np.ones(n_iters) * 0.01
-#lr[8:] /= 10
+lr[180:] /= 10
 
 if __name__ == '__main__':
 
