@@ -25,7 +25,8 @@ class TorchExactRep(object):
             if device is None:
                 device = val.device.type
             if shape is not None:
-                self.intrep = torch.zeros(*shape, dtype=torch.long, device=device)
+                self.intrep = torch.zeros(*shape,
+                                          dtype=torch.long, device=device)
             else:
                 shape = val.shape
                 if from_intrep:

@@ -18,10 +18,8 @@ from momentumnet.toy_datasets import make_data
 import os
 import numpy as np
 
-try:
-    os.mkdir('results')
-except:
-    pass
+if not os.path.isdir('figures'):
+    os.mkdir('figures')
 ###########################################
 # Fix random seed for reproducible figures
 ###########################################
@@ -48,8 +46,8 @@ ts = 1
 function = nn.Sequential(nn.Linear(2, hidden), nn.Tanh(), nn.Linear(hidden, 2))
 
 # Network
-mom_net = MomentumNet([function, ], gamma=gamma, n_iters=n_iters, learn_gamma=False,
-                      init_speed=0)
+mom_net = MomentumNet([function, ], gamma=gamma,
+                      n_iters=n_iters, learn_gamma=False, init_speed=0)
 
 criterion = nn.CrossEntropyLoss()
 
@@ -84,7 +82,6 @@ if __name__ == '__main__':
             print('itr %s, loss = %.3f' % (i, loss.item()))
             print('- ' * 20)
 
-
     # Save the output
 
     x_, y_ = make_data(500)
@@ -95,4 +92,3 @@ if __name__ == '__main__':
         torch.save(pred_, 'results/%.3d_mom.pt' % i)
 
     torch.save(y_, 'results/labels.pt')
-

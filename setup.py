@@ -25,11 +25,13 @@ DOWNLOAD_URL = 'https://github.com/michaelsdr/momentumnet.git'
 VERSION = version
 URL = 'https://github.com/michaelsdr/momentumnet'
 
+
 def get_requirements():
     """Return the requirements of the projects in requirements.txt"""
     with open('requirements.txt') as f:
         requirements = [r.strip() for r in f.readlines()]
     return [r for r in requirements if r != '']
+
 
 def package_tree(pkgroot):
     """Get the submodule list."""

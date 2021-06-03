@@ -14,10 +14,8 @@ import torch
 import imageio
 import os
 
-try:
+if not os.path.isdir('figures'):
     os.mkdir('figures')
-except:
-    pass
 
 
 n_iters = 15

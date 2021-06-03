@@ -9,11 +9,14 @@ import torchvision
 import torchvision.transforms as transforms
 import os
 
-from .models import ResNet101, mResNet101, ResNet18, mResNet18, mResNet34, ResNet34, mResNet152, ResNet152
+from .models import ResNet101, mResNet101, ResNet18,\
+    mResNet18, mResNet34, ResNet34, mResNet152, ResNet152
 
 n_workers = 10
 
-def train_resnet(lr_list, model='resnet18', mem=False, init_speed=0, cifar100=False, save_adr=None, gamma=0.9, seed=0, save=True):
+
+def train_resnet(lr_list, model='resnet18', mem=False, init_speed=0,
+                 cifar100=False, save_adr=None, gamma=0.9, seed=0, save=True):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     is_momnet = model.startswith('m')
     # Data
@@ -23,12 +26,14 @@ def train_resnet(lr_list, model='resnet18', mem=False, init_speed=0, cifar100=Fa
         transforms.RandomCrop(32, padding=4),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        transforms.Normalize((0.4914, 0.4822, 0.4465),
+                             (0.2023, 0.1994, 0.2010)),
     ])
 
     transform_test = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        transforms.Normalize((0.4914, 0.4822, 0.4465),
+                             (0.2023, 0.1994, 0.2010)),
     ])
     if cifar100:
         Loader = torchvision.datasets.CIFAR100
@@ -36,12 +41,16 @@ def train_resnet(lr_list, model='resnet18', mem=False, init_speed=0, cifar100=Fa
     else:
         Loader = torchvision.datasets.CIFAR10
         root = '.data/CIFAR10'
-    trainset = Loader(root=root, train=True, download=True, transform=transform_train)
-    testset = Loader(root=root, train=False, download=True, transform=transform_test)
+    trainset = Loader(root=root, train=True,
+                      download=True, transform=transform_train)
+    testset = Loader(root=root, train=False,
+                     download=True, transform=transform_test)
     trainloader = torch.utils.data.DataLoader(
-        trainset, batch_size=128, shuffle=True, num_workers=n_workers)
+        trainset, batch_size=128, shuffle=True,
+        num_workers=n_workers)
     testloader = torch.utils.data.DataLoader(
-        testset, batch_size=100, shuffle=False, num_workers=n_workers)
+        testset, batch_size=100, shuffle=False,
+        num_workers=n_workers)
 
     # Model
     print('==> Building model..')
@@ -65,15 +74,18 @@ def train_resnet(lr_list, model='resnet18', mem=False, init_speed=0, cifar100=Fa
     if not is_momnet:
         net = net(num_classes=num_classes)
     else:
-        net = net(num_classes=num_classes, init_speed=init_speed, gamma=gamma, mem=mem)
+        net = net(num_classes=num_classes,
+                  init_speed=init_speed, gamma=gamma, mem=mem)
     net = net.to(device)
     if device == 'cuda':
         net = torch.nn.DataParallel(net).cuda()
     resume = os.path.isdir('checkpoint_CIFAR10_resnet')
-    if (resume == True):
-        assert os.path.isdir('checkpoint_CIFAR10_resnet'), 'Error: no checkpoint directory found!'
+    if resume:
+        assert os.path.isdir('checkpoint_CIFAR10_resnet'),\
+            'Error: no checkpoint directory found!'
         try:
-            checkpoint = torch.load('./checkpoint_CIFAR10_resnet/%s' % expe_name)
+            checkpoint = torch.load(
+                './checkpoint_CIFAR10_resnet/%s' % expe_name)
             net.load_state_dict(checkpoint['net'])
             print('==> Resuming from checkpoint..')
         except:
@@ -82,7 +94,6 @@ def train_resnet(lr_list, model='resnet18', mem=False, init_speed=0, cifar100=Fa
     criterion = nn.CrossEntropyLoss().cuda()
     optimizer = optim.SGD(net.parameters(), lr=lr_list[0],
                           momentum=0.9, weight_decay=5e-4)
-
 
     # Training
     def train(net, trainloader, epoch):
@@ -94,24 +105,19 @@ def train_resnet(lr_list, model='resnet18', mem=False, init_speed=0, cifar100=Fa
         correct = 0
         total = 0
         for batch_idx, (inputs, targets) in enumerate(trainloader):
-
             inputs, targets = inputs.to(device), targets.to(device)
             optimizer.zero_grad()
             outputs = net(inputs)
-
             loss = criterion(outputs, targets)
             loss.backward()
             optimizer.step()
-
             train_loss += loss.item()
             _, predicted = outputs.max(1)
             total += targets.size(0)
             correct += predicted.eq(targets).sum().item()
-
-
-        print('Epoch %d: %.2e, %.2e' % (epoch, train_loss/(batch_idx+1), 100.*correct/total))
+        print('Epoch %d: %.2e, %.2e' % (epoch, train_loss/(batch_idx+1),
+                                        100.*correct/total))
         return train_loss/(batch_idx+1), 100.*correct/total
-
 
     def test(epoch):
         net.eval()
@@ -128,17 +134,14 @@ def train_resnet(lr_list, model='resnet18', mem=False, init_speed=0, cifar100=Fa
                 _, predicted = outputs.max(1)
                 total += targets.size(0)
                 correct += predicted.eq(targets).sum().item()
-
-
-        print('Test  : %.2e, %.2e' % (test_loss/(batch_idx+1), 100.*correct/total))
-
+        print('Test  : %.2e, %.2e' % (test_loss/(batch_idx+1),
+                                      100.*correct/total))
         return test_loss/(batch_idx+1), 100.*correct/total
 
     train_accs = []
     train_losss = []
     test_losss = []
     test_accs = []
-
 
     for epoch in range(len(lr_list)):
         train_loss, train_acc = train(net, trainloader, epoch)
@@ -147,9 +150,10 @@ def train_resnet(lr_list, model='resnet18', mem=False, init_speed=0, cifar100=Fa
         train_accs.append(train_acc)
         test_losss.append(test_loss)
         test_accs.append(test_acc)
-        if (save==True):
+        if save:
             if save_adr is not None:
-                np.save(save_adr, np.array([train_accs, train_losss, test_accs, test_losss]))
+                np.save(save_adr, np.array(
+                    [train_accs, train_losss, test_accs, test_losss]))
             state = {
                 'net': net.state_dict(),
                 'acc': test_acc,

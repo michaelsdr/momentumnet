@@ -23,10 +23,8 @@ gamma = args.g
 save = args.save
 seed = args.seed
 
-try:
-    os.mkdir(save_adr)
-except:
-    pass
+if not os.path.isdir('figures'):
+    os.mkdir('figures')
 
 
 n_iters = 220
@@ -35,8 +33,9 @@ lr[180:] /= 10
 
 if __name__ == '__main__':
 
-    train_accs, train_losss, test_accs, test_losss = train_resnet(lr, model, init_speed=init_speed, gamma=gamma,
-                                                                  seed=seed, save=save)
+    train_accs, train_losss, test_accs, test_losss = \
+        train_resnet(lr, model, init_speed=init_speed,
+                     gamma=gamma, seed=seed, save=save)
 
-    np.save('%s/%s_%d' % (save_adr, model, seed), np.array([train_accs, train_losss, test_accs, test_losss]))
-
+    np.save('%s/%s_%d' % (save_adr, model, seed),
+            np.array([train_accs, train_losss, test_accs, test_losss]))
