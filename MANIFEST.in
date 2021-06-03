@@ -25,3 +25,6 @@ recursive-exclude doc *
 recursive-include examples *.DS_Store
 recursive-include momentumnet *.DS_Store
 recursive-include momentumnet *.ipynb
+
+recursive-include examples *.pdf
+recursive-include examples2 *.py
