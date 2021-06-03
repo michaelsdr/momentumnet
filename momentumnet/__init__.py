@@ -1,6 +1,6 @@
 # Authors: Michael Sander, Pierre Ablin
 # License: MIT
 
-from .momentum_net import MomentumNet, MomentumMemory, Mom  # noqa
+__version__ = '0.7.dev'
 
-__version__ = "0.0.dev"  # noqa
+from .momentum_net import MomentumNet, MomentumMemory, Mom  # noqa

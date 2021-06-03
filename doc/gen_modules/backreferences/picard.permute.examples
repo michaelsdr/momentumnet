@@ -1,0 +1,23 @@
+
+
+Examples using ``picard.permute``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use custom densities using Picard">
+
+.. only:: html
+
+ .. figure:: /auto_examples/images/thumb/sphx_glr_plot_custom_density_thumb.png
+     :alt: Using a custom density with Picard
+
+     :ref:`sphx_glr_auto_examples_plot_custom_density.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_auto_examples_plot_custom_density.py`

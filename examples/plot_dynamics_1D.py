@@ -1,3 +1,12 @@
+"""
+==================================
+Plotting the dynamics in 1D
+==================================
+
+This example compares the dynamics of a ResNet and a Momentum ResNet
+
+"""  # noqa
+
 # Authors: Michael Sander, Pierre Ablin
 # License: MIT
 

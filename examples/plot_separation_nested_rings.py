@@ -1,13 +1,17 @@
+"""
+==================================
+Separtion of nested rings using a Momentum ResNet.
+==================================
+
+This example shows how a Momentum ResNet separates nested rings 
+
+"""  # noqa
+
 # Authors: Michael Sander, Pierre Ablin
 # License: MIT
 
 """
 Separtion of nested rings using a MomentumNet.
-
-- Use example/run_separation_nested_rings.py to train the networks.
-  The results are saved in results/.
-- Use example/plot_separation_nested_rings.py to plot the results.
-  The figures are saved in figures/.
 """
 import matplotlib.pyplot as plt
 import torch

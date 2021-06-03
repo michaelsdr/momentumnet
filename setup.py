@@ -1,8 +1,7 @@
 #! /usr/bin/env python
 
 import os
-import setuptools  # noqa; we are using a setuptools namespace
-from numpy.distutils.core import setup
+from setuptools import setup
 
 descr = """Momentum Residual Neural Networks"""
 

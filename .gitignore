@@ -133,3 +133,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+doc/_build/
+doc/generated
+doc/auto_examples/
+doc/modules/generated/
+doc/datasets/generated/

@@ -1,3 +1,12 @@
+"""
+==================================
+Plotting memory consumptions
+==================================
+
+This example compares memory used when using a ResNet or a Momentum ResNet as a function of their depth
+
+"""  # noqa
+
 # Authors: Michael Sander, Pierre Ablin
 # License: MIT
 

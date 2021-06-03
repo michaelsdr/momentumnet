@@ -1,0 +1,6 @@
+mne >= 0.14
+numpydoc
+pillow
+scikit-learn >=0.18
+sphinx-bootstrap-theme
+sphinx-gallery
