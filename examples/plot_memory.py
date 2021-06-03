@@ -36,7 +36,7 @@ torch.manual_seed(1)
 ##############################
 
 
-Depths = np.arange(1, 500, 100)
+Depths = np.arange(1, 300, 100)
 
 
 hidden = 8
