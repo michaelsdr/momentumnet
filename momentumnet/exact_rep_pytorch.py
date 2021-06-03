@@ -11,12 +11,18 @@ International conference on machine learning. PMLR, 2015.
 import numpy as np
 import torch
 
-RADIX_SCALE = 2**52
+RADIX_SCALE = 2 ** 52
 
 
 class TorchExactRep(object):
-    def __init__(self, val, from_intrep=False, shape=None, device=None,
-                 from_representation=None):
+    def __init__(
+        self,
+        val,
+        from_intrep=False,
+        shape=None,
+        device=None,
+        from_representation=None,
+    ):
         if from_representation is not None:
             intrep, store = from_representation
             self.intrep = intrep
@@ -25,8 +31,9 @@ class TorchExactRep(object):
             if device is None:
                 device = val.device.type
             if shape is not None:
-                self.intrep = torch.zeros(*shape,
-                                          dtype=torch.long, device=device)
+                self.intrep = torch.zeros(
+                    *shape, dtype=torch.long, device=device
+                )
             else:
                 shape = val.shape
                 if from_intrep:
@@ -63,9 +70,9 @@ class TorchExactRep(object):
 
     def rational_mul(self, n, d):
         self.aux.push(self.intrep % d, d)  # Store remainder bits externally
-        self.intrep //= d                  # Divide by denominator
-        self.intrep *= n                  # Multiply by numerator
-        self.intrep += self.aux.pop(n)    # Pack bits into the remainder
+        self.intrep //= d  # Divide by denominator
+        self.intrep *= n  # Multiply by numerator
+        self.intrep += self.aux.pop(n)  # Pack bits into the remainder
 
     def mul(self, a):
         n, d = self.float_to_rational(a)
@@ -78,7 +85,7 @@ class TorchExactRep(object):
         return self
 
     def float_to_rational(self, a):
-        d = 2**16 // int(a + 1)
+        d = 2 ** 16 // int(a + 1)
         n = int(a * d + 1)
         return n, d
 
@@ -113,6 +120,7 @@ class BitStore(object):
     """
     Efficiently stores information with non-integer number of bits (up to 16).
     """
+
     def __init__(self, shape, device, store=None):
         # Use an array of Python 'long' ints which conveniently grow
         # as large as necessary. It's about 50X slower though...

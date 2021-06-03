@@ -10,8 +10,8 @@ from momentumnet import MomentumNet
 from momentumnet.toy_datasets import make_data_1D
 import os
 
-if not os.path.isdir('figures'):
-    os.mkdir('figures')
+if not os.path.isdir("figures"):
+    os.mkdir("figures")
 ###########################################
 # Fix random seed for reproducible figures
 ###########################################
@@ -26,19 +26,33 @@ hidden = 16
 n_iters = 15
 gamma = 0.99
 d = 1
-function = nn.Sequential(nn.Linear(d, hidden),
-                         nn.Tanh(), nn.Linear(hidden, d))
-function_res = nn.Sequential(nn.Linear(d, hidden),
-                             nn.Tanh(), nn.Linear(hidden, d))
+function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
+function_res = nn.Sequential(
+    nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d)
+)
 
-mom_net = MomentumNet([function, ], gamma=gamma,
-                      n_iters=n_iters, learn_gamma=False, init_speed=0)
-res_net = MomentumNet([function_res, ], gamma=0.,
-                      n_iters=n_iters, learn_gamma=False, init_speed=0)
+mom_net = MomentumNet(
+    [
+        function,
+    ],
+    gamma=gamma,
+    n_iters=n_iters,
+    learn_gamma=False,
+    init_speed=0,
+)
+res_net = MomentumNet(
+    [
+        function_res,
+    ],
+    gamma=0.0,
+    n_iters=n_iters,
+    learn_gamma=False,
+    init_speed=0,
+)
 
 
 def h(x):
-    return - x ** 3
+    return -(x ** 3)
 
 
 def Loss(pred, x):
@@ -49,7 +63,7 @@ optimizer = optim.SGD(mom_net.parameters(), lr=0.01)
 
 # Training
 
-print('MomentumNet ->')
+print("MomentumNet ->")
 for i in range(301):
     optimizer.zero_grad()
     x = make_data_1D(200)
@@ -58,15 +72,15 @@ for i in range(301):
     loss.backward()
     optimizer.step()
     if i % 100 == 0:
-        print('- ' * 20)
-        print('itr %s, loss = %.3f' % (i, loss.item()))
+        print("- " * 20)
+        print("itr %s, loss = %.3f" % (i, loss.item()))
 
-print('- ' * 40)
+print("- " * 40)
 
 optimizer = optim.SGD(res_net.parameters(), lr=0.01)
 
 
-print('ResNet -->')
+print("ResNet -->")
 for i in range(2001):
     optimizer.zero_grad()
     x = make_data_1D(200)
@@ -75,8 +89,8 @@ for i in range(2001):
     loss.backward()
     optimizer.step()
     if i % 100 == 0:
-        print('- ' * 20)
-        print('itr %s, loss = %.3f' % (i, loss.item()))
+        print("- " * 20)
+        print("itr %s, loss = %.3f" % (i, loss.item()))
 
 
 # Plot the output
@@ -88,50 +102,52 @@ num_plots = n_plot
 
 plt.figure(figsize=(3, 4))
 colormap = plt.cm.gist_ncar
-plt.gca().set_prop_cycle(plt.cycler(
-    'color', plt.cm.jet(np.linspace(.8, .95, num_plots))))
+plt.gca().set_prop_cycle(
+    plt.cycler("color", plt.cm.jet(np.linspace(0.8, 0.95, num_plots)))
+)
 
 x_ = make_data_1D(n_plot)
 x = np.linspace(-1, 1, n_plot)
 x_ = torch.tensor(x).view(-1, d).float()
-x_axis = np.arange(0, n_iters+1)
+x_axis = np.arange(0, n_iters + 1)
 
-preds = np.zeros((n_iters+1, n_plot))
+preds = np.zeros((n_iters + 1, n_plot))
 
 preds[0] = x_[:, 0]
 
-for i in range(1, n_iters+1):
+for i in range(1, n_iters + 1):
     with torch.no_grad():
         pred_ = mom_net(x_, n_iters=i)
         preds[i] = pred_[:, 0]
 
-plt.plot(preds, x_axis, '-x', lw=2.5)
+plt.plot(preds, x_axis, "-x", lw=2.5)
 plt.xticks([], [])
 plt.yticks([], [])
-plt.ylabel('Depth')
-plt.xlabel('Input')
-plt.savefig('figures/mom_net_dynamics_1D.pdf')
+plt.ylabel("Depth")
+plt.xlabel("Input")
+plt.savefig("figures/mom_net_dynamics_1D.pdf")
 
 num_plots = n_plot
 
 plt.figure(figsize=(3, 4))
 colormap = plt.cm.gist_ncar
-plt.gca().set_prop_cycle(plt.cycler(
-    'color', plt.cm.jet(np.linspace(.0, .1, num_plots))))
+plt.gca().set_prop_cycle(
+    plt.cycler("color", plt.cm.jet(np.linspace(0.0, 0.1, num_plots)))
+)
 
-x_axis = np.arange(0, n_iters+1)
+x_axis = np.arange(0, n_iters + 1)
 
-preds_res = np.zeros((n_iters+1, n_plot))
+preds_res = np.zeros((n_iters + 1, n_plot))
 
 preds_res[0] = x_[:, 0]
-for i in range(1, n_iters+1):
+for i in range(1, n_iters + 1):
     with torch.no_grad():
         pred_ = res_net(x_, n_iters=i)
         preds_res[i] = pred_[:, 0]
 
-plt.plot(preds_res, x_axis, '-x', lw=2.5)
+plt.plot(preds_res, x_axis, "-x", lw=2.5)
 plt.xticks([], [])
 plt.yticks([], [])
-plt.ylabel('Depth')
-plt.xlabel('Input')
-plt.savefig('figures/res_net_dynamics_1D.pdf')
+plt.ylabel("Depth")
+plt.xlabel("Input")
+plt.savefig("figures/res_net_dynamics_1D.pdf")

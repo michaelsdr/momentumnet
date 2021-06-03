@@ -7,8 +7,15 @@ from .exact_rep_pytorch import TorchExactRep
 
 
 class MomentumNet(nn.Module):
-    def __init__(self, functions, gamma, n_iters=1, learn_gamma=False,
-                 init_speed=0, init_function=None):
+    def __init__(
+        self,
+        functions,
+        gamma,
+        n_iters=1,
+        learn_gamma=False,
+        init_speed=0,
+        init_function=None,
+    ):
         super(MomentumNet, self).__init__()
         if gamma < 0 or gamma > 1:
             raise Exception("gamma has to be between 0 and 1")
@@ -23,7 +30,7 @@ class MomentumNet(nn.Module):
         self.n_iters = n_iters
         self.init_speed = init_speed
         if init_function is not None:
-            self.add_module('init', init_function)
+            self.add_module("init", init_function)
 
     def forward(self, x, n_iters=None, ts=1):
         if n_iters is None:
@@ -35,7 +42,7 @@ class MomentumNet(nn.Module):
         gamma = self.gamma
         for i in range(n_iters):
             for function in self.functions:
-                v = gamma * v + function(x) * ts * (1-gamma)
+                v = gamma * v + function(x) * ts * (1 - gamma)
                 x = x + v * ts
         return x
 
@@ -45,7 +52,7 @@ class MomentumNet(nn.Module):
 
     @property
     def init_function(self):
-        return self._modules['init']
+        return self._modules["init"]
 
 
 class MomentumMemory(torch.autograd.Function):
@@ -58,7 +65,7 @@ class MomentumMemory(torch.autograd.Function):
         with torch.no_grad():
             for function in functions:
                 v *= gamma
-                v += (1-gamma) * function(x)
+                v += (1 - gamma) * function(x)
                 x = x + v.val
         ctx.save_for_backward(x, v.intrep, v.aux.store)
         return x
@@ -80,20 +87,21 @@ class MomentumMemory(torch.autograd.Function):
                 x = x.detach().requires_grad_(True)
                 f_eval = function(x)
                 grad_combi = grad_x + grad_v
-                vjps = torch.autograd.grad(f_eval,
-                                           (x,) + tuple(function.parameters()),
-                                           grad_combi)
-                v += -(1-gamma) * f_eval
+                vjps = torch.autograd.grad(
+                    f_eval, (x,) + tuple(function.parameters()), grad_combi
+                )
+                v += -(1 - gamma) * f_eval
                 v /= gamma
-                grad_params.append([(1-gamma) * vjp for vjp in vjps[1:]])
-                grad_x = grad_x + (1-gamma) * vjps[0]
+                grad_params.append([(1 - gamma) * vjp for vjp in vjps[1:]])
+                grad_x = grad_x + (1 - gamma) * vjps[0]
                 grad_v = gamma * grad_combi
             if ctx.init_function is not None:
                 x = x.detach().requires_grad_(True)
                 f_eval = init_function(x)
                 params = tuple(init_function.parameters())
-                vjps = torch.autograd.grad(f_eval,
-                                           params, torch.zeros_like(grad_x))
+                vjps = torch.autograd.grad(
+                    f_eval, params, torch.zeros_like(grad_x)
+                )
                 grad_params.append([vjp for vjp in vjps])
             else:
                 pass
@@ -117,7 +125,7 @@ class Mom(nn.Module):
             self.add_module(str(i), function)
         self.v = None
         if init_function is not None:
-            self.add_module('init', init_function)
+            self.add_module("init", init_function)
 
     def forward(self, x):
         if self.init_speed == 0:
@@ -132,8 +140,8 @@ class Mom(nn.Module):
         for function in functions:
             params += list(function.parameters())
         output = MomentumMemory.apply(
-                    x, v, self.gamma, functions, init_function, *params
-                    )
+            x, v, self.gamma, functions, init_function, *params
+        )
         self.v = v
         return output
 
@@ -153,4 +161,4 @@ class Mom(nn.Module):
 
     @property
     def init_function(self):
-        return self._modules['init']
+        return self._modules["init"]

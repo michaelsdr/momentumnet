@@ -14,12 +14,12 @@ import torch
 import imageio
 import os
 
-if not os.path.isdir('figures'):
-    os.mkdir('figures')
+if not os.path.isdir("figures"):
+    os.mkdir("figures")
 
 
 n_iters = 15
-y_ = torch.load('results/labels.pt')
+y_ = torch.load("results/labels.pt")
 
 
 ##############################################
@@ -28,16 +28,16 @@ y_ = torch.load('results/labels.pt')
 
 for i in range(n_iters + 1):
 
-    pred_ = torch.load('results/%.3d_mom.pt' % i)
+    pred_ = torch.load("results/%.3d_mom.pt" % i)
     plt.figure(figsize=(10, 10))
     plt.scatter(pred_[:, 0], pred_[:, 1], c=y_ + 3, s=10)
-    plt.axis('off')
-    plt.savefig('figures/%.3d_mom.png' % i)
-    plt.close('all')
+    plt.axis("off")
+    plt.savefig("figures/%.3d_mom.png" % i)
+    plt.close("all")
 
 
 images = []
 for i in range(n_iters + 1):
-    images.append(imageio.imread('figures/%.3d_mom.png' % i))
+    images.append(imageio.imread("figures/%.3d_mom.png" % i))
 
-imageio.mimsave('figures/animation_separation.gif', images)
+imageio.mimsave("figures/animation_separation.gif", images)
