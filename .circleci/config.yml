@@ -72,7 +72,7 @@ jobs:
         - run:
             name: deploy
             command: |
-              if [[ ${CIRCLE_BRANCH} == "master" ]]; then
+              if [[ ${CIRCLE_BRANCH} == "main" ]]; then
                 set -e
                 mkdir -p ~/.ssh
                 echo -e "Host *\nStrictHostKeyChecking no" > ~/.ssh/config
