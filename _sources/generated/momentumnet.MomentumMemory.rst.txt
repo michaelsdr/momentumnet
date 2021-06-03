@@ -1,0 +1,48 @@
+﻿momentumnet.MomentumMemory
+==========================
+
+.. currentmodule:: momentumnet
+
+.. autoclass:: MomentumMemory
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MomentumMemory.__init__
+      ~MomentumMemory.apply
+      ~MomentumMemory.backward
+      ~MomentumMemory.forward
+      ~MomentumMemory.mark_dirty
+      ~MomentumMemory.mark_non_differentiable
+      ~MomentumMemory.mark_shared_storage
+      ~MomentumMemory.name
+      ~MomentumMemory.register_hook
+      ~MomentumMemory.save_for_backward
+      ~MomentumMemory.set_materialize_grads
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MomentumMemory.dirty_tensors
+      ~MomentumMemory.is_traceable
+      ~MomentumMemory.materialize_grads
+      ~MomentumMemory.metadata
+      ~MomentumMemory.needs_input_grad
+      ~MomentumMemory.next_functions
+      ~MomentumMemory.non_differentiable
+      ~MomentumMemory.requires_grad
+      ~MomentumMemory.saved_tensors
+      ~MomentumMemory.saved_variables
+      ~MomentumMemory.to_save
+   
+   
