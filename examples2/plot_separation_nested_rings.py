@@ -19,7 +19,7 @@ import imageio
 import os
 
 if not os.path.isdir("figures"):
-    os.mkdir("figures")
+    os.mkdir("../examples/figures")
 
 
 n_iters = 15
