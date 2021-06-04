@@ -1,5 +1,5 @@
-Momentum ResNets: Drop-in replacement for any ResNet
-====================================================
+Momentum ResNets: Drop-in replacement for any ResNet with a significantly reduced memory footprint 
+==================================================================================================
 
 |GHActions|_ |PyPI|_ |Downloads|_
 
