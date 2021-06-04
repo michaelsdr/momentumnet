@@ -31,7 +31,7 @@ conda
 momentumnet can be installed with `conda-forge <https://conda-forge.org/docs/user/introduction.html>`_.
 You need to add `conda-forge` to your conda channels, and then do::
 
-  $ conda install momenutmnet
+  $ conda install momentumnet
 
 
 pip
@@ -78,7 +78,7 @@ You can download the directory examples_paper and reproduce some figures of the 
 
 Figure 1 - Comparison of the dynamics of a ResNet and a Momentum ResNet::
 
- $ python examples_paper/plot_dynamics_1D.py
+ python examples_paper/plot_dynamics_1D.py
 
 Figure 2 - Memory comparison on a toy example:: 
 
