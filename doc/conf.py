@@ -60,7 +60,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'momentumnet'
-copyright = u'2017, Michael Sander'
+copyright = u'2021, Michael Sander'
 author = u'Michael Sander'
 
 # The version info for the project you're documenting, acts as replacement for

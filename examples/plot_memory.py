@@ -36,7 +36,7 @@ torch.manual_seed(1)
 ##############################
 
 
-Depths = np.arange(1, 401, 100)
+Depths = np.arange(1, 300, 100)
 
 
 hidden = 8
@@ -98,8 +98,4 @@ if __name__ == "__main__":
     y_ = plt.ylabel("Memory (MiB)")
     x_ = plt.xlabel("Depth")
     plt.legend()
-    plt.savefig(
-        "figures/memory_theory.pdf",
-        bbox_inches="tight",
-        bbox_extra_artists=[x_, y_],
-    )
+    plt.show()
