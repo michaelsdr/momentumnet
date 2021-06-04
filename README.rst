@@ -89,12 +89,7 @@ Figure 5 - Separation of nested rings using a Momentum ResNet::
 $ python examples_paper/run_separation_nested_rings.py
 $ python examples_paper/plot_separation_nested_rings.py
 
-Running Image Experiments
-
-CIFAR-10
-----------
-
-You can train a Momentum ResNet or a ResNet on the CIFAR-10 dataset by using::
+You can also train a Momentum ResNet or a ResNet on the CIFAR-10 dataset by using::
 
 $ python examples_paper/run_CIFAR_10.py -m [MODEL] -g [GAMMA]
 
