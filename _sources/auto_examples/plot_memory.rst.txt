@@ -77,7 +77,7 @@ Fix random seed for reproducible figures
  .. code-block:: none
 
 
-    <torch._C.Generator object at 0x7fbc90578b30>
+    <torch._C.Generator object at 0x7ff76f369b30>
 
 
 
@@ -86,13 +86,13 @@ Fix random seed for reproducible figures
 Parameters of the simulation
 #############################
 
-.. GENERATED FROM PYTHON SOURCE LINES 37-106
+.. GENERATED FROM PYTHON SOURCE LINES 37-102
 
 .. code-block:: default
 
 
 
-    Depths = np.arange(1, 401, 100)
+    Depths = np.arange(1, 300, 100)
 
 
     hidden = 8
@@ -154,11 +154,7 @@ Parameters of the simulation
         y_ = plt.ylabel("Memory (MiB)")
         x_ = plt.xlabel("Depth")
         plt.legend()
-        plt.savefig(
-            "figures/memory_theory.pdf",
-            bbox_inches="tight",
-            bbox_extra_artists=[x_, y_],
-        )
+        plt.show()
 
 
 
@@ -173,7 +169,7 @@ Parameters of the simulation
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 4 minutes  26.897 seconds)
+   **Total running time of the script:** ( 2 minutes  1.133 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_memory.py:
