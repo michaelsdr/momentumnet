@@ -7,6 +7,32 @@ from .exact_rep_pytorch import TorchExactRep
 
 
 class MomentumNet(nn.Module):
+    """
+        A class used to define a Momentum ResNet
+
+        ...
+
+        Attributes
+        ----------
+        functions : list of nn, list of Sequential or Sequential
+            a list of Sequential to define the transformation at each layer
+        gamma : float
+            the momentum term
+        n_iters : int
+            how many times to loop in functions in the forward pass (default 1)
+        learn_gamma : bool
+            whether to learn gamma
+        init_speed : int
+            if init_speed is not 0 then specify an init_function
+        init_function : Sequential
+
+
+        Methods
+        -------
+        forward(x, n_iters=None, ts=1)
+            maps x to the output of the network
+        """
+
     def __init__(
         self,
         functions,
@@ -112,6 +138,28 @@ class MomentumMemory(torch.autograd.Function):
 
 
 class Mom(nn.Module):
+    """
+            A class used to define a Momentum ResNet with the memory tricks
+
+            ...
+
+            Attributes
+            ----------
+            functions : list of nn, list of Sequential or Sequential
+                a list of Sequential to define the transformation at each layer
+            gamma : float
+                the momentum term
+            init_speed : int
+                if init_speed is not 0 then specify an init_function
+            init_function : Sequential
+
+
+            Methods
+            -------
+            forward(x)
+                maps x to the output of the network
+            """
+
     def __init__(self, functions, gamma, init_speed=0, init_function=None):
         super(Mom, self).__init__()
         if gamma < 0 or gamma > 1:

@@ -15,5 +15,11 @@ Classes
    :toctree: generated/
 
     MomentumNet
-    MomentumMemory
     Mom
+
+Functions
+
+.. autosummary::
+   :toctree: generated/
+
+    transform

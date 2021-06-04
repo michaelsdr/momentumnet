@@ -86,7 +86,7 @@ if __name__ == "__main__":
         used_mem = np.max(memory_usage((train, (res_net,))))
         Mem_list_res.append(used_mem)
 
-    plt.figure(figsize=(4, 1.5))
+    plt.figure(figsize=(8, 4))
 
     plt.plot(
         Depths, Mem_list_res, label="ResNet", linewidth=4, color="darkblue"
