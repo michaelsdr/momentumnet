@@ -76,15 +76,15 @@ Reproducing the figures of the paper
 
 You can download the directory examples_paper and reproduce some figures of the paper. 
 
-Figure 1 - Comparison of the dynamics of a ResNet and a Momentum ResNet
+Figure 1 - Comparison of the dynamics of a ResNet and a Momentum ResNet::
 
  $ python examples_paper/plot_dynamics_1D.py
 
-Figure 2 - Memory comparison on a toy example 
+Figure 2 - Memory comparison on a toy example:: 
 
 $ python examples_paper/plot_memory.py
 
-Figure 5 - Separation of nested rings using a Momentum ResNet
+Figure 5 - Separation of nested rings using a Momentum ResNet::
 
 $ python examples_paper/run_separation_nested_rings.py
 $ python examples_paper/plot_separation_nested_rings.py
@@ -94,7 +94,7 @@ Running Image Experiments
 CIFAR-10
 ----------
 
-You can train a Momentum ResNet or a ResNet on the CIFAR-10 dataset by using
+You can train a Momentum ResNet or a ResNet on the CIFAR-10 dataset by using::
 
 $ python examples_paper/run_CIFAR_10.py -m [MODEL] -g [GAMMA]
 
