@@ -69,7 +69,13 @@ Quickstart
 
 .. code:: python
 
-   >>> import momentumnet 
+   >>> from momentumnet import MomentumNet, Mom
+   >>> hidden = 8
+   >>> d = 500
+   >>> function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
+   >>> mom_net = MomentumNet([function,] * 10, gamma=0.99)
+
+
 
 Reproducing the figures of the paper
 ------------------------------------
