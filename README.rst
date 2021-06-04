@@ -69,6 +69,7 @@ Quickstart
 
 .. code:: python
 
+   >>> from torch import nn
    >>> from momentumnet import MomentumNet, Mom
    >>> hidden = 8
    >>> d = 500
