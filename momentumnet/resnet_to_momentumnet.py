@@ -60,4 +60,3 @@ def transform(model, pretrained=False, gamma=0.9, mem=False):
         for (name1, param1), (name2, param2) in zip(params1, params2):
             param2.data.copy_(param1)
     return mresnet
-
