@@ -66,6 +66,7 @@ and it should not give any error message.
 Quickstart
 ----------
 
+To get started, you can create a toy momentumnet:
 
 .. code:: python
 
@@ -76,7 +77,19 @@ Quickstart
    >>> function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
    >>> mom_net = MomentumNet([function,] * 10, gamma=0.99)
 
+Momentum ResNets are a drop-in replacement for ResNets
+------------------------------------------------------
 
+To see how a Momentum ResNet can be created using a ResNet, you can run:
+
+.. code:: python
+
+   >>> import torch
+   >>> from momentumnet import transform
+   >>> from torchvision.models import resnet101
+   >>> mresnet101 = transform(resnet101(), gamma=0.99, pretrained=True)
+
+This initiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet.
 
 Reproducing the figures of the paper
 ------------------------------------
