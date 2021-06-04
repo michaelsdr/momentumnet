@@ -78,7 +78,9 @@
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">API Documentation</a><ul>
-<li><a class="reference internal" href="#momentum-residual-residual-networks">Momentum Residual Residual Networks</a></li>
+<li><a class="reference internal" href="#momentum-residual-residual-networks">Momentum Residual Residual Networks</a><ul>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -126,25 +128,22 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MomentumNet</span></code></a>(functions, gamma[, n_iters, …])</p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">Attributes</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</p></td>
+<td><p>A class used to define a Momentum ResNet</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/momentumnet.MomentumMemory.html#momentumnet.MomentumMemory" title="momentumnet.MomentumMemory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MomentumMemory</span></code></a></p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">Attributes</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/momentumnet.Mom.html#momentumnet.Mom" title="momentumnet.Mom"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mom</span></code></a>(functions, gamma[, init_speed, …])</p></td>
+<td><p>A class used to define a Momentum ResNet with the memory tricks</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/momentumnet.Mom.html#momentumnet.Mom" title="momentumnet.Mom"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mom</span></code></a>(functions, gamma[, init_speed, …])</p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">Attributes</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</p></td>
+</tbody>
+</table>
+<p>Functions</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/momentumnet.transform.html#momentumnet.transform" title="momentumnet.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(model[, pretrained, gamma, mem])</p></td>
+<td><p>Return the MomentumNet counterpart of the model</p></td>
 </tr>
 </tbody>
 </table>
