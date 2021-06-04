@@ -1,5 +1,5 @@
-Momentum ResNets: Drop-in replacement for any ResNet with a significantly reduced memory footprint and better representation capabilities.
-=========================================
+Momentum ResNets: Drop-in replacement for any ResNet
+====================================================
 
 |GHActions|_ |PyPI|_ |Downloads|_
 
@@ -72,7 +72,7 @@ Quickstart
    >>> import momentumnet 
 
 Reproducing the figures of the paper
-----------
+------------------------------------
 
 You can download the directory examples_paper and reproduce some figures of the paper. 
 
