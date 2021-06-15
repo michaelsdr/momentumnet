@@ -24,16 +24,6 @@ Installation
 
 We recommend the `Anaconda Python distribution <https://www.continuum.io/downloads>`_.
 
-
-conda
-~~~~~
-
-momentumnet can be installed with `conda-forge <https://conda-forge.org/docs/user/introduction.html>`_.
-You need to add `conda-forge` to your conda channels, and then do::
-
-  $ conda install momentumnet
-
-
 pip
 ~~~
 
