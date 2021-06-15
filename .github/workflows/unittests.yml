@@ -1,9 +1,8 @@
-
 name: unittests
 on:
   pull_request:
   push:
-    branches: master
+    branches: main
 
 jobs:
   test:
@@ -31,7 +30,7 @@ jobs:
       - name: Run Python unit tests
         run: |
           make
-          flake8 --count momentumnet
+          flake8 --count ksddescent
       - name: Upload coverage
         run: |
           bash <(curl -s https://codecov.io/bash)
