@@ -30,7 +30,7 @@ jobs:
       - name: Run Python unit tests
         run: |
           make
-          flake8 --count ksddescent
+          flake8 --count momentumnet
       - name: Upload coverage
         run: |
           bash <(curl -s https://codecov.io/bash)
