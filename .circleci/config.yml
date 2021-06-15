@@ -26,7 +26,7 @@ jobs:
                 echo "Merging $(cat merge.txt)";
                 git remote add upstream git://github.com/michaelsdr/momentumnet.git;
                 git pull --ff-only upstream "refs/pull/$(cat merge.txt)/merge";
-                git fetch upstream master;
+                git fetch upstream main;
               fi
         # Load our data
         - restore_cache:
