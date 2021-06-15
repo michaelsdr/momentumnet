@@ -8,6 +8,8 @@ recursive-include examples *.py
 recursive-include examples *.txt
 
 recursive-include momentumnet *.py
+recursive-include examples_paper *.py
+
 
 ### Exclude
 
