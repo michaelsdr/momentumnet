@@ -26,6 +26,9 @@
       ~MomentumNet.extra_repr
       ~MomentumNet.float
       ~MomentumNet.forward
+      ~MomentumNet.get_buffer
+      ~MomentumNet.get_parameter
+      ~MomentumNet.get_submodule
       ~MomentumNet.half
       ~MomentumNet.load_state_dict
       ~MomentumNet.modules
@@ -44,6 +47,7 @@
       ~MomentumNet.share_memory
       ~MomentumNet.state_dict
       ~MomentumNet.to
+      ~MomentumNet.to_empty
       ~MomentumNet.train
       ~MomentumNet.type
       ~MomentumNet.xpu

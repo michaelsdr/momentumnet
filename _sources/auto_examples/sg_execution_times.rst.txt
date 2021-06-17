@@ -5,10 +5,10 @@
 
 Computation times
 =================
-**07:47.546** total execution time for **auto_examples** files:
+**20:05.129** total execution time for **auto_examples** files:
 
 +-----------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_memory.py` (``plot_memory.py``)           | 07:15.042 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_memory.py` (``plot_memory.py``)           | 19:37.653 | 0.0 MB |
 +-----------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_dynamics_1D.py` (``plot_dynamics_1D.py``) | 00:32.504 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_dynamics_1D.py` (``plot_dynamics_1D.py``) | 00:27.476 | 0.0 MB |
 +-----------------------------------------------------------------------------+-----------+--------+

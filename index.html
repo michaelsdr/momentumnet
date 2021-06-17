@@ -159,7 +159,7 @@ with <cite>pip</cite>. To upgrade, use the <code class="docutils literal notrans
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">momentumnet</span> <span class="kn">import</span> <span class="n">transform</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torchvision.models</span> <span class="kn">import</span> <span class="n">resnet101</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mresnet101</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">resnet101</span><span class="p">(),</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span> <span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mresnet101</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">resnet101</span><span class="p">(),</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This initiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet.</p>
