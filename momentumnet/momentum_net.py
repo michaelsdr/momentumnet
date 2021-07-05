@@ -18,7 +18,7 @@ class MomentumNetWithBackprop(nn.Module):
     gamma : float
         the momentum term
     init_speed : int
-        if init_speed is not 0 then specify an init_function
+        if init_speed is True then specify an init_function
     init_function : Sequential
 
 
@@ -32,7 +32,7 @@ class MomentumNetWithBackprop(nn.Module):
         self,
         functions,
         gamma,
-        init_speed=0,
+        init_speed=False,
         init_function=None,
     ):
         super(MomentumNetWithBackprop, self).__init__()
@@ -49,7 +49,7 @@ class MomentumNetWithBackprop(nn.Module):
     def forward(self, x, n_iters=None):
         if n_iters is None:
             n_iters = len(self.functions)
-        if self.init_speed == 0:
+        if not self.init_speed:
             v = torch.zeros_like(x)
         else:
             v = self.init_function(x)
@@ -139,8 +139,8 @@ class MomentumNetNoBackprop(nn.Module):
         a list of Sequential to define the transformation at each layer
     gamma : float
         the momentum term
-    init_speed : int
-        if init_speed is not 0 then specify an init_function
+    init_speed : bool
+        if init_speed is True then specify an init_function
     init_function : Sequential
 
 
@@ -150,7 +150,7 @@ class MomentumNetNoBackprop(nn.Module):
         maps x to the output of the network
     """
 
-    def __init__(self, functions, gamma, init_speed=0, init_function=None):
+    def __init__(self, functions, gamma, init_speed=False, init_function=None):
         super(MomentumNetNoBackprop, self).__init__()
         if gamma < 0 or gamma > 1:
             raise Exception("gamma has to be between 0 and 1")
@@ -168,7 +168,7 @@ class MomentumNetNoBackprop(nn.Module):
     def forward(self, x, n_iters=None):
         if n_iters is None:
             n_iters = len(self.functions)
-        if self.init_speed == 0:
+        if not self.init_speed:
             init_function = None
             v = torch.zeros_like(x)
             params = []
@@ -205,11 +205,46 @@ class MomentumNetNoBackprop(nn.Module):
 
 
 class MomentumNet(nn.Module):
+    """
+    Create a Momentum Residual Network.
+
+    It iterates
+
+    v_{t + 1} = (1 - gamma) * v_t + gamma * f_t(x_t)
+    x_{t + 1} = x_t + v_{t + 1}
+
+    where the f_t are stored in `functions`.
+    These forward equations can be reversed in closed-form,
+    enabling learning without backpropagation. This process
+    trades memory for computations.
+
+    ...
+
+    Attributes
+    ----------
+    functions : list of nn, list of Sequential or Sequential
+        a list of Sequential to define the transformation at each layer
+    gamma : float
+        the momentum term
+    init_speed : bool
+        Whether to initialize v as 0 or as a function of the input.
+    init_function : Sequential
+        The initial function
+    use_backprop : bool
+        Whether to use backprop or not to compute the gradient of
+        the parameters.
+
+
+    Methods
+    -------
+    forward(x, n_iters=None)
+        maps x to the output of the network
+    """
     def __init__(
         self,
         functions,
         gamma,
-        init_speed=0,
+        init_speed=False,
         init_function=None,
         use_backprop=False,
     ):
