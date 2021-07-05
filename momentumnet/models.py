@@ -3,7 +3,7 @@
 
 import torch
 import torch.nn as nn
-from .momentum_net import MomentumNet, Mom
+from .momentum_net import MomentumNet
 
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
@@ -519,10 +519,7 @@ class MResNet(nn.Module):
             )
         )
         self.inplanes = planes * block.expansion
-        if self.mem:
-            Maker = Mom
-        else:
-            Maker = MomentumNet
+        Maker = MomentumNet
         for _ in range(1, blocks):
 
             layers.append(
@@ -553,6 +550,7 @@ class MResNet(nn.Module):
                 self.gamma,
                 init_speed=self.init_speed,
                 init_function=init_function,
+                use_backprop=self.mem,
             ),
         )
 
