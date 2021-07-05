@@ -17,7 +17,7 @@ from momentumnet.models import (
 )
 
 
-def transform(model, pretrained=False, gamma=0.9, mem=False):
+def transform(model, pretrained=False, gamma=0.9, use_backprop=False):
     """Return the MomentumNet counterpart of the model
 
 
@@ -29,7 +29,7 @@ def transform(model, pretrained=False, gamma=0.9, mem=False):
         Whether using a pretrained resnet and transfer its weights
     gamma : float (default: 0.9)
         The momentum term for the MomentumNet
-    mem : bool (default: False)
+    use_backprop : bool (default: False)
         If True then the MomentumNet has a smaller memory footprint
 
     Return
@@ -48,11 +48,11 @@ def transform(model, pretrained=False, gamma=0.9, mem=False):
     try:
         _ = resnet.layer1[0].conv3
         mresnet = MResNet(
-            Bottleneck, MBottleneck, layers, num_classes, gamma=gamma, mem=mem
+            Bottleneck, MBottleneck, layers, num_classes, gamma=gamma, use_backprop=use_backprop
         )
     except AttributeError:
         mresnet = MResNet(
-            BasicBlock, MBasicBlock, layers, num_classes, gamma=gamma, mem=mem
+            BasicBlock, MBasicBlock, layers, num_classes, gamma=gamma, use_backprop=use_backprop
         )
     params1 = resnet.named_parameters()
     params2 = mresnet.named_parameters()
