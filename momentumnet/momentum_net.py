@@ -68,6 +68,7 @@ class MomentumNet(nn.Module):
         gamma = self.gamma
         for i in range(n_iters):
             for function in self.functions:
+                print(function(x).shape)
                 v = gamma * v + function(x) * ts * (1 - gamma)
                 x = x + v * ts
         return x
