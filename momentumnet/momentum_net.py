@@ -240,6 +240,7 @@ class MomentumNet(nn.Module):
     forward(x, n_iters=None)
         maps x to the output of the network
     """
+
     def __init__(
         self,
         functions,

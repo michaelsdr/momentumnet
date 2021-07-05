@@ -43,7 +43,9 @@ def test_outputs_memory(init_speed):
         for _ in range(5)
     ]
     if init_speed:
-        init_function = nn.Sequential(nn.Linear(3, 5), nn.Tanh(), nn.Linear(5, 3))
+        init_function = nn.Sequential(
+            nn.Linear(3, 5), nn.Tanh(), nn.Linear(5, 3)
+        )
     else:
         init_function = None
     mom_no_backprop = MomentumNet(
