@@ -50,14 +50,14 @@ def test_outputs_memory(init_speed):
         init_function = None
     mom_no_backprop = MomentumNet(
         functions,
-        gamma=0.99,
+        gamma=0.9,
         init_speed=init_speed,
         init_function=init_function,
         use_backprop=False,
     )
     mom_net = MomentumNet(
         functions,
-        gamma=0.99,
+        gamma=0.9,
         init_speed=init_speed,
         init_function=init_function,
         use_backprop=True,
@@ -77,7 +77,17 @@ def test_outputs_memory(init_speed):
 
 @pytest.mark.parametrize("init_speed", [True, False])
 def test_outputs_memory_multiple_args(init_speed):
-    functions = nn.Transformer().decoder.layers[:2]
+
+    class Custom(nn.Module):
+        def __init__(self):
+            super(Custom, self).__init__()
+            self.layer1 = nn.Linear(3, 3)
+            self.layer2 = nn.Linear(3, 3)
+        
+        def forward(self, x, mem):
+            return self.layer1(x) + self.layer2(mem)
+    
+    functions = [Custom() for _ in range(5)]
 
     if init_speed:
         init_function = nn.Tanh()
@@ -97,11 +107,10 @@ def test_outputs_memory_multiple_args(init_speed):
         init_function=init_function,
         use_backprop=True,
     )
-    x = torch.randn(2, 16, 512, requires_grad=True)
-    mem = torch.randn(2, 16, 512)
-    print(mom_net(x, mem) - mom_no_backprop(x, mem))
+    x = torch.randn(10, 3, requires_grad=True)
+    mem = torch.randn(10, 3, requires_grad=False)
     assert torch.allclose(mom_net(x, mem), mom_no_backprop(x, mem), atol=1e-5, rtol=1e-3)
-    x = torch.randn(2, 16, 512, requires_grad=True)
+    x = torch.randn(10, 3, requires_grad=True)
     mom_net_output = (mom_net(x, mem) ** 2 + mom_net(x, mem) ** 3).sum()
     mom_output = (mom_no_backprop(x, mem) ** 2 + mom_no_backprop(x, mem) ** 3).sum()
     params_mom_net = tuple(mom_net.parameters())

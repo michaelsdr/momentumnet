@@ -105,7 +105,7 @@ class MomentumMemory(torch.autograd.Function):
                 f_eval = function(x, *fun_args)
                 grad_combi = grad_x + grad_v
                 vjps = torch.autograd.grad(
-                    f_eval, (x,) + tuple(function.parameters()) + fun_args, grad_combi
+                    f_eval, (x,) + tuple(function.parameters()), grad_combi
                 )
                 v += -(1 - gamma) * f_eval
                 v /= gamma
