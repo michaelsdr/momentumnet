@@ -281,11 +281,13 @@ class MomentumNetTransformWithBackprop(nn.Module):
 
 class MomentumTransformMemory(torch.autograd.Function):
     @staticmethod
-    def forward(ctx, x, v, gamma, functions, init_function, fun_args, *params):
+    def forward(ctx, x, v, gamma, functions, init_function, n_fun_args, *params):
+        fun_args = params[:n_fun_args]
         ctx.functions = functions
         ctx.gamma = gamma
         ctx.init_function = init_function
         ctx.fun_args = fun_args
+        ctx.params_require_grad = [param.requires_grad for param in params]
         n_iters = len(functions)
         v = TorchExactRep(v)
         with torch.no_grad():
@@ -302,13 +304,13 @@ class MomentumTransformMemory(torch.autograd.Function):
         gamma = ctx.gamma
         init_function = ctx.init_function
         fun_args = ctx.fun_args
+        params_require_grad = ctx.params_require_grad
         n_iters = len(functions)
         x, v_intrep, v_store = ctx.saved_tensors
         v = TorchExactRep(0, from_representation=(v_intrep, v_store))
         grad_x = grad_output
         grad_v = torch.zeros_like(grad_x)
         grad_params = []
-        grad_func_params = []
         with torch.set_grad_enabled(True):
             for i in range(n_iters):
                 function = functions[n_iters - 1 - i]
@@ -316,16 +318,17 @@ class MomentumTransformMemory(torch.autograd.Function):
                 x = x - v.val
                 x = x.detach().requires_grad_(True)
                 f_eval = (function(x, *fun_args) - x)
-                #print(torch.autograd.grad(f_eval.sum(), (x,) + fun_args))
                 grad_combi = grad_x + grad_v
+                backward_list = []
+                for requires_grad, param in zip(params_require_grad, fun_args + tuple(function.parameters())):
+                    if requires_grad:
+                        backward_list.append(param)
                 vjps = torch.autograd.grad(
-                    f_eval, (x,) + tuple(function.parameters()) + fun_args, grad_combi
+                    f_eval, (x,) + tuple(backward_list), grad_combi
                 )
-                print(vjps)
                 v += -(1 - gamma) * f_eval
                 v /= gamma
-                grad_params.append([(1 - gamma) * vjp for vjp in vjps[1:-1]])
-                grad_func_params.append((1 - gamma) * vjps[-1])
+                grad_params.append([(1 - gamma) * vjp for vjp in vjps[1:]])
                 grad_x = grad_x + (1 - gamma) * vjps[0]
                 grad_v = gamma * grad_combi
             if ctx.init_function is not None:
@@ -338,13 +341,18 @@ class MomentumTransformMemory(torch.autograd.Function):
                 grad_params.append([vjp for vjp in vjps])
             else:
                 pass
-        flat_params = []
+        flat_params_vjp = []
         for param in grad_params[::-1]:
-            flat_params += param
-        flat_func_params = grad_func_params[0]
-        for param in grad_func_params[1:]:
-            flat_func_params += param
-        return (grad_x, grad_v, None, None, None, tuple(flat_func_params), *flat_params)
+            flat_params_vjp += param
+        flat_params = []
+        i = 0
+        for requires_grad in params_require_grad:
+            if requires_grad:
+                flat_params.append(flat_params_vjp[i])
+                i += 1
+            else:
+                flat_params.append(None)   # ENH: improve this to make it cleaner
+        return (grad_x, grad_v, None, None, None, None, *flat_params)
 
 
 class MomentumNetTransformNoBackprop(nn.Module):
@@ -399,9 +407,9 @@ class MomentumNetTransformNoBackprop(nn.Module):
             params += list(function.parameters())
         #params += list(function_args)
         # function_args = list(function_args)
-
+        n_fun_args = len(function_args)
         output = MomentumTransformMemory.apply(
-            x, v, self.gamma, functions, init_function, function_args, *params
+            x, v, self.gamma, functions, init_function, n_fun_args, *function_args, *params,
         )
         self.v = v
         return output

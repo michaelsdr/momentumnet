@@ -7,7 +7,7 @@ import torch
 import torch.nn as nn
 
 from momentumnet import MomentumNet, MomentumNetTransform
-from numpy.testing import assert_raises
+from numpy.testing import assert_allclose, assert_raises
 
 
 torch.manual_seed(1)
@@ -121,32 +121,89 @@ def test_outputs_memory_multiple_args(init_speed):
         assert torch.allclose(grad_1, grad_2, atol=1e-5, rtol=1e-3)
 
 
+def test_two_inputs():
+    class Custom(nn.Module):
+        def __init__(self):
+            super(Custom, self).__init__()
+            self.layer1 = nn.Linear(3, 3)
+            self.layer2 = nn.Linear(2, 3)
 
-class Custom(nn.Module):
-    def __init__(self):
-        super(Custom, self).__init__()
-        self.layer1 = nn.Linear(3, 3)
-        self.layer2 = nn.Linear(3, 3)
+        def forward(self, x, mem):
+            return self.layer1(x) + self.layer2(mem)
 
-    def forward(self, x, mem):
-        return self.layer1(x) + self.layer2(mem)
+    functions = [Custom() for _ in range(2)]
 
-functions = [Custom() for _ in range(1)]
+    init_speed = False
+    init_function = None
+    mom_no_backprop = MomentumNetTransform(
+        functions,
+        gamma=0.9,
+        init_speed=init_speed,
+        init_function=init_function,
+        use_backprop=False,
+    )
+    mom_backprop = MomentumNetTransform(
+        functions,
+        gamma=0.9,
+        init_speed=init_speed,
+        init_function=init_function,
+        use_backprop=True,
+    )
+    x = torch.randn(10, 3, requires_grad=True)
+    mem = torch.randn(10, 2, requires_grad=True)
+    mom_output = (mom_no_backprop(x, mem) ** 2).sum()
+    mom_output2 = (mom_backprop(x, mem) ** 2).sum()
+    #params_mom_net = tuple(mom_net.parameters())
+    params_mom = tuple(mom_no_backprop.parameters())
+    #grad_mom = torch.autograd.grad(mom_output, x)
+    grad_mom = torch.autograd.grad(mom_output, (x, mem))
+    grad_mom2 = torch.autograd.grad(mom_output2, (x, mem))
+    for g1, g2 in zip(grad_mom, grad_mom2):
+        assert(torch.allclose(g1, g2))
 
-init_speed = False
-init_function = None
-mom_no_backprop = MomentumNetTransform(
-    functions,
-    gamma=0.9,
-    init_speed=init_speed,
-    init_function=init_function,
-    use_backprop=False,
-)
-x = torch.randn(10, 3, requires_grad=True)
-mem = torch.randn(10, 3, requires_grad=True)
-mom_output = (mom_no_backprop(x, mem) ** 2 + mom_no_backprop(x, mem) ** 3).sum()
-#params_mom_net = tuple(mom_net.parameters())
-params_mom = tuple(mom_no_backprop.parameters())
-#grad_mom_net = torch.autograd.grad(mom_net_output, mem)
-#grad_mom = torch.autograd.grad(mom_output, x)
-grad_mom = torch.autograd.grad(mom_output, (x, mem))
+
+def test_three_inputs():
+    class Custom(nn.Module):
+        def __init__(self):
+            super(Custom, self).__init__()
+            self.layer1 = nn.Linear(3, 3)
+            self.layer2 = nn.Linear(2, 3)
+            self.layer3 = nn.Linear(4, 3)
+
+        def forward(self, x, mem, mem2):
+            return self.layer1(x) + self.layer2(mem) + self.layer3(mem2)
+
+    functions = [Custom() for _ in range(2)]
+
+    init_speed = False
+    init_function = None
+    mom_no_backprop = MomentumNetTransform(
+        functions,
+        gamma=0.9,
+        init_speed=init_speed,
+        init_function=init_function,
+        use_backprop=False,
+    )
+    mom_backprop = MomentumNetTransform(
+        functions,
+        gamma=0.9,
+        init_speed=init_speed,
+        init_function=init_function,
+        use_backprop=True,
+    )
+    x_base = torch.randn(10, 3)
+    mem_base = torch.randn(10, 2)
+    mem2 = torch.randn(10, 4)
+    gx_list = []
+    gmem_list =[]
+    for mom in [mom_backprop, mom_no_backprop]:
+        x = torch.clone(x_base)
+        mem = torch.clone(mem_base)
+        x.requires_grad = True
+        mem.requires_grad = True
+        output = mom(x, mem, mem2).sum()
+        output.backward()
+        gx_list.append(x.grad)
+        gmem_list.append(mem.grad)
+    assert torch.allclose(*gx_list)
+    assert torch.allclose(*gmem_list)
