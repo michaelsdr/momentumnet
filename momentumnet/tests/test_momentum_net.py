@@ -120,38 +120,33 @@ def test_outputs_memory_multiple_args(init_speed):
     for grad_1, grad_2 in zip(grad_mom_net, grad_mom):
         assert torch.allclose(grad_1, grad_2, atol=1e-5, rtol=1e-3)
 
-# class Custom(nn.Module):
-#     def __init__(self):
-#         super(Custom, self).__init__()
-#         self.layer1 = nn.Linear(3, 3)
-#         self.layer2 = nn.Linear(3, 3)
-#
-#     def forward(self, x, mem):
-#         return self.layer1(x) + self.layer2(mem)
-#
-# functions = [Custom() for _ in range(5)]
-#
-# init_speed = False
-# init_function = None
-# mom_no_backprop = MomentumNetTransform(
-#     functions,
-#     gamma=0.9,
-#     init_speed=init_speed,
-#     init_function=init_function,
-#     use_backprop=False,
-# )
-# mom_net = MomentumNetTransform(
-#     functions,
-#     gamma=0.9,
-#     init_speed=init_speed,
-#     init_function=init_function,
-#     use_backprop=True,
-# )
-# x = torch.randn(10, 3, requires_grad=True)
-# mem = torch.randn(10, 3, requires_grad=True)
-# mom_net_output = (mom_net(x, mem) ** 2 + mom_net(x, mem) ** 3).sum()
-# mom_output = (mom_no_backprop(x, mem) ** 2 + mom_no_backprop(x, mem) ** 3).sum()
-# #params_mom_net = tuple(mom_net.parameters())
-# params_mom = tuple(mom_no_backprop.parameters())
-# #grad_mom_net = torch.autograd.grad(mom_net_output, mem)
-# grad_mom = torch.autograd.grad(mom_output, mem)
+
+
+class Custom(nn.Module):
+    def __init__(self):
+        super(Custom, self).__init__()
+        self.layer1 = nn.Linear(3, 3)
+        self.layer2 = nn.Linear(3, 3)
+
+    def forward(self, x, mem):
+        return self.layer1(x) + self.layer2(mem)
+
+functions = [Custom() for _ in range(1)]
+
+init_speed = False
+init_function = None
+mom_no_backprop = MomentumNetTransform(
+    functions,
+    gamma=0.9,
+    init_speed=init_speed,
+    init_function=init_function,
+    use_backprop=False,
+)
+x = torch.randn(10, 3, requires_grad=True)
+mem = torch.randn(10, 3, requires_grad=True)
+mom_output = (mom_no_backprop(x, mem) ** 2 + mom_no_backprop(x, mem) ** 3).sum()
+#params_mom_net = tuple(mom_net.parameters())
+params_mom = tuple(mom_no_backprop.parameters())
+#grad_mom_net = torch.autograd.grad(mom_net_output, mem)
+#grad_mom = torch.autograd.grad(mom_output, x)
+grad_mom = torch.autograd.grad(mom_output, (x, mem))
