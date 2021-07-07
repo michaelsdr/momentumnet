@@ -96,6 +96,7 @@ class MomentumTransformMemory(torch.autograd.Function):
         grad_x = grad_output
         grad_v = torch.zeros_like(grad_x)
         grad_params = []
+        grad_func_params = []
         with torch.set_grad_enabled(True):
             for i in range(n_iters):
                 function = functions[n_iters - 1 - i]
@@ -105,11 +106,12 @@ class MomentumTransformMemory(torch.autograd.Function):
                 f_eval = (function(x, *fun_args) - x)
                 grad_combi = grad_x + grad_v
                 vjps = torch.autograd.grad(
-                    f_eval, (x,) + tuple(function.parameters()), grad_combi
+                    f_eval, (x,) + tuple(function.parameters()) + fun_args, grad_combi
                 )
                 v += -(1 - gamma) * f_eval
                 v /= gamma
-                grad_params.append([(1 - gamma) * vjp for vjp in vjps[1:]])
+                grad_params.append([(1 - gamma) * vjp for vjp in vjps[1:-1]])
+                grad_func_params.append((1 - gamma) * vjps[-1])
                 grad_x = grad_x + (1 - gamma) * vjps[0]
                 grad_v = gamma * grad_combi
             if ctx.init_function is not None:
@@ -125,7 +127,10 @@ class MomentumTransformMemory(torch.autograd.Function):
         flat_params = []
         for param in grad_params[::-1]:
             flat_params += param
-        return (grad_x, grad_v, None, None, None, None, *flat_params)
+        flat_func_params = grad_func_params[0]
+        for param in grad_func_params[1:]:
+            flat_func_params += param
+        return (grad_x, grad_v, None, None, None, flat_func_params, *flat_params)
 
 
 class MomentumNetTransformNoBackprop(nn.Module):
@@ -178,6 +183,9 @@ class MomentumNetTransformNoBackprop(nn.Module):
         functions = self.functions
         for function in functions:
             params += list(function.parameters())
+        #params += list(function_args)
+        # function_args = list(function_args)
+
         output = MomentumTransformMemory.apply(
             x, v, self.gamma, functions, init_function, function_args, *params
         )
@@ -262,7 +270,6 @@ class MomentumNetTransform(nn.Module):
         self.init_speed = init_speed
 
     def forward(self, x, *args, **kwargs):
-        print(args)
         return self.network.forward(x, *args)
 
     @property
