@@ -1,7 +1,6 @@
 # Authors: Michael Sander, Pierre Ablin
 # License: MIT
 import pytest
-
 import torch
 import torch.nn as nn
 
