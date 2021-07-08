@@ -5,7 +5,7 @@
 Illustration of the drop-in replacement aspect of Momentum ResNets.
 """
 
-from copy import deepcopy, copy
+from copy import deepcopy
 from momentumnet import MomentumNetTransform
 
 from torch import nn
