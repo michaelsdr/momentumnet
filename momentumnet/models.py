@@ -3,7 +3,7 @@
 
 import torch
 import torch.nn as nn
-from .momentum_net import MomentumNet, Mom
+from .momentum_net import MomentumNet
 
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
@@ -400,7 +400,7 @@ class MResNet(nn.Module):
         norm_layer=None,
         gamma=0.9,
         init_speed=0,
-        mem=False,
+        use_backprop=False,
     ):
         super(MResNet, self).__init__()
         self.large = num_classes == 1000
@@ -410,7 +410,7 @@ class MResNet(nn.Module):
         self.inplanes = 64
         self.dilation = 1
         self.gamma = gamma
-        self.mem = mem
+        self.use_backprop = use_backprop
         self.init_speed = init_speed
         if replace_stride_with_dilation is None:
             # each element in the tuple indicates if we should replace
@@ -519,10 +519,7 @@ class MResNet(nn.Module):
             )
         )
         self.inplanes = planes * block.expansion
-        if self.mem:
-            Maker = Mom
-        else:
-            Maker = MomentumNet
+        Maker = MomentumNet
         for _ in range(1, blocks):
 
             layers.append(
@@ -553,6 +550,7 @@ class MResNet(nn.Module):
                 self.gamma,
                 init_speed=self.init_speed,
                 init_function=init_function,
+                use_backprop=self.use_backprop,
             ),
         )
 
@@ -585,7 +583,7 @@ def ResNet18(num_classes=1000, bn=True):
     return ResNet(BasicBlock, [2, 2, 2, 2], num_classes, norm_layer=norm_layer)
 
 
-def mResNet18(num_classes=1000, init_speed=0, gamma=0.9, mem=False, bn=True):
+def mResNet18(num_classes=1000, init_speed=0, gamma=0.9, use_backprop=False, bn=True):
     if bn:
         norm_layer = None
     else:
@@ -597,7 +595,7 @@ def mResNet18(num_classes=1000, init_speed=0, gamma=0.9, mem=False, bn=True):
         num_classes,
         init_speed=init_speed,
         gamma=gamma,
-        mem=mem,
+        use_backprop=use_backprop,
         norm_layer=norm_layer,
     )
 
@@ -606,7 +604,7 @@ def ResNet34(num_classes=1000):
     return ResNet(BasicBlock, [3, 4, 6, 3], num_classes)
 
 
-def mResNet34(num_classes=1000, init_speed=0, gamma=0.9, mem=False, bn=True):
+def mResNet34(num_classes=1000, init_speed=0, gamma=0.9, use_backprop=False, bn=True):
     if bn:
         norm_layer = None
     else:
@@ -618,7 +616,7 @@ def mResNet34(num_classes=1000, init_speed=0, gamma=0.9, mem=False, bn=True):
         num_classes,
         init_speed=init_speed,
         gamma=gamma,
-        mem=mem,
+        use_backprop=use_backprop,
         norm_layer=norm_layer,
     )
 
@@ -627,7 +625,7 @@ def ResNet101(num_classes=1000):
     return ResNet(Bottleneck, [3, 4, 23, 3], num_classes)
 
 
-def mResNet101(num_classes=1000, init_speed=0, gamma=0.9, mem=False):
+def mResNet101(num_classes=1000, init_speed=0, gamma=0.9, use_backprop=False):
     return MResNet(
         Bottleneck,
         MBottleneck,
@@ -635,7 +633,7 @@ def mResNet101(num_classes=1000, init_speed=0, gamma=0.9, mem=False):
         num_classes=num_classes,
         init_speed=init_speed,
         gamma=gamma,
-        mem=mem,
+        use_backprop=use_backprop,
     )
 
 
@@ -643,7 +641,7 @@ def ResNet152(num_classes=1000):
     return ResNet(Bottleneck, [3, 8, 36, 3], num_classes)
 
 
-def mResNet152(num_classes=1000, init_speed=0, gamma=0.9, mem=False):
+def mResNet152(num_classes=1000, init_speed=0, gamma=0.9, use_backprop=False):
     return MResNet(
         Bottleneck,
         MBottleneck,
@@ -651,5 +649,5 @@ def mResNet152(num_classes=1000, init_speed=0, gamma=0.9, mem=False):
         num_classes=num_classes,
         init_speed=init_speed,
         gamma=gamma,
-        mem=mem,
+        use_backprop=use_backprop,
     )

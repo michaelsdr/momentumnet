@@ -9,15 +9,17 @@ This example compares the dynamics of a ResNet and a Momentum ResNet
 
 # Authors: Michael Sander, Pierre Ablin
 # License: MIT
+import os
+import copy
 
 import torch
 import torch.nn as nn
 import numpy as np
 import matplotlib.pyplot as plt
 import torch.optim as optim
+
 from momentumnet import MomentumNet
 from momentumnet.toy_datasets import make_data_1D
-import os
 
 if not os.path.isdir("figures"):
     os.mkdir("figures")
@@ -36,26 +38,16 @@ n_iters = 15
 gamma = 0.99
 d = 1
 function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
-function_res = nn.Sequential(
-    nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d)
-)
+function_res = copy.deepcopy(function)
 
 mom_net = MomentumNet(
-    [
-        function,
-    ],
+    [function, ] * n_iters,
     gamma=gamma,
-    n_iters=n_iters,
-    learn_gamma=False,
     init_speed=0,
 )
 res_net = MomentumNet(
-    [
-        function_res,
-    ],
+    [function_res, ] * n_iters,
     gamma=0.0,
-    n_iters=n_iters,
-    learn_gamma=False,
     init_speed=0,
 )
 

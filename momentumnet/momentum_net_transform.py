@@ -5,7 +5,7 @@ import torch.nn as nn
 from .exact_rep_pytorch import TorchExactRep
 
 
-class MomentumNetWithBackprop(nn.Module):
+class MomentumNetTransformWithBackprop(nn.Module):
     """
     A class used to define a Momentum ResNet
 
@@ -35,7 +35,7 @@ class MomentumNetWithBackprop(nn.Module):
         init_speed=False,
         init_function=None,
     ):
-        super(MomentumNetWithBackprop, self).__init__()
+        super(MomentumNetTransformWithBackprop, self).__init__()
         if gamma < 0 or gamma > 1:
             raise Exception("gamma has to be between 0 and 1")
         self.n_functions = len(functions)
@@ -54,7 +54,7 @@ class MomentumNetWithBackprop(nn.Module):
             v = self.init_function(x)
         gamma = self.gamma
         for i in range(n_iters):
-            v = gamma * v + self.functions[i](x, *function_args) * (1 - gamma)
+            v = gamma * v + (self.functions[i](x, *function_args) - x) * (1 - gamma)
             x = x + v
         return x
 
@@ -67,19 +67,21 @@ class MomentumNetWithBackprop(nn.Module):
         return self._modules["init"]
 
 
-class MomentumMemory(torch.autograd.Function):
+class MomentumTransformMemory(torch.autograd.Function):
     @staticmethod
-    def forward(ctx, x, v, gamma, functions, init_function, fun_args, *params):
+    def forward(ctx, x, v, gamma, functions, init_function, n_fun_args, *params):
+        fun_args = params[:n_fun_args]
         ctx.functions = functions
         ctx.gamma = gamma
         ctx.init_function = init_function
         ctx.fun_args = fun_args
+        ctx.params_require_grad = [param.requires_grad for param in params]
         n_iters = len(functions)
         v = TorchExactRep(v)
         with torch.no_grad():
             for i in range(n_iters):
                 v *= gamma
-                v += (1 - gamma) * functions[i](x, *fun_args)
+                v += (1 - gamma) * (functions[i](x, *fun_args) - x)
                 x = x + v.val
         ctx.save_for_backward(x, v.intrep, v.aux.store)
         return x
@@ -88,8 +90,10 @@ class MomentumMemory(torch.autograd.Function):
     def backward(ctx, grad_output):
         functions = ctx.functions
         gamma = ctx.gamma
-        init_function = ctx.init_function
         fun_args = ctx.fun_args
+        fun_args_requires_grad  = [param.requires_grad for param in fun_args]
+        n_fun_grad = sum(fun_args_requires_grad)
+        params_require_grad = ctx.params_require_grad
         n_iters = len(functions)
         x, v_intrep, v_store = ctx.saved_tensors
         v = TorchExactRep(0, from_representation=(v_intrep, v_store))
@@ -102,33 +106,41 @@ class MomentumMemory(torch.autograd.Function):
                 x = x.detach().requires_grad_(False)
                 x = x - v.val
                 x = x.detach().requires_grad_(True)
-                f_eval = function(x, *fun_args)
+                f_eval = (function(x, *fun_args) - x)
                 grad_combi = grad_x + grad_v
+                backward_list = []
+                for requires_grad, param in zip(params_require_grad, fun_args + tuple(function.parameters())):
+                    if requires_grad:
+                        backward_list.append(param)
                 vjps = torch.autograd.grad(
-                    f_eval, (x,) + tuple(function.parameters()), grad_combi
+                    f_eval, (x,) + tuple(backward_list), grad_combi
                 )
                 v += -(1 - gamma) * f_eval
                 v /= gamma
                 grad_params.append([(1 - gamma) * vjp for vjp in vjps[1:]])
                 grad_x = grad_x + (1 - gamma) * vjps[0]
                 grad_v = gamma * grad_combi
-            if ctx.init_function is not None:
-                x = x.detach().requires_grad_(True)
-                f_eval = init_function(x)
-                params = tuple(init_function.parameters())
-                vjps = torch.autograd.grad(
-                    f_eval, params, torch.zeros_like(grad_x)
-                )
-                grad_params.append([vjp for vjp in vjps])
-            else:
-                pass
-        flat_params = []
+        flat_params_vjp = []
+
         for param in grad_params[::-1]:
-            flat_params += param
+            flat_params_vjp += param[n_fun_grad:]
+        flat_param_fun = grad_params[::-1][0][:n_fun_grad]
+        for param in grad_params[::-1][1:]:
+            for j in range(n_fun_grad):
+                flat_param_fun[j] = flat_param_fun[j] + param[j]
+        flat_params_vjp = flat_param_fun + flat_params_vjp
+        flat_params = []
+        i = 0
+        for requires_grad in params_require_grad:
+            if requires_grad:
+                flat_params.append(flat_params_vjp[i])
+                i += 1
+            else:
+                flat_params.append(None)   # ENH: improve this to make it cleaner
         return (grad_x, grad_v, None, None, None, None, *flat_params)
 
 
-class MomentumNetNoBackprop(nn.Module):
+class MomentumNetTransformNoBackprop(nn.Module):
     """
     A class used to define a Momentum ResNet with the memory tricks
 
@@ -152,7 +164,7 @@ class MomentumNetNoBackprop(nn.Module):
     """
 
     def __init__(self, functions, gamma, init_speed=False, init_function=None):
-        super(MomentumNetNoBackprop, self).__init__()
+        super(MomentumNetTransformNoBackprop, self).__init__()
         if gamma < 0 or gamma > 1:
             raise Exception("gamma has to be between 0 and 1")
         for i, function in enumerate(functions):
@@ -178,21 +190,14 @@ class MomentumNetNoBackprop(nn.Module):
         functions = self.functions
         for function in functions:
             params += list(function.parameters())
-        output = MomentumMemory.apply(
-            x, v, self.gamma, functions, init_function, function_args, *params
+        #params += list(function_args)
+        # function_args = list(function_args)
+        n_fun_args = len(function_args)
+        output = MomentumTransformMemory.apply(
+            x, v, self.gamma, functions, init_function, n_fun_args, *function_args, *params,
         )
         self.v = v
         return output
-
-    def inverse(self, x):
-        v = self.v
-        gamma = self.gamma
-        with torch.no_grad():
-            for function in self.functions[::-1]:
-                x = x - v.val
-                v -= (1 - gamma) * function(x)
-                v /= gamma
-        return x
 
     @property
     def functions(self):
@@ -203,7 +208,7 @@ class MomentumNetNoBackprop(nn.Module):
         return self._modules["init"]
 
 
-class MomentumNet(nn.Module):
+class MomentumNetTransform(nn.Module):
     """
     Create a Momentum Residual Network.
 
@@ -248,20 +253,20 @@ class MomentumNet(nn.Module):
         init_function=None,
         use_backprop=True,
     ):
-        super(MomentumNet, self).__init__()
+        super(MomentumNetTransform, self).__init__()
         if use_backprop:
-            self.network = MomentumNetWithBackprop(
+            self.network = MomentumNetTransformWithBackprop(
                 functions, gamma, init_speed, init_function
             )
         else:
-            self.network = MomentumNetNoBackprop(
+            self.network = MomentumNetTransformNoBackprop(
                 functions, gamma, init_speed, init_function
             )
         self.use_backprop = use_backprop
         self.gamma = gamma
         self.init_speed = init_speed
 
-    def forward(self, x, *args):
+    def forward(self, x, *args, **kwargs):
         return self.network.forward(x, *args)
 
     @property
