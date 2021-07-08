@@ -54,7 +54,9 @@ class MomentumNetTransformWithBackprop(nn.Module):
             v = self.init_function(x)
         gamma = self.gamma
         for i in range(n_iters):
-            v = gamma * v + (self.functions[i](x, *function_args) - x) * (1 - gamma)
+            v = gamma * v + (self.functions[i](x, *function_args) - x) * (
+                1 - gamma
+            )
             x = x + v
         return x
 
@@ -69,7 +71,9 @@ class MomentumNetTransformWithBackprop(nn.Module):
 
 class MomentumTransformMemory(torch.autograd.Function):
     @staticmethod
-    def forward(ctx, x, v, gamma, functions, init_function, n_fun_args, *params):
+    def forward(
+        ctx, x, v, gamma, functions, init_function, n_fun_args, *params
+    ):
         fun_args = params[:n_fun_args]
         ctx.functions = functions
         ctx.gamma = gamma
@@ -91,7 +95,7 @@ class MomentumTransformMemory(torch.autograd.Function):
         functions = ctx.functions
         gamma = ctx.gamma
         fun_args = ctx.fun_args
-        fun_args_requires_grad  = [param.requires_grad for param in fun_args]
+        fun_args_requires_grad = [param.requires_grad for param in fun_args]
         n_fun_grad = sum(fun_args_requires_grad)
         params_require_grad = ctx.params_require_grad
         n_iters = len(functions)
@@ -106,10 +110,13 @@ class MomentumTransformMemory(torch.autograd.Function):
                 x = x.detach().requires_grad_(False)
                 x = x - v.val
                 x = x.detach().requires_grad_(True)
-                f_eval = (function(x, *fun_args) - x)
+                f_eval = function(x, *fun_args) - x
                 grad_combi = grad_x + grad_v
                 backward_list = []
-                for requires_grad, param in zip(params_require_grad, fun_args + tuple(function.parameters())):
+                for requires_grad, param in zip(
+                    params_require_grad,
+                    fun_args + tuple(function.parameters()),
+                ):
                     if requires_grad:
                         backward_list.append(param)
                 vjps = torch.autograd.grad(
@@ -136,7 +143,9 @@ class MomentumTransformMemory(torch.autograd.Function):
                 flat_params.append(flat_params_vjp[i])
                 i += 1
             else:
-                flat_params.append(None)   # ENH: improve this to make it cleaner
+                flat_params.append(
+                    None
+                )  # ENH: improve this to make it cleaner
         return (grad_x, grad_v, None, None, None, None, *flat_params)
 
 
@@ -190,11 +199,18 @@ class MomentumNetTransformNoBackprop(nn.Module):
         functions = self.functions
         for function in functions:
             params += list(function.parameters())
-        #params += list(function_args)
+        # params += list(function_args)
         # function_args = list(function_args)
         n_fun_args = len(function_args)
         output = MomentumTransformMemory.apply(
-            x, v, self.gamma, functions, init_function, n_fun_args, *function_args, *params,
+            x,
+            v,
+            self.gamma,
+            functions,
+            init_function,
+            n_fun_args,
+            *function_args,
+            *params,
         )
         self.v = v
         return output

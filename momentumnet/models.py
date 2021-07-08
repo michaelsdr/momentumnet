@@ -583,7 +583,9 @@ def ResNet18(num_classes=1000, bn=True):
     return ResNet(BasicBlock, [2, 2, 2, 2], num_classes, norm_layer=norm_layer)
 
 
-def mResNet18(num_classes=1000, init_speed=0, gamma=0.9, use_backprop=False, bn=True):
+def mResNet18(
+    num_classes=1000, init_speed=0, gamma=0.9, use_backprop=False, bn=True
+):
     if bn:
         norm_layer = None
     else:
@@ -604,7 +606,9 @@ def ResNet34(num_classes=1000):
     return ResNet(BasicBlock, [3, 4, 6, 3], num_classes)
 
 
-def mResNet34(num_classes=1000, init_speed=0, gamma=0.9, use_backprop=False, bn=True):
+def mResNet34(
+    num_classes=1000, init_speed=0, gamma=0.9, use_backprop=False, bn=True
+):
     if bn:
         norm_layer = None
     else:

@@ -41,12 +41,18 @@ function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
 function_res = copy.deepcopy(function)
 
 mom_net = MomentumNet(
-    [function, ] * n_iters,
+    [
+        function,
+    ]
+    * n_iters,
     gamma=gamma,
     init_speed=0,
 )
 res_net = MomentumNet(
-    [function_res, ] * n_iters,
+    [
+        function_res,
+    ]
+    * n_iters,
     gamma=0.0,
     init_speed=0,
 )

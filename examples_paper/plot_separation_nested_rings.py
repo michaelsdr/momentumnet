@@ -1,3 +1,10 @@
+# Authors: Michael Sander, Pierre Ablin
+# License: MIT
+import matplotlib.pyplot as plt
+import torch
+import imageio
+import os
+
 """
 ==================================
 Separtion of nested rings using a Momentum ResNet.
@@ -7,16 +14,10 @@ This example shows how a Momentum ResNet separates nested rings
 
 """  # noqa
 
-# Authors: Michael Sander, Pierre Ablin
-# License: MIT
-
 """
 Separtion of nested rings using a MomentumNet.
 """
-import matplotlib.pyplot as plt
-import torch
-import imageio
-import os
+
 
 if not os.path.isdir("figures"):
     os.mkdir("../examples/figures")
