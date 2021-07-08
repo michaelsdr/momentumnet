@@ -52,9 +52,9 @@ To see how a Momentum ResNet can be created using a ResNet, you can run:
 .. code:: python
 
    >>> import torch
-   >>> from momentumnet import transform
+   >>> from momentumnet import transform_to_momentumnet
    >>> from torchvision.models import resnet101
-   >>> mresnet101 = transform(resnet101(), gamma=0.99)
+   >>> mresnet101 = transform_to_momentumnet(resnet101(), gamma=0.99)
 
 This initiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet.
 

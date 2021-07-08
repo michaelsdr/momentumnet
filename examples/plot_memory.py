@@ -39,16 +39,15 @@ torch.manual_seed(1)
 Depths = np.arange(1, 300, 100)
 
 
-hidden = 8
-gamma = 0.99
-d = 500
+hidden = 4
+d = 200
 
 function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
 function_res = nn.Sequential(
     nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d)
 )
 
-X = torch.rand(500, 500)
+X = torch.rand(d, d)
 
 
 def train(net):
