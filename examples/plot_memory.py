@@ -12,7 +12,7 @@ This example compares memory used when using a ResNet or a Momentum ResNet as a 
 
 import torch
 import torch.nn as nn
-from momentumnet import MomentumNet, Mom
+from momentumnet import MomentumNet
 import matplotlib.pyplot as plt
 from memory_profiler import memory_usage
 import numpy as np
@@ -60,13 +60,13 @@ if __name__ == "__main__":
     Mem_list_mom = []
 
     for n_iters in Depths:
-        mom_net = Mom(
+        mom_net = MomentumNet(
             [
                 function,
             ]
             * n_iters,
             gamma=1 - 1 / (50 * n_iters),
-            init_speed=0,
+            init_speed=0, use_backprop=False
         )
         used_mem = np.max(memory_usage((train, (mom_net,))))
         Mem_list_mom.append(used_mem)
@@ -77,11 +77,10 @@ if __name__ == "__main__":
         res_net = MomentumNet(
             [
                 function_res,
-            ],
+            ]
+            * n_iters,
             gamma=0.0,
-            n_iters=n_iters,
-            learn_gamma=False,
-            init_speed=0,
+            init_speed=0, use_backprop=True
         )
         used_mem = np.max(memory_usage((train, (res_net,))))
         Mem_list_res.append(used_mem)

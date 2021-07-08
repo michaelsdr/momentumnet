@@ -123,8 +123,17 @@ preds = np.zeros((n_iters + 1, n_plot))
 preds[0] = x_[:, 0]
 
 for i in range(1, n_iters + 1):
+    mom_net = MomentumNet(
+        [
+            function,
+        ]
+        * i,
+        gamma=gamma,
+        init_speed=0,
+    )
     with torch.no_grad():
-        pred_ = mom_net(x_, n_iters=i)
+
+        pred_ = mom_net(x_)
         preds[i] = pred_[:, 0]
 
 plt.plot(preds, x_axis, "-x", lw=2.5)
@@ -148,8 +157,17 @@ preds_res = np.zeros((n_iters + 1, n_plot))
 
 preds_res[0] = x_[:, 0]
 for i in range(1, n_iters + 1):
+    res_net = MomentumNet(
+        [
+            function_res,
+        ]
+        * i,
+        gamma=0.0,
+        init_speed=0,
+    )
+
     with torch.no_grad():
-        pred_ = res_net(x_, n_iters=i)
+        pred_ = res_net(x_)
         preds_res[i] = pred_[:, 0]
 
 plt.plot(preds_res, x_axis, "-x", lw=2.5)
