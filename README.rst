@@ -75,11 +75,23 @@ To see how a Momentum ResNet can be created using a ResNet, you can run:
 .. code:: python
 
    >>> import torch
-   >>> from momentumnet import transform
+   >>> from momentumnet import transform_to_momentumnet
    >>> from torchvision.models import resnet101
-   >>> mresnet101 = transform(resnet101(), gamma=0.99)
+   >>> mresnet101 = transform_to_momentumnet(resnet101(), gamma=0.99, use_backprop=False)
 
 This initiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet.
+
+Importantly, this method also works with Pytorch Transformers module, specifying the residual layers to be turned into their Momentum counterpart.
+
+.. code:: python
+
+   >>> import torch
+   >>> from momentumnet import transform_to_momentumnet
+   >>> transformer = torch.nn.Transformer(num_encoder_layers=6, num_decoder_layers=6)
+   >>> mtransformer = transform_to_momentumnet(transformer, residual_layers=["encoder.layers", "decoder.layers"], gamma=0.99,
+   >>>                                          use_backprop=False, keep_first_layer=False)
+
+This initiates a Momentum Transformer with the same weights as the original Transformer.
 
 Reproducing the figures of the paper
 ------------------------------------
