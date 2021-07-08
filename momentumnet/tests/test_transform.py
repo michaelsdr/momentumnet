@@ -1,13 +1,13 @@
 # Authors: Michael Sander, Pierre Ablin
 # License: MIT
 import pytest
-
+from torchvision.models import resnet18
 import torch
 import torch.nn as nn
 
 from momentumnet import transform
 
-from torchvision.models import resnet18
+
 
 @pytest.mark.parametrize("use_backprop", [True, False])
 def test_resnet_vision(use_backprop):
