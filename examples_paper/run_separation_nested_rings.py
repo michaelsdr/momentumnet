@@ -65,8 +65,8 @@ if model == "mom_net":
 else:
     n_epochs = 5000
     lr_list = np.ones(n_epochs) * 0.01
-    lr_list[n_epochs // 2:] /= 2
-    lr_list[3 * n_epochs // 4:] /= 10
+    lr_list[n_epochs // 2 :] /= 2
+    lr_list[3 * n_epochs // 4 :] /= 10
 
 optimizer = optim.Adam(mom_net.parameters(), lr=lr_list[0])
 
