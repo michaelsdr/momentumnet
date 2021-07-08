@@ -302,8 +302,9 @@ class MomentumTransformMemory(torch.autograd.Function):
     def backward(ctx, grad_output):
         functions = ctx.functions
         gamma = ctx.gamma
-        init_function = ctx.init_function
         fun_args = ctx.fun_args
+        fun_args_requires_grad  = [param.requires_grad for param in fun_args]
+        n_fun_grad = sum(fun_args_requires_grad)
         params_require_grad = ctx.params_require_grad
         n_iters = len(functions)
         x, v_intrep, v_store = ctx.saved_tensors
@@ -331,19 +332,16 @@ class MomentumTransformMemory(torch.autograd.Function):
                 grad_params.append([(1 - gamma) * vjp for vjp in vjps[1:]])
                 grad_x = grad_x + (1 - gamma) * vjps[0]
                 grad_v = gamma * grad_combi
-            if ctx.init_function is not None:
-                x = x.detach().requires_grad_(True)
-                f_eval = init_function(x) - x
-                params = tuple(init_function.parameters())
-                vjps = torch.autograd.grad(
-                    f_eval, params, torch.zeros_like(grad_x)
-                )
-                grad_params.append([vjp for vjp in vjps])
-            else:
-                pass
         flat_params_vjp = []
+
         for param in grad_params[::-1]:
-            flat_params_vjp += param
+            flat_params_vjp += param[n_fun_grad:]
+        flat_param_fun = grad_params[::-1][0][:n_fun_grad]
+        print(flat_param_fun)
+        for param in grad_params[::-1][1:]:
+            for j in range(n_fun_grad):
+                flat_param_fun[j] = flat_param_fun[j] + param[j]
+        flat_params_vjp = flat_param_fun + flat_params_vjp
         flat_params = []
         i = 0
         for requires_grad in params_require_grad:
@@ -351,6 +349,7 @@ class MomentumTransformMemory(torch.autograd.Function):
                 flat_params.append(flat_params_vjp[i])
                 i += 1
             else:
+                print('Adding None')
                 flat_params.append(None)   # ENH: improve this to make it cleaner
         return (grad_x, grad_v, None, None, None, None, *flat_params)
 

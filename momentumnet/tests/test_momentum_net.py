@@ -131,7 +131,7 @@ def test_two_inputs():
         def forward(self, x, mem):
             return self.layer1(x) + self.layer2(mem)
 
-    functions = [Custom() for _ in range(2)]
+    functions = [Custom() for _ in range(3)]
 
     init_speed = False
     init_function = None
@@ -149,8 +149,8 @@ def test_two_inputs():
         init_function=init_function,
         use_backprop=True,
     )
-    x = torch.randn(10, 3, requires_grad=True)
-    mem = torch.randn(10, 2, requires_grad=True)
+    x = torch.randn(1, 3, requires_grad=True)
+    mem = torch.randn(1, 2, requires_grad=True)
     mom_output = (mom_no_backprop(x, mem) ** 2).sum()
     mom_output2 = (mom_backprop(x, mem) ** 2).sum()
     #params_mom_net = tuple(mom_net.parameters())
@@ -173,7 +173,7 @@ def test_three_inputs():
         def forward(self, x, mem, mem2):
             return self.layer1(x) + self.layer2(mem) + self.layer3(mem2)
 
-    functions = [Custom() for _ in range(2)]
+    functions = [Custom() for _ in range(5)]
 
     init_speed = False
     init_function = None
