@@ -153,11 +153,10 @@ def test_two_inputs():
     mem = torch.randn(1, 2, requires_grad=True)
     mom_output = (mom_no_backprop(x, mem) ** 2).sum()
     mom_output2 = (mom_backprop(x, mem) ** 2).sum()
-    #params_mom_net = tuple(mom_net.parameters())
     params_mom = tuple(mom_no_backprop.parameters())
-    #grad_mom = torch.autograd.grad(mom_output, x)
-    grad_mom = torch.autograd.grad(mom_output, (x, mem))
-    grad_mom2 = torch.autograd.grad(mom_output2, (x, mem))
+    params_mom2 = tuple(mom_backprop.parameters())
+    grad_mom = torch.autograd.grad(mom_output, (x, mem) + tuple(params_mom))
+    grad_mom2 = torch.autograd.grad(mom_output2, (x, mem) + tuple(params_mom2))
     for g1, g2 in zip(grad_mom, grad_mom2):
         assert(torch.allclose(g1, g2))
 
