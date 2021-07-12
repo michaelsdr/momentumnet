@@ -61,7 +61,7 @@ To get started, you can create a toy momentumnet:
 .. code:: python
 
    >>> from torch import nn
-   >>> from momentumnet import MomentumNet, Mom
+   >>> from momentumnet import MomentumNet
    >>> hidden = 8
    >>> d = 500
    >>> function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
@@ -77,7 +77,8 @@ To see how a Momentum ResNet can be created using a ResNet, you can run:
    >>> import torch
    >>> from momentumnet import transform_to_momentumnet
    >>> from torchvision.models import resnet101
-   >>> mresnet101 = transform_to_momentumnet(resnet101(), gamma=0.99, use_backprop=False)
+   >>> resnet = resnet101(pretrained=True)
+   >>> mresnet101 = transform_to_momentumnet(resnet, gamma=0.99, use_backprop=False)
 
 This initiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet.
 
@@ -90,6 +91,7 @@ Importantly, this method also works with Pytorch Transformers module, specifying
    >>> transformer = torch.nn.Transformer(num_encoder_layers=6, num_decoder_layers=6)
    >>> mtransformer = transform_to_momentumnet(transformer, residual_layers=["encoder.layers", "decoder.layers"], gamma=0.99,
    >>>                                          use_backprop=False, keep_first_layer=False)
+
 
 This initiates a Momentum Transformer with the same weights as the original Transformer.
 

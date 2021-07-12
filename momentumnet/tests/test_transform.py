@@ -14,7 +14,7 @@ def test_resnet_vision(use_backprop):
     x = torch.randn((2, 3, 10, 10), requires_grad=True)
     net = resnet18()
     net(x)
-    momnet = transform_to_momentumnet(net, use_backprop=use_backprop)
+    momnet = transform_to_momentumnet(net, use_backprop=use_backprop, keep_first_layer=True)
     momnet(x)
     momnet.train()
     loss = momnet(x).sum()

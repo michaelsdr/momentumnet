@@ -27,6 +27,9 @@ def transform_to_momentumnet(
         The resnet one desires to turn into a Momentum ResNet.
     residual_layers : a list of strings
         The name of the submodules of the model one desires to make invertible.
+    keep_first_layer : bool (default: True)
+        Whether to leave to leave the first layer of each residual layer unchanged (useful if this first
+         layer changes the dimension of the input)
     gamma : float (default: 0.9)
         The momentum term for the Momentum ResNet.
     use_backprop : bool (default: False)
@@ -62,13 +65,3 @@ def transform_to_momentumnet(
             momentumnet = nn.Sequential(module[0], momentumnet)
         setattr(parent_module, key, momentumnet)
     return momnet
-
-
-def transform_minus_id(layer):
-    new_layer = deepcopy(layer)
-
-    def forward(*input):
-        return layer(*input) - input[0]
-
-    new_layer.forward = forward
-    return new_layer

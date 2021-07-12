@@ -38,7 +38,7 @@ To get started, you can create a toy momentumnet:
 .. code:: python
 
    >>> from torch import nn
-   >>> from momentumnet import MomentumNet, Mom
+   >>> from momentumnet import MomentumNet
    >>> hidden = 8
    >>> d = 500
    >>> function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
@@ -54,7 +54,8 @@ To see how a Momentum ResNet can be created using a ResNet, you can run:
    >>> import torch
    >>> from momentumnet import transform_to_momentumnet
    >>> from torchvision.models import resnet101
-   >>> mresnet101 = transform_to_momentumnet(resnet101(), gamma=0.99, use_backprop=False)
+   >>> resnet = resnet101(pretrained=True)
+   >>> mresnet101 = transform_to_momentumnet(resnet, gamma=0.99, use_backprop=False)
 
 This initiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet.
 
