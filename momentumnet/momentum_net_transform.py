@@ -34,6 +34,7 @@ class MomentumNetTransformWithBackprop(nn.Module):
         gamma,
         init_speed=False,
         init_function=None,
+        add_skip_connection = False
     ):
         super(MomentumNetTransformWithBackprop, self).__init__()
         if gamma < 0 or gamma > 1:
@@ -43,6 +44,7 @@ class MomentumNetTransformWithBackprop(nn.Module):
             self.add_module(str(i), function)
         self.gamma = gamma
         self.init_speed = init_speed
+        self.add_skip_connection = add_skip_connection
         if init_function is not None:
             self.add_module("init", init_function)
 
@@ -54,9 +56,14 @@ class MomentumNetTransformWithBackprop(nn.Module):
             v = self.init_function(x)
         gamma = self.gamma
         for i in range(n_iters):
-            v = gamma * v + (self.functions[i](x, *function_args) - x) * (
-                1 - gamma
-            )
+            if self.add_skip_connection:
+                v = gamma * v + (self.functions[i](x, *function_args)) * (
+                    1 - gamma
+                )
+            else:
+                v = gamma * v + (self.functions[i](x, *function_args) - x) * (
+                        1 - gamma
+                )
             x = x + v
         return x
 

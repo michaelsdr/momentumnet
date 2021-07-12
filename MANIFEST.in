@@ -3,7 +3,7 @@ include LICENSE
 include momentumnet/__init__.py
 include *.png
 include requirements.txt
-
+include .DS_Store
 recursive-include examples *.py
 recursive-include examples *.txt
 
