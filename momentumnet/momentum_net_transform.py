@@ -79,7 +79,9 @@ class MomentumTransformMemory(torch.autograd.Function):
         ctx.gamma = gamma
         ctx.init_function = init_function
         ctx.fun_args = fun_args
-        ctx.params_require_grad = [param.requires_grad for param in params if param is not None]
+        ctx.params_require_grad = [
+            param.requires_grad for param in params if param is not None
+        ]
         n_iters = len(functions)
         v = TorchExactRep(v)
         with torch.no_grad():

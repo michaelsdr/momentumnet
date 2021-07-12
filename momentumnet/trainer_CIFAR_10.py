@@ -142,7 +142,7 @@ def train_resnet(
             outputs = net(inputs)
             loss = criterion(outputs, targets)
             loss.backward()
-            print('ok')
+            print("ok")
             optimizer.step()
             train_loss += loss.item()
             _, predicted = outputs.max(1)

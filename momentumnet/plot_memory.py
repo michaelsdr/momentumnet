@@ -65,7 +65,8 @@ if __name__ == "__main__":
             ]
             * n_iters,
             gamma=1 - 1 / (50 * n_iters),
-            init_speed=0, use_backprop=False
+            init_speed=0,
+            use_backprop=False,
         )
         used_mem = np.max(memory_usage((train, (mom_net,))))
         Mem_list_mom.append(used_mem)
@@ -79,7 +80,8 @@ if __name__ == "__main__":
             ]
             * n_iters,
             gamma=0.0,
-            init_speed=0, use_backprop=True
+            init_speed=0,
+            use_backprop=True,
         )
         used_mem = np.max(memory_usage((train, (res_net,))))
         Mem_list_res.append(used_mem)
