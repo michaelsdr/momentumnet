@@ -34,7 +34,7 @@ class MomentumNetTransformWithBackprop(nn.Module):
         gamma,
         init_speed=False,
         init_function=None,
-        add_skip_connection = False
+        add_skip_connection=False,
     ):
         super(MomentumNetTransformWithBackprop, self).__init__()
         if gamma < 0 or gamma > 1:
@@ -62,7 +62,7 @@ class MomentumNetTransformWithBackprop(nn.Module):
                 )
             else:
                 v = gamma * v + (self.functions[i](x, *function_args) - x) * (
-                        1 - gamma
+                    1 - gamma
                 )
             x = x + v
         return x
@@ -79,7 +79,15 @@ class MomentumNetTransformWithBackprop(nn.Module):
 class MomentumTransformMemory(torch.autograd.Function):
     @staticmethod
     def forward(
-        ctx, x, v, gamma, functions, init_function, n_fun_args, *params
+        ctx,
+        x,
+        v,
+        gamma,
+        functions,
+        init_function,
+        add_skip_connection,
+        n_fun_args,
+        *params
     ):
         fun_args = params[:n_fun_args]
         ctx.functions = functions
@@ -89,6 +97,7 @@ class MomentumTransformMemory(torch.autograd.Function):
         ctx.params_require_grad = [
             param.requires_grad for param in params if param is not None
         ]
+        ctx.add_skip_connection = add_skip_connection
         n_iters = len(functions)
         v = TorchExactRep(v)
         with torch.no_grad():
@@ -119,7 +128,10 @@ class MomentumTransformMemory(torch.autograd.Function):
                 x = x.detach().requires_grad_(False)
                 x = x - v.val
                 x = x.detach().requires_grad_(True)
-                f_eval = function(x, *fun_args) - x
+                if ctx.add_skip_connection:
+                    f_eval = function(x, *fun_args)
+                else:
+                    f_eval = function(x, *fun_args) - x
                 grad_combi = grad_x + grad_v
                 backward_list = []
                 for requires_grad, param in zip(
@@ -156,7 +168,7 @@ class MomentumTransformMemory(torch.autograd.Function):
                 flat_params.append(
                     None
                 )  # ENH: improve this to make it cleaner
-        return (grad_x, grad_v, None, None, None, None, *flat_params)
+        return (grad_x, grad_v, None, None, None, None, None, *flat_params)
 
 
 class MomentumNetTransformNoBackprop(nn.Module):
@@ -182,7 +194,14 @@ class MomentumNetTransformNoBackprop(nn.Module):
         maps x to the output of the network
     """
 
-    def __init__(self, functions, gamma, init_speed=False, init_function=None):
+    def __init__(
+        self,
+        functions,
+        gamma,
+        init_speed=False,
+        init_function=None,
+        add_skip_connection=False,
+    ):
         super(MomentumNetTransformNoBackprop, self).__init__()
         if gamma < 0 or gamma > 1:
             raise Exception("gamma has to be between 0 and 1")
@@ -194,6 +213,7 @@ class MomentumNetTransformNoBackprop(nn.Module):
         for i, function in enumerate(functions):
             self.add_module(str(i), function)
         self.v = None
+        self.add_skip_connection = add_skip_connection
         if init_function is not None:
             self.add_module("init", init_function)
 
@@ -218,6 +238,7 @@ class MomentumNetTransformNoBackprop(nn.Module):
             self.gamma,
             functions,
             init_function,
+            self.add_skip_connection,
             n_fun_args,
             *function_args,
             *params,
