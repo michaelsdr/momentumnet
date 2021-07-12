@@ -28,8 +28,9 @@ def transform_to_momentumnet(
     residual_layers : a list of strings
         The name of the submodules of the model one desires to make invertible.
     keep_first_layer : bool (default: True)
-        Whether to leave to leave the first layer of each residual layer unchanged (useful if this first
-         layer changes the dimension of the input)
+        Whether to leave to leave the first layer
+        of each residual layer unchanged (useful if this first
+        layer changes the dimension of the input)
     gamma : float (default: 0.9)
         The momentum term for the Momentum ResNet.
     use_backprop : bool (default: False)
