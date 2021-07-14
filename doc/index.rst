@@ -61,15 +61,16 @@ Momentum ResNets are a drop-in replacement for ResNets
 
 We can transform a ResNet into a MomentumNet with the same parameters in two lines of codes.
 For instance, the following code
-initiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet.
+initiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet. We use set 'use_backprop' to False
+so that activations are not saved during the forward pass, allowing smaller memory consumptions.
 
 .. code:: python
 
    >>> import torch
    >>> from momentumnet import transform_to_momentumnet
-   >>> from torchvision.models import resnet101
-   >>> resnet = resnet101(pretrained=True)
-   >>> mresnet101 = transform_to_momentumnet(resnet, gamma=0.99, use_backprop=False)
+   >>> from torchvision.models import resnet18
+   >>> resnet = resnet18(pretrained=True)
+   >>> mresnet18 = transform_to_momentumnet(resnet, gamma=0.99, use_backprop=False)
 
 
 Importantly, this method also works with Pytorch Transformers module, specifying the residual layers to be turned into their Momentum version.

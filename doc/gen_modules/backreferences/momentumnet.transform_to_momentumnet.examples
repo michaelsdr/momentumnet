@@ -9,10 +9,10 @@ Examples using ``momentumnet.transform_to_momentumnet``
 
 .. only:: html
 
- .. figure:: /auto_examples/images/thumb/sphx_glr_plot_drop_in_replacement_thumb.png
+ .. figure:: /auto_examples/images/thumb/sphx_glr_drop_in_replacement_thumb.png
      :alt: From ResNets to Momentum ResNets
 
-     :ref:`sphx_glr_auto_examples_plot_drop_in_replacement.py`
+     :ref:`sphx_glr_auto_examples_drop_in_replacement.py`
 
 .. raw:: html
 
@@ -20,4 +20,4 @@ Examples using ``momentumnet.transform_to_momentumnet``
 
 .. only:: not html
 
- * :ref:`sphx_glr_auto_examples_plot_drop_in_replacement.py`
+ * :ref:`sphx_glr_auto_examples_drop_in_replacement.py`

@@ -38,9 +38,23 @@ def transform_to_momentumnet(
         If True then the Momentum ResNet has a smaller memory footprint.
     is_residual : bool (default: False)
         If True then the forward rule is x + f(x)
-    Return
-    ------
+
+    Returns
+    -------
     mresnet : the MomentumNet ResNet counterpart of model
+
+    Examples
+    --------
+    >>> import torch
+    >>> from momentumnet import transform_to_momentumnet
+    >>> from torchvision.models import resnet18
+    >>> resnet = resnet18(pretrained=True)
+    >>> mresnet = transform_to_momentumnet(resnet, gamma=0.99, use_backprop=False)
+
+    >>> import torch
+    >>> from momentumnet import transform_to_momentumnet
+    >>> transformer = torch.nn.Transformer(num_encoder_layers=6, num_decoder_layers=6)
+    >>> mtransformer = transform_to_momentumnet(transformer, residual_layers=["encoder.layers", "decoder.layers"], gamma=0.99, use_backprop=False, keep_first_layer=False)
 
     """
     momnet = deepcopy(model)
