@@ -144,3 +144,4 @@ bert_transform.py
 transformer.py
 v.py
 tests.py
+plot_memory.py
