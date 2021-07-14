@@ -61,7 +61,7 @@ Momentum ResNets are a drop-in replacement for ResNets
 
 We can transform a ResNet into a MomentumNet with the same parameters in two lines of codes.
 For instance, the following code
-initiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet. We use set 'use_backprop' to False
+initiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet. We set "use_backprop" to False
 so that activations are not saved during the forward pass, allowing smaller memory consumptions.
 
 .. code:: python
