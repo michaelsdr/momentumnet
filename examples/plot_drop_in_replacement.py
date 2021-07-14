@@ -23,8 +23,8 @@ from torchvision.models import resnet101
 resnet = resnet101(pretrained=True)
 mresnet101 = transform_to_momentumnet(resnet, gamma=0.99, use_backprop=False)
 x = torch.rand((64, 3, 7, 7), requires_grad=True)
-l = mresnet101(x).sum()
-l.backward()
+loss = mresnet101(x).sum()
+loss.backward()
 
 ##########################################
 # It naturally extends the original ResNet
