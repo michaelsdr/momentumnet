@@ -42,6 +42,7 @@ def transform_to_momentumnet(
     Returns
     -------
     mresnet : the MomentumNet ResNet counterpart of model
+make
 
     Examples
     --------

@@ -6,7 +6,7 @@ include requirements.txt
 include .DS_Store
 recursive-include examples *.py
 recursive-include examples *.txt
-
+include p
 recursive-include momentumnet *.py
 recursive-include examples_paper *.py
 
