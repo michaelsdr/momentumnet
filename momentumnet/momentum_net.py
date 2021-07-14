@@ -309,7 +309,8 @@ class MomentumNet(nn.Module):
     >>> from momentumnet import MomentumNet
     >>> hidden = 8
     >>> d = 500
-    >>> function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
+    >>> function = nn.Sequential(nn.Linear(d, hidden),
+    ...                           nn.Tanh(), nn.Linear(hidden, d))
     >>> mom_net = MomentumNet([function,] * 10, gamma=0.99)
 
     Notes

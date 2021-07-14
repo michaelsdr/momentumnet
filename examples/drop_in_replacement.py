@@ -20,7 +20,7 @@ import numpy as np
 
 from torchvision.models import resnet18
 
-resnet = resnet18(pretrained=True)
+resnet = resnet18()
 mresnet18 = transform_to_momentumnet(resnet, gamma=0.99, use_backprop=False)
 x = torch.rand((64, 3, 7, 7), requires_grad=True)
 
@@ -29,7 +29,7 @@ x = torch.rand((64, 3, 7, 7), requires_grad=True)
 ##########################################
 
 x = torch.rand((64, 3, 7, 7))
-resnet = resnet18(pretrained=True)
+resnet = resnet18()
 lx = resnet(x)
 mresnet = transform_to_momentumnet(resnet, gamma=0.0, use_backprop=False)
 print(((resnet(x) - mresnet(x)) ** 2).sum())

@@ -49,12 +49,19 @@ def transform_to_momentumnet(
     >>> from momentumnet import transform_to_momentumnet
     >>> from torchvision.models import resnet18
     >>> resnet = resnet18(pretrained=True)
-    >>> mresnet = transform_to_momentumnet(resnet, gamma=0.99, use_backprop=False)
+    >>> mresnet = transform_to_momentumnet(resnet,
+    ...                                    gamma=0.99, use_backprop=False)
 
     >>> import torch
     >>> from momentumnet import transform_to_momentumnet
-    >>> transformer = torch.nn.Transformer(num_encoder_layers=6, num_decoder_layers=6)
-    >>> mtransformer = transform_to_momentumnet(transformer, residual_layers=["encoder.layers", "decoder.layers"], gamma=0.99, use_backprop=False, keep_first_layer=False)
+    >>> transformer = torch.nn.Transformer(num_encoder_layers=6,
+    ...                                    num_decoder_layers=6)
+    >>> layers = ["encoder.layers", "decoder.layers"]
+    >>> mtransformer = transform_to_momentumnet(transformer,
+    ...                                         residual_layers=layers,
+    ...                                         gamma=0.99,
+    ...                                         use_backprop=False,
+    ...                                         keep_first_layer=False)
 
     """
     momnet = deepcopy(model)
