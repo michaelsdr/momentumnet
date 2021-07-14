@@ -14,7 +14,7 @@ class MomentumNetWithBackprop(nn.Module):
     functions : list of nn, list of Sequential or Sequential
         a list of Sequential to define the transformation at each layer
     gamma : float
-        the momentum term
+        the momentum term 
     init_speed : bool (default: False)
         if init_speed is True then specify an init_function for v
     init_function : Sequential (default: None)
