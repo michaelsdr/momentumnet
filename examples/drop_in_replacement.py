@@ -11,8 +11,6 @@ This illustrates on two simple examples how to replace a ResNet with a MomentumN
 # License: MIT
 import torch
 from momentumnet import transform_to_momentumnet
-import matplotlib.pyplot as plt
-import numpy as np
 
 #####################
 # A torchvision model
