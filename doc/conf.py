@@ -138,7 +138,7 @@ html_theme_options = {
         ("API", "api"),
         ("GitHub", "https://github.com/michaelsdr/momentumnet", True),
     ],
-    "bootswatch_theme": "simplex",
+    "bootswatch_theme": "flatly",
 }
 
 # Add any paths that contain custom themes here, relative to this directory.

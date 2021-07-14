@@ -22,7 +22,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 if not os.path.isdir("figures"):
-    os.mkdir("../examples/figures")
+    os.mkdir("figures")
 
 
 ###########################################
@@ -40,7 +40,7 @@ Depths = np.arange(1, 300, 100)
 
 
 hidden = 4
-d = 200
+d = 500
 
 function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
 function_res = nn.Sequential(

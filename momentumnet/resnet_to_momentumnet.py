@@ -17,6 +17,7 @@ def transform_to_momentumnet(
     keep_first_layer=True,
     gamma=0.9,
     use_backprop=False,
+    add_skip_connection=False,
 ):
     """Return the MomentumNet counterpart of the model
 
@@ -35,7 +36,8 @@ def transform_to_momentumnet(
         The momentum term for the Momentum ResNet.
     use_backprop : bool (default: False)
         If True then the Momentum ResNet has a smaller memory footprint.
-
+    add_skip_connection : bool (default: False)
+        If True then the forward rule is x + f(x)
     Return
     ------
     mresnet : the MomentumNet ResNet counterpart of model
@@ -52,14 +54,20 @@ def transform_to_momentumnet(
         if not keep_first_layer:
             momentumnet = nn.Sequential(
                 MomentumNetTransform(
-                    module, gamma=gamma, use_backprop=use_backprop
+                    module,
+                    gamma=gamma,
+                    use_backprop=use_backprop,
+                    add_skip_connection=add_skip_connection,
                 )
             )
         else:
             momentumnet = nn.Sequential(
                 (
                     MomentumNetTransform(
-                        module[1:], gamma=gamma, use_backprop=use_backprop
+                        module[1:],
+                        gamma=gamma,
+                        use_backprop=use_backprop,
+                        add_skip_connection=add_skip_connection,
                     )
                 )
             )

@@ -140,7 +140,6 @@ class MomentumTransformMemory(torch.autograd.Function):
                 ):
                     if requires_grad:
                         backward_list.append(param)
-                print(x, backward_list)
                 vjps = torch.autograd.grad(
                     f_eval, (x,) + tuple(backward_list), grad_combi
                 )
@@ -299,15 +298,24 @@ class MomentumNetTransform(nn.Module):
         init_speed=False,
         init_function=None,
         use_backprop=True,
+        add_skip_connection=False,
     ):
         super(MomentumNetTransform, self).__init__()
         if use_backprop:
             self.network = MomentumNetTransformWithBackprop(
-                functions, gamma, init_speed, init_function
+                functions,
+                gamma,
+                init_speed,
+                init_function,
+                add_skip_connection,
             )
         else:
             self.network = MomentumNetTransformNoBackprop(
-                functions, gamma, init_speed, init_function
+                functions,
+                gamma,
+                init_speed,
+                init_function,
+                add_skip_connection,
             )
         self.use_backprop = use_backprop
         self.gamma = gamma
