@@ -1,6 +1,6 @@
 """
 ======================================================
-Momentum ResNets are a drop-in replacement for ResNets
+From ResNets to Momentum ResNets
 ======================================================
 
 This illustrates on two simple examples how to replace a ResNet with a MomentumNet 
@@ -18,9 +18,9 @@ import numpy as np
 # A torchvision model
 #####################
 
-from torchvision.models import resnet101
+from torchvision.models import resnet18
 
-resnet = resnet101(pretrained=True)
+resnet = resnet18(pretrained=True)
 mresnet101 = transform_to_momentumnet(resnet, gamma=0.99, use_backprop=False)
 x = torch.rand((64, 3, 7, 7), requires_grad=True)
 loss = mresnet101(x).sum()
@@ -31,18 +31,16 @@ loss.backward()
 ##########################################
 
 x = torch.rand((64, 3, 7, 7))
-resnet = resnet101(pretrained=True)
+resnet = resnet18(pretrained=True)
 lx = resnet(x)
 outputs = []
 ys = np.linspace(0, 0.2, 20)
 for gamma in ys:
     mresnet101 = transform_to_momentumnet(resnet, gamma=gamma)
-    outputs.append(((lx - mresnet101(x))**2).sum())
+    outputs.append(((lx - mresnet101(x)) ** 2).sum())
 
 plt.figure(figsize=(10, 5))
-plt.plot(
-    ys, outputs, linewidth=4, color="red"
-)
+plt.plot(ys, outputs, linewidth=4, color="red")
 y_ = plt.ylabel("Squared norm difference with the original output")
 x_ = plt.xlabel("Gamma")
 plt.show()

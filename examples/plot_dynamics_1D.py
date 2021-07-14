@@ -141,7 +141,6 @@ plt.xticks([], [])
 plt.yticks([], [])
 plt.ylabel("Depth")
 plt.xlabel("Input")
-plt.savefig("figures/mom_net_dynamics_1D.pdf")
 
 num_plots = n_plot
 
@@ -175,4 +174,3 @@ plt.xticks([], [])
 plt.yticks([], [])
 plt.ylabel("Depth")
 plt.xlabel("Input")
-plt.savefig("figures/res_net_dynamics_1D.pdf")

@@ -81,5 +81,4 @@ def test_outputs_transformer():
     grad_mom_net = torch.autograd.grad(mom_net_output, params_mom_net)
 
     for grad_1, grad_2 in zip(grad_mom_net, grad_mom):
-        (grad_1 - grad_2)
         assert torch.allclose(grad_1, grad_2, atol=1e-4, rtol=1e-3)

@@ -12,8 +12,7 @@ Official library for using Momentum Residual Neural Networks [1].
 Installation
 ------------
 
-We recommend the `Anaconda Python distribution <https://www.continuum.io/downloads>`_.
-Otherwise, to install ``momentumnet``, you first need to install its dependencies::
+To install ``momentumnet``, you first need to install its dependencies::
 
 	$ pip install numpy matplotlib torch
 
@@ -33,7 +32,20 @@ and it should not give any error message.
 Quickstart
 ----------
 
-To get started, you can create a toy momentumnet:
+The main class is MomentumNet. It creates a Momentum ResNet that iterates
+
+.. math::
+
+    v_{t + 1} = (1 - \gamma) * v_t + \gamma * f_t(x_t) \\
+    x_{t + 1} = x_t + v_{t + 1}
+
+
+These forward equations can be reversed in closed-form,
+enabling learning without standard memory consuming backpropagation.
+This process trades memory for computations.
+
+To get started, you can create a toy momentumnet. Specifying the functions f for the forward pass
+and the value of the momentum term, gamma.
 
 .. code:: python
 
@@ -47,7 +59,9 @@ To get started, you can create a toy momentumnet:
 Momentum ResNets are a drop-in replacement for ResNets
 ------------------------------------------------------
 
-To see how a Momentum ResNet can be created using a ResNet, you can run:
+We can transform a ResNet into a MomentumNet with the same parameters in two lines of codes.
+For instance, the following code
+initiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet.
 
 .. code:: python
 
@@ -57,9 +71,8 @@ To see how a Momentum ResNet can be created using a ResNet, you can run:
    >>> resnet = resnet101(pretrained=True)
    >>> mresnet101 = transform_to_momentumnet(resnet, gamma=0.99, use_backprop=False)
 
-This initiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet.
 
-Importantly, this method also works with Pytorch Transformers module, specifying the residual layers to be turned into their Momentum counterpart.
+Importantly, this method also works with Pytorch Transformers module, specifying the residual layers to be turned into their Momentum version.
 
 .. code:: python
 

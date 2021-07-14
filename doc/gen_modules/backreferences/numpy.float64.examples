@@ -5,14 +5,14 @@ Examples using ``numpy.float64``
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example compares memory used when using a ResNet or a Momentum ResNet as a function of the...">
+    <div class="sphx-glr-thumbcontainer" tooltip="This illustrates on two simple examples how to replace a ResNet with a MomentumNet ">
 
 .. only:: html
 
- .. figure:: /auto_examples/images/thumb/sphx_glr_plot_memory_thumb.png
-     :alt: Plotting memory consumptions
+ .. figure:: /auto_examples/images/thumb/sphx_glr_plot_drop_in_replacement_thumb.png
+     :alt: From ResNets to Momentum ResNets
 
-     :ref:`sphx_glr_auto_examples_plot_memory.py`
+     :ref:`sphx_glr_auto_examples_plot_drop_in_replacement.py`
 
 .. raw:: html
 
@@ -20,4 +20,4 @@ Examples using ``numpy.float64``
 
 .. only:: not html
 
- * :ref:`sphx_glr_auto_examples_plot_memory.py`
+ * :ref:`sphx_glr_auto_examples_plot_drop_in_replacement.py`

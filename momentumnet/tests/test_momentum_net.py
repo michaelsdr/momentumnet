@@ -6,7 +6,7 @@ import pytest
 import torch
 import torch.nn as nn
 
-from momentumnet import MomentumNet, MomentumNetTransform
+from momentumnet import MomentumNet
 from numpy.testing import assert_raises
 
 
@@ -40,7 +40,7 @@ def test_dimension_layers(use_backprop):
 def test_outputs_memory(init_speed):
     functions = [
         nn.Sequential(nn.Linear(3, 5), nn.Tanh(), nn.Linear(5, 3))
-        for _ in range(5)
+        for _ in range(10)
     ]
     if init_speed:
         init_function = nn.Sequential(
@@ -50,14 +50,14 @@ def test_outputs_memory(init_speed):
         init_function = None
     mom_no_backprop = MomentumNet(
         functions,
-        gamma=0.9,
+        gamma=0.999,
         init_speed=init_speed,
         init_function=init_function,
         use_backprop=False,
     )
     mom_net = MomentumNet(
         functions,
-        gamma=0.9,
+        gamma=0.999,
         init_speed=init_speed,
         init_function=init_function,
         use_backprop=True,
@@ -109,7 +109,7 @@ def test_outputs_memory_multiple_args(init_speed):
     x = torch.randn(10, 3, requires_grad=True)
     mem = torch.randn(10, 3, requires_grad=False)
     assert torch.allclose(
-        mom_net(x, mem), mom_no_backprop(x, mem), atol=1e-5, rtol=1e-3
+        mom_net(x, mem), mom_no_backprop(x, mem), atol=1e-4, rtol=1e-3
     )
     x = torch.randn(10, 3, requires_grad=True)
     mom_net_output = (mom_net(x, mem) ** 2 + mom_net(x, mem) ** 3).sum()
@@ -121,7 +121,7 @@ def test_outputs_memory_multiple_args(init_speed):
     grad_mom_net = torch.autograd.grad(mom_net_output, (x,) + params_mom_net)
     grad_mom = torch.autograd.grad(mom_output, (x,) + params_mom)
     for grad_1, grad_2 in zip(grad_mom_net, grad_mom):
-        assert torch.allclose(grad_1, grad_2, atol=1e-5, rtol=1e-3)
+        assert torch.allclose(grad_1, grad_2, atol=1e-4, rtol=1e-3)
 
 
 def test_two_inputs():
@@ -138,14 +138,14 @@ def test_two_inputs():
 
     init_speed = False
     init_function = None
-    mom_no_backprop = MomentumNetTransform(
+    mom_no_backprop = MomentumNet(
         functions,
         gamma=0.9,
         init_speed=init_speed,
         init_function=init_function,
         use_backprop=False,
     )
-    mom_backprop = MomentumNetTransform(
+    mom_backprop = MomentumNet(
         functions,
         gamma=0.9,
         init_speed=init_speed,
@@ -161,7 +161,7 @@ def test_two_inputs():
     grad_mom = torch.autograd.grad(mom_output, (x, mem) + tuple(params_mom))
     grad_mom2 = torch.autograd.grad(mom_output2, (x, mem) + tuple(params_mom2))
     for g1, g2 in zip(grad_mom, grad_mom2):
-        assert torch.allclose(g1, g2)
+        assert torch.allclose(g1, g2, atol=1e-4, rtol=1e-3)
 
 
 def test_three_inputs():
@@ -179,14 +179,14 @@ def test_three_inputs():
 
     init_speed = False
     init_function = None
-    mom_no_backprop = MomentumNetTransform(
+    mom_no_backprop = MomentumNet(
         functions,
         gamma=0.9,
         init_speed=init_speed,
         init_function=init_function,
         use_backprop=False,
     )
-    mom_backprop = MomentumNetTransform(
+    mom_backprop = MomentumNet(
         functions,
         gamma=0.9,
         init_speed=init_speed,

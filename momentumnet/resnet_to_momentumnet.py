@@ -6,7 +6,7 @@ Illustration of the drop-in replacement aspect of Momentum ResNets.
 """
 
 from copy import deepcopy
-from momentumnet import MomentumNetTransform
+from momentumnet import MomentumNet
 
 from torch import nn
 
@@ -17,7 +17,7 @@ def transform_to_momentumnet(
     keep_first_layer=True,
     gamma=0.9,
     use_backprop=False,
-    add_skip_connection=False,
+    is_residual=False,
 ):
     """Return the MomentumNet counterpart of the model
 
@@ -36,7 +36,7 @@ def transform_to_momentumnet(
         The momentum term for the Momentum ResNet.
     use_backprop : bool (default: False)
         If True then the Momentum ResNet has a smaller memory footprint.
-    add_skip_connection : bool (default: False)
+    is_residual : bool (default: False)
         If True then the forward rule is x + f(x)
     Return
     ------
@@ -53,21 +53,21 @@ def transform_to_momentumnet(
                 parent_module = module
         if not keep_first_layer:
             momentumnet = nn.Sequential(
-                MomentumNetTransform(
+                MomentumNet(
                     module,
                     gamma=gamma,
                     use_backprop=use_backprop,
-                    add_skip_connection=add_skip_connection,
+                    is_residual=is_residual,
                 )
             )
         else:
             momentumnet = nn.Sequential(
                 (
-                    MomentumNetTransform(
+                    MomentumNet(
                         module[1:],
                         gamma=gamma,
                         use_backprop=use_backprop,
-                        add_skip_connection=add_skip_connection,
+                        is_residual=is_residual,
                     )
                 )
             )

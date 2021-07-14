@@ -22,12 +22,10 @@ Model
 Installation
 ------------
 
-We recommend the `Anaconda Python distribution <https://www.continuum.io/downloads>`_.
-
 pip
 ~~~
 
-Otherwise, to install ``momentumet``, you first need to install its dependencies::
+To install ``momentumet``, you first need to install its dependencies::
 
 	$ pip install numpy matplotlib numexpr scipy
 
