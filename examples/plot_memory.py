@@ -48,49 +48,47 @@ def train(net):
     Loss = (net(X) ** 2).mean()
     Loss.backward()
 
+Mem_list_mom = []
 
-if __name__ == "__main__":
-    Mem_list_mom = []
+for n_iters in Depths:
 
-    for n_iters in Depths:
-
-        mom_net = MomentumNet(
-            [
-                function,
-            ]
-            * n_iters,
-            gamma=1 - 1 / (50 * n_iters),
-            init_speed=0,
-            use_backprop=False,
-        )
-        used_mem = np.max(memory_usage((train, (mom_net,))))
-        Mem_list_mom.append(used_mem)
-
-    Mem_list_res = []
-
-    for n_iters in Depths:
-
-        res_net = MomentumNet(
-            [
-                function_res,
-            ]
-            * n_iters,
-            gamma=0.0,
-            init_speed=0,
-            use_backprop=True,
-        )
-        used_mem = np.max(memory_usage((train, (res_net,))))
-        Mem_list_res.append(used_mem)
-
-    plt.figure(figsize=(8, 4))
-
-    plt.plot(
-        Depths, Mem_list_res, label="ResNet", linewidth=4, color="darkblue"
+    mom_net = MomentumNet(
+        [
+            function,
+        ]
+        * n_iters,
+        gamma=1 - 1 / (50 * n_iters),
+        init_speed=0,
+        use_backprop=False,
     )
-    plt.plot(
-        Depths, Mem_list_mom, label="MomentumNet", linewidth=4, color="red"
+    used_mem = np.max(memory_usage((train, (mom_net,))))
+    Mem_list_mom.append(used_mem)
+
+Mem_list_res = []
+
+for n_iters in Depths:
+
+    res_net = MomentumNet(
+        [
+            function_res,
+        ]
+        * n_iters,
+        gamma=0.0,
+        init_speed=0,
+        use_backprop=True,
     )
-    y_ = plt.ylabel("Memory (MiB)")
-    x_ = plt.xlabel("Depth")
-    plt.legend()
-    plt.show()
+    used_mem = np.max(memory_usage((train, (res_net,))))
+    Mem_list_res.append(used_mem)
+
+plt.figure(figsize=(8, 4))
+
+plt.plot(
+    Depths, Mem_list_res, label="ResNet", linewidth=4, color="darkblue"
+)
+plt.plot(
+    Depths, Mem_list_mom, label="MomentumNet", linewidth=4, color="red"
+)
+y_ = plt.ylabel("Memory (MiB)")
+x_ = plt.xlabel("Depth")
+plt.legend()
+plt.show()

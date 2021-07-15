@@ -11,14 +11,14 @@ class MomentumNetWithBackprop(nn.Module):
 
     Parameters
     ----------
-    functions : list of nn, list of Sequential or Sequential
+    functions : list of modules, list of Sequential or Sequential
         a list of Sequential to define the transformation at each layer
     gamma : float
         the momentum term
     init_speed : bool (default: False)
-        if init_speed is True then specify an init_function for v
+        if init_speed is True then specify an init_function for the velocity v
     init_function : Sequential (default: None)
-        to initialize the velocity to init_function(v) before the forward pass
+        to initialize the velocity to init_function(x) before the forward pass
     is_residual : Bool (default: True)
         if True then the blocks are residual
 
@@ -56,14 +56,12 @@ class MomentumNetWithBackprop(nn.Module):
             v = self.init_function(x)
         gamma = self.gamma
         for i in range(n_iters):
-            if self.is_residual:
-                v = gamma * v + (self.functions[i](x, *function_args)) * (
-                    1 - gamma
-                )
-            else:
-                v = gamma * v + (self.functions[i](x, *function_args) - x) * (
-                    1 - gamma
-                )
+            f = self.functions[i](x, *function_args)
+            if not self.is_residual:
+                f = f - x
+            v = gamma * v + f * (
+                1 - gamma
+            )
             x = x + v
         return x
 
@@ -104,10 +102,10 @@ class MomentumTransformMemory(torch.autograd.Function):
         with torch.no_grad():
             for i in range(n_iters):
                 v *= gamma
-                if is_residual:
-                    v += (1 - gamma) * (functions[i](x, *fun_args))
-                else:
-                    v += (1 - gamma) * (functions[i](x, *fun_args) - x)
+                f = functions[i](x, *fun_args)
+                if not is_residual:
+                    f = f - x
+                v += (1 - gamma) * f
                 x = x + v.val
         ctx.save_for_backward(x, v.intrep, v.aux.store)
         return x
@@ -190,14 +188,14 @@ class MomentumNetNoBackprop(nn.Module):
 
     Parameters
     ----------
-    functions : list of nn, list of Sequential or Sequential
+    functions : list of modules, list of Sequential or Sequential
         a list of Sequential to define the transformation at each layer
     gamma : float
         the momentum term
     init_speed : bool (default: False)
-        if init_speed is True then specify an init_function for v
+        if init_speed is True then specify an init_function for the velocity v
     init_function : Sequential (default: None)
-        to initialize the velocity to init_function(v) before the forward pass
+        to initialize the velocity to init_function(x) before the forward pass
     is_residual : Bool (default: True)
         if True then the blocks are residual
 
@@ -283,24 +281,29 @@ class MomentumNet(nn.Module):
 
     Parameters
     ----------
-    functions : list of nn, list of Sequential or Sequential
-        a list of Sequential to define the transformation at each layer
+    functions : list of modules, list of Sequential or Sequential
+        a list of Sequential to define the transformation at each layer.
+        Each function in the list can take additional inputs. 'x' is assumed
+        to be the first input (see example 2).
     gamma : float
         the momentum term
     init_speed : bool (default: False)
-        if init_speed is True then specify an init_function for v
+        if init_speed is True then specify an init_function for the velocity v
     init_function : Sequential (default: None)
-        to initialize the velocity to init_function(v) before the forward pass
+        to initialize the velocity to init_function(x) before the forward pass
     use_backprop : bool (default: True)
         if True then standard backpropagation is used,
         if False activations are not
         saved during the forward pass allowing memory savings
     is_residual : Bool (default: True)
-        if True then the blocks are residual
+        if True then the update rule is
+        v_{t + 1} = (1 - gamma) * v_t + gamma * f_t(x_t)
+        if False then the update rule is
+        v_{t + 1} = (1 - gamma) * v_t + gamma * (f_t(x_t) - x_t)
 
     Methods
     -------
-    forward(x)
+    forward(x, *args, **kwargs)
         maps x to the output of the network
 
     Examples
@@ -308,10 +311,32 @@ class MomentumNet(nn.Module):
     >>> from torch import nn
     >>> from momentumnet import MomentumNet
     >>> hidden = 8
-    >>> d = 500
+    >>> d = 50
     >>> function = nn.Sequential(nn.Linear(d, hidden),
     ...                           nn.Tanh(), nn.Linear(hidden, d))
-    >>> mom_net = MomentumNet([function,] * 10, gamma=0.99)
+    >>> mresnet = MomentumNet([function,] * 10, gamma=0.99)
+    >>> x = torch.randn(10, d)
+    >>> mresnet(x)
+
+    >>> from torch import nn
+    >>> class Custom(nn.Module):
+    >>> def __init__(self):
+    >>>     super(Custom, self).__init__()
+    >>>     self.layer1 = nn.Linear(3, 3)
+    >>>     self.layer2 = nn.Linear(3, 3)
+    >>>
+    >>> def forward(self, x, mem):  # Additional input mem
+    >>>     return self.layer1(x) + self.layer2(mem)
+    >>>
+    >>> functions = [Custom() for _ in range(5)]
+    >>>
+    >>> mresnet = MomentumNet(
+    >>>     functions,
+    >>>     gamma=0.9,
+    >>>     init_speed=init_speed,
+    >>>     init_function=init_function,
+    >>>     use_backprop=True,
+    >>> )
 
     Notes
     -----
