@@ -76,7 +76,9 @@ net = Net()
 
 ###############################################################################
 # The first layer 'res_layer1' preserves dimension and is residual.
-# One can transform this residual block into a momentum one as follow.
+# It can be accessed through net.res_layer_1.functions so we will specify
+# this attribute as the "sub_layers" parameter.
+# One can transform this residual block into a momentum one as follow:
 
 mnet1 = transform_to_momentumnet(
     net,
@@ -89,6 +91,8 @@ mnet1 = transform_to_momentumnet(
 
 ###############################################################################
 # Note that layer2 is not residual but also preserves dimensions.
+# It can be accessed through net.layer_2 so we will specify
+# this attribute as the "sub_layers" parameter.
 # One can transform it in the same way setting is_residual to False.
 
 mnet = transform_to_momentumnet(

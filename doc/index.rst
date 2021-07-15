@@ -97,6 +97,7 @@ These are the dependencies to use momentumnet:
 * torch (>= 1.7)
 * memory_profiler
 * torchvision
+* vit_pytorch
 
 Bug reports
 -----------
