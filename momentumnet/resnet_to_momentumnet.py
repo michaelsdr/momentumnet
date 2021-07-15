@@ -31,7 +31,7 @@ def transform_to_momentumnet(
     keep_first_layer : bool (default: True)
         Whether to leave to leave the first layer
         of each residual layer unchanged (useful if this first
-        layer changes the dimension of the input)
+        layer changes the dimension of the input).
     gamma : float (default: 0.9)
         The momentum term for the Momentum ResNet.
     use_backprop : bool (default: False)
@@ -42,7 +42,6 @@ def transform_to_momentumnet(
     Returns
     -------
     mresnet : the MomentumNet ResNet counterpart of model
-make
 
     Examples
     --------
@@ -65,10 +64,10 @@ make
     ...                                         keep_first_layer=False)
 
     """
-    momnet = deepcopy(model)
+    mresnet = deepcopy(model)
     for residual_layer in residual_layers:
         splitted_key = residual_layer.split(".")
-        parent_module = momnet
+        parent_module = mresnet
         for i, key in enumerate(splitted_key):
             module = parent_module._modules[key]
             if i < len(splitted_key) - 1:
@@ -95,4 +94,4 @@ make
             )
             momentumnet = nn.Sequential(module[0], momentumnet)
         setattr(parent_module, key, momentumnet)
-    return momnet
+    return mresnet

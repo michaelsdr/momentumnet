@@ -5,7 +5,7 @@ Examples using ``numpy.zeros``
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example compares the dynamics of a ResNet and a Momentum ResNet">
+    <div class="sphx-glr-thumbcontainer" tooltip="This example compares the dynamics of a ResNet and a Momentum ResNet. We try to learn a mapping...">
 
 .. only:: html
 

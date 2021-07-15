@@ -40,7 +40,7 @@ def test_dimension_layers(use_backprop):
 def test_outputs_memory(init_speed):
     functions = [
         nn.Sequential(nn.Linear(3, 5), nn.Tanh(), nn.Linear(5, 3))
-        for _ in range(10)
+        for _ in range(8)
     ]
     if init_speed:
         init_function = nn.Sequential(
@@ -50,14 +50,14 @@ def test_outputs_memory(init_speed):
         init_function = None
     mom_no_backprop = MomentumNet(
         functions,
-        gamma=0.999,
+        gamma=0.99,
         init_speed=init_speed,
         init_function=init_function,
         use_backprop=False,
     )
     mom_net = MomentumNet(
         functions,
-        gamma=0.999,
+        gamma=0.99,
         init_speed=init_speed,
         init_function=init_function,
         use_backprop=True,

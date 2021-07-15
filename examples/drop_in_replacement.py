@@ -1,6 +1,6 @@
 """
 ======================================================
-From ResNets to Momentum ResNets
+From ResNets to Momentum ResNets 1)
 ======================================================
 
 This illustrates on two simple examples how to replace a ResNet with a MomentumNet 

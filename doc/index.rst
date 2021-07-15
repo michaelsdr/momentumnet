@@ -44,7 +44,7 @@ These forward equations can be reversed in closed-form,
 enabling learning without standard memory consuming backpropagation.
 This process trades memory for computations.
 
-To get started, you can create a toy momentumnet. Specifying the functions f for the forward pass
+To get started, you can create a toy Momentum ResNet by specifying the functions f for the forward pass
 and the value of the momentum term, gamma.
 
 .. code:: python
@@ -54,14 +54,14 @@ and the value of the momentum term, gamma.
    >>> hidden = 8
    >>> d = 500
    >>> function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
-   >>> mom_net = MomentumNet([function,] * 10, gamma=0.99)
+   >>> mresnet = MomentumNet([function,] * 10, gamma=0.99)
 
 Momentum ResNets are a drop-in replacement for ResNets
 ------------------------------------------------------
 
 We can transform a ResNet into a MomentumNet with the same parameters in two lines of codes.
 For instance, the following code
-initiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet. We set "use_backprop" to False
+instantiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet. We set "use_backprop" to False
 so that activations are not saved during the forward pass, allowing smaller memory consumptions.
 
 .. code:: python

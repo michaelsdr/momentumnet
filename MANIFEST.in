@@ -3,7 +3,6 @@ include LICENSE
 include momentumnet/__init__.py
 include *.png
 include requirements.txt
-include .DS_Store
 recursive-include examples *.py
 recursive-include examples *.txt
 include p
@@ -17,7 +16,7 @@ exclude Makefile
 exclude .coveragerc
 exclude .circleci/*
 exclude *.yml
-
+exclude .DS_Store
 exclude dictionary.txt
 exclude .mailmap
 recursive-exclude momentumnet *.pyc

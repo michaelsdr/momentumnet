@@ -139,9 +139,4 @@ doc/generated
 doc/auto_examples/
 doc/modules/generated/
 doc/datasets/generated/
-
-bert_transform.py
-transformer.py
-v.py
-tests.py
-plot_memory.py
+doc/gen_modules
