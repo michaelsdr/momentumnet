@@ -4,5 +4,4 @@
 __version__ = "0.9.dev"
 
 from .momentum_net import MomentumNet  # noqa
-from .momentum_net_transform import MomentumNetTransform  # noqa
-from .resnet_to_momentumnet import transform  # noqa
+from .resnet_to_momentumnet import transform_to_momentumnet  # noqa

@@ -15,11 +15,11 @@ Classes
    :toctree: generated/
 
     MomentumNet
-    Mom
+
 
 Functions
 
 .. autosummary::
    :toctree: generated/
 
-    transform
+    transform_to_momentumnet

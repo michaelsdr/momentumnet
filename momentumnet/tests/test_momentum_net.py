@@ -6,8 +6,8 @@ import pytest
 import torch
 import torch.nn as nn
 
-from momentumnet import MomentumNet, MomentumNetTransform
-from numpy.testing import assert_allclose, assert_raises
+from momentumnet import MomentumNet
+from numpy.testing import assert_raises
 
 
 torch.manual_seed(1)
@@ -40,7 +40,7 @@ def test_dimension_layers(use_backprop):
 def test_outputs_memory(init_speed):
     functions = [
         nn.Sequential(nn.Linear(3, 5), nn.Tanh(), nn.Linear(5, 3))
-        for _ in range(5)
+        for _ in range(8)
     ]
     if init_speed:
         init_function = nn.Sequential(
@@ -50,14 +50,14 @@ def test_outputs_memory(init_speed):
         init_function = None
     mom_no_backprop = MomentumNet(
         functions,
-        gamma=0.9,
+        gamma=0.99,
         init_speed=init_speed,
         init_function=init_function,
         use_backprop=False,
     )
     mom_net = MomentumNet(
         functions,
-        gamma=0.9,
+        gamma=0.99,
         init_speed=init_speed,
         init_function=init_function,
         use_backprop=True,
@@ -77,16 +77,15 @@ def test_outputs_memory(init_speed):
 
 @pytest.mark.parametrize("init_speed", [True, False])
 def test_outputs_memory_multiple_args(init_speed):
-
     class Custom(nn.Module):
         def __init__(self):
             super(Custom, self).__init__()
             self.layer1 = nn.Linear(3, 3)
             self.layer2 = nn.Linear(3, 3)
-        
+
         def forward(self, x, mem):
             return self.layer1(x) + self.layer2(mem)
-    
+
     functions = [Custom() for _ in range(5)]
 
     if init_speed:
@@ -109,16 +108,20 @@ def test_outputs_memory_multiple_args(init_speed):
     )
     x = torch.randn(10, 3, requires_grad=True)
     mem = torch.randn(10, 3, requires_grad=False)
-    assert torch.allclose(mom_net(x, mem), mom_no_backprop(x, mem), atol=1e-5, rtol=1e-3)
+    assert torch.allclose(
+        mom_net(x, mem), mom_no_backprop(x, mem), atol=1e-4, rtol=1e-3
+    )
     x = torch.randn(10, 3, requires_grad=True)
     mom_net_output = (mom_net(x, mem) ** 2 + mom_net(x, mem) ** 3).sum()
-    mom_output = (mom_no_backprop(x, mem) ** 2 + mom_no_backprop(x, mem) ** 3).sum()
+    mom_output = (
+        mom_no_backprop(x, mem) ** 2 + mom_no_backprop(x, mem) ** 3
+    ).sum()
     params_mom_net = tuple(mom_net.parameters())
     params_mom = tuple(mom_no_backprop.parameters())
     grad_mom_net = torch.autograd.grad(mom_net_output, (x,) + params_mom_net)
     grad_mom = torch.autograd.grad(mom_output, (x,) + params_mom)
     for grad_1, grad_2 in zip(grad_mom_net, grad_mom):
-        assert torch.allclose(grad_1, grad_2, atol=1e-5, rtol=1e-3)
+        assert torch.allclose(grad_1, grad_2, atol=1e-4, rtol=1e-3)
 
 
 def test_two_inputs():
@@ -135,14 +138,14 @@ def test_two_inputs():
 
     init_speed = False
     init_function = None
-    mom_no_backprop = MomentumNetTransform(
+    mom_no_backprop = MomentumNet(
         functions,
         gamma=0.9,
         init_speed=init_speed,
         init_function=init_function,
         use_backprop=False,
     )
-    mom_backprop = MomentumNetTransform(
+    mom_backprop = MomentumNet(
         functions,
         gamma=0.9,
         init_speed=init_speed,
@@ -158,7 +161,7 @@ def test_two_inputs():
     grad_mom = torch.autograd.grad(mom_output, (x, mem) + tuple(params_mom))
     grad_mom2 = torch.autograd.grad(mom_output2, (x, mem) + tuple(params_mom2))
     for g1, g2 in zip(grad_mom, grad_mom2):
-        assert(torch.allclose(g1, g2))
+        assert torch.allclose(g1, g2, atol=1e-4, rtol=1e-3)
 
 
 def test_three_inputs():
@@ -176,14 +179,14 @@ def test_three_inputs():
 
     init_speed = False
     init_function = None
-    mom_no_backprop = MomentumNetTransform(
+    mom_no_backprop = MomentumNet(
         functions,
         gamma=0.9,
         init_speed=init_speed,
         init_function=init_function,
         use_backprop=False,
     )
-    mom_backprop = MomentumNetTransform(
+    mom_backprop = MomentumNet(
         functions,
         gamma=0.9,
         init_speed=init_speed,
@@ -194,7 +197,7 @@ def test_three_inputs():
     mem_base = torch.randn(10, 2)
     mem2 = torch.randn(10, 4)
     gx_list = []
-    gmem_list =[]
+    gmem_list = []
     for mom in [mom_backprop, mom_no_backprop]:
         x = torch.clone(x_base)
         mem = torch.clone(mem_base)

@@ -4,16 +4,17 @@
    contain the root `toctree` directive.
 
 Momentum ResNets
-======
+================
 
-This is a library for using Momentum Residual Neural Networks [1].
+Official library for using Momentum Residual Neural Networks [1]. These models extend to notion of ResNets
+to a larger class of deep learning models that consume less memory. They can be initialized with the
+same weights as a pretrained ResNet and are promising in fine-tuning applications.
 
 
 Installation
 ------------
 
-We recommend the `Anaconda Python distribution <https://www.continuum.io/downloads>`_.
-Otherwise, to install ``momentumnet``, you first need to install its dependencies::
+To install ``momentumnet``, you first need to install its dependencies::
 
 	$ pip install numpy matplotlib torch
 
@@ -33,30 +34,58 @@ and it should not give any error message.
 Quickstart
 ----------
 
-To get started, you can create a toy momentumnet:
+The main class is MomentumNet. It creates a Momentum ResNet that iterates
+
+.. math::
+
+    v_{t + 1} = (1 - \gamma) * v_t + \gamma * f_t(x_t) \\
+    x_{t + 1} = x_t + v_{t + 1}
+
+
+These forward equations can be reversed in closed-form,
+enabling learning without standard memory consuming backpropagation.
+This process trades memory for computations.
+
+To get started, you can create a toy Momentum ResNet by specifying the functions f for the forward pass
+and the value of the momentum term, gamma.
 
 .. code:: python
 
    >>> from torch import nn
-   >>> from momentumnet import MomentumNet, Mom
+   >>> from momentumnet import MomentumNet
    >>> hidden = 8
    >>> d = 500
    >>> function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
-   >>> mom_net = MomentumNet([function,] * 10, gamma=0.99)
+   >>> mresnet = MomentumNet([function,] * 10, gamma=0.99)
 
 Momentum ResNets are a drop-in replacement for ResNets
 ------------------------------------------------------
 
-To see how a Momentum ResNet can be created using a ResNet, you can run:
+We can transform a ResNet into a MomentumNet with the same parameters in two lines of codes.
+For instance, the following code
+instantiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet. We set "use_backprop" to False
+so that activations are not saved during the forward pass, allowing smaller memory consumptions.
 
 .. code:: python
 
    >>> import torch
-   >>> from momentumnet import transform
-   >>> from torchvision.models import resnet101
-   >>> mresnet101 = transform(resnet101(), gamma=0.99)
+   >>> from momentumnet import transform_to_momentumnet
+   >>> from torchvision.models import resnet18
+   >>> resnet = resnet18(pretrained=True)
+   >>> mresnet18 = transform_to_momentumnet(resnet, gamma=0.99, use_backprop=False)
 
-This initiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet.
+
+Importantly, this method also works with Pytorch Transformers module, specifying the residual layers to be turned into their Momentum version.
+
+.. code:: python
+
+   >>> import torch
+   >>> from momentumnet import transform_to_momentumnet
+   >>> transformer = torch.nn.Transformer(num_encoder_layers=6, num_decoder_layers=6)
+   >>> mtransformer = transform_to_momentumnet(transformer, residual_layers=["encoder.layers", "decoder.layers"], gamma=0.99,
+   >>>                                          use_backprop=False, keep_first_layer=False)
+
+This initiates a Momentum Transformer with the same weights as the original Transformer.
 
 Dependencies
 ------------
@@ -67,6 +96,8 @@ These are the dependencies to use momentumnet:
 * matplotlib (>=1.3)
 * torch (>= 1.7)
 * memory_profiler
+* torchvision
+* vit_pytorch
 
 Bug reports
 -----------
@@ -76,8 +107,11 @@ Use the `github issue tracker <https://github.com/michaelsdr/momentumnet/issues>
 Cite
 ----
 
-   [1] Michael E. Sander, Pierre Ablin, Mathieu Blondel, Gabriel Peyré
-      Momentum Residual Neural Networks In: Proc. of ICML 2021. https://arxiv.org/abs/2102.07870
+   [1] Michael E. Sander, Pierre Ablin, Mathieu Blondel, Gabriel Peyre. Momentum Residual Neural Networks.
+      Proceedings of the 38th International Conference
+      on Machine Learning, PMLR 139:9276-9287
+
+      https://arxiv.org/abs/2102.07870
 
 
 API

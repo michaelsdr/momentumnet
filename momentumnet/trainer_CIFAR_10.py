@@ -26,7 +26,7 @@ n_workers = 10
 def train_resnet(
     lr_list,
     model="resnet18",
-    mem=False,
+    use_backprop=False,
     init_speed=0,
     cifar100=False,
     save_adr=None,
@@ -103,7 +103,7 @@ def train_resnet(
             num_classes=num_classes,
             init_speed=init_speed,
             gamma=gamma,
-            mem=mem,
+            use_backprop=use_backprop,
         )
     net = net.to(device)
     if device == "cuda":

@@ -3,3 +3,4 @@ torch>=1.7
 matplotlib
 imageio
 torchvision
+vit_pytorch

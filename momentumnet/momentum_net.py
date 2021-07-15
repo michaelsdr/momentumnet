@@ -9,22 +9,22 @@ class MomentumNetWithBackprop(nn.Module):
     """
     A class used to define a Momentum ResNet
 
-    ...
-
-    Attributes
+    Parameters
     ----------
-    functions : list of nn, list of Sequential or Sequential
+    functions : list of modules, list of Sequential or Sequential
         a list of Sequential to define the transformation at each layer
     gamma : float
         the momentum term
-    init_speed : int
-        if init_speed is True then specify an init_function
-    init_function : Sequential
-
+    init_speed : bool (default: False)
+        if init_speed is True then specify an init_function for the velocity v
+    init_function : Sequential (default: None)
+        to initialize the velocity to init_function(x) before the forward pass
+    is_residual : Bool (default: True)
+        if True then the blocks are residual
 
     Methods
     -------
-    forward(x, n_iters=None, ts=1)
+    forward(x)
         maps x to the output of the network
     """
 
@@ -34,6 +34,7 @@ class MomentumNetWithBackprop(nn.Module):
         gamma,
         init_speed=False,
         init_function=None,
+        is_residual=True,
     ):
         super(MomentumNetWithBackprop, self).__init__()
         if gamma < 0 or gamma > 1:
@@ -43,6 +44,7 @@ class MomentumNetWithBackprop(nn.Module):
             self.add_module(str(i), function)
         self.gamma = gamma
         self.init_speed = init_speed
+        self.is_residual = is_residual
         if init_function is not None:
             self.add_module("init", init_function)
 
@@ -54,7 +56,12 @@ class MomentumNetWithBackprop(nn.Module):
             v = self.init_function(x)
         gamma = self.gamma
         for i in range(n_iters):
-            v = gamma * v + self.functions[i](x, *function_args) * (1 - gamma)
+            f = self.functions[i](x, *function_args)
+            if not self.is_residual:
+                f = f - x
+            v = gamma * v + f * (
+                1 - gamma
+            )
             x = x + v
         return x
 
@@ -67,19 +74,38 @@ class MomentumNetWithBackprop(nn.Module):
         return self._modules["init"]
 
 
-class MomentumMemory(torch.autograd.Function):
+class MomentumTransformMemory(torch.autograd.Function):
     @staticmethod
-    def forward(ctx, x, v, gamma, functions, init_function, fun_args, *params):
+    def forward(
+        ctx,
+        x,
+        v,
+        gamma,
+        functions,
+        init_function,
+        is_residual,
+        n_fun_args,
+        *params
+    ):
+        fun_args = params[:n_fun_args]
         ctx.functions = functions
         ctx.gamma = gamma
         ctx.init_function = init_function
         ctx.fun_args = fun_args
+        ctx.is_residual = is_residual
+        ctx.params_require_grad = [
+            param.requires_grad for param in params if param is not None
+        ]
+        ctx.is_residual = is_residual
         n_iters = len(functions)
         v = TorchExactRep(v)
         with torch.no_grad():
             for i in range(n_iters):
                 v *= gamma
-                v += (1 - gamma) * functions[i](x, *fun_args)
+                f = functions[i](x, *fun_args)
+                if not is_residual:
+                    f = f - x
+                v += (1 - gamma) * f
                 x = x + v.val
         ctx.save_for_backward(x, v.intrep, v.aux.store)
         return x
@@ -88,8 +114,10 @@ class MomentumMemory(torch.autograd.Function):
     def backward(ctx, grad_output):
         functions = ctx.functions
         gamma = ctx.gamma
-        init_function = ctx.init_function
         fun_args = ctx.fun_args
+        fun_args_requires_grad = [param.requires_grad for param in fun_args]
+        n_fun_grad = sum(fun_args_requires_grad)
+        params_require_grad = ctx.params_require_grad
         n_iters = len(functions)
         x, v_intrep, v_store = ctx.saved_tensors
         v = TorchExactRep(0, from_representation=(v_intrep, v_store))
@@ -102,10 +130,20 @@ class MomentumMemory(torch.autograd.Function):
                 x = x.detach().requires_grad_(False)
                 x = x - v.val
                 x = x.detach().requires_grad_(True)
-                f_eval = function(x, *fun_args)
+                if ctx.is_residual:
+                    f_eval = function(x, *fun_args)
+                else:
+                    f_eval = function(x, *fun_args) - x
                 grad_combi = grad_x + grad_v
+                backward_list = []
+                for requires_grad, param in zip(
+                    params_require_grad,
+                    fun_args + tuple(function.parameters()),
+                ):
+                    if requires_grad:
+                        backward_list.append(param)
                 vjps = torch.autograd.grad(
-                    f_eval, (x,) + tuple(function.parameters()), grad_combi
+                    f_eval, (x,) + tuple(backward_list), grad_combi
                 )
                 v += -(1 - gamma) * f_eval
                 v /= gamma
@@ -114,35 +152,52 @@ class MomentumMemory(torch.autograd.Function):
                 grad_v = gamma * grad_combi
             if ctx.init_function is not None:
                 x = x.detach().requires_grad_(True)
-                f_eval = init_function(x)
-                params = tuple(init_function.parameters())
+                f_eval = ctx.init_function(x)
+                params = tuple(ctx.init_function.parameters())
                 vjps = torch.autograd.grad(
                     f_eval, params, torch.zeros_like(grad_x)
                 )
                 grad_params.append([vjp for vjp in vjps])
             else:
                 pass
-        flat_params = []
+        flat_params_vjp = []
+
         for param in grad_params[::-1]:
-            flat_params += param
-        return (grad_x, grad_v, None, None, None, None, *flat_params)
+            flat_params_vjp += param[n_fun_grad:]
+        flat_param_fun = grad_params[::-1][0][:n_fun_grad]
+        for param in grad_params[::-1][1:]:
+            for j in range(n_fun_grad):
+                flat_param_fun[j] = flat_param_fun[j] + param[j]
+        flat_params_vjp = flat_param_fun + flat_params_vjp
+        flat_params = []
+        i = 0
+        for requires_grad in params_require_grad:
+            if requires_grad:
+                flat_params.append(flat_params_vjp[i])
+                i += 1
+            else:
+                flat_params.append(
+                    None
+                )  # ENH: improve this to make it cleaner
+        return (grad_x, grad_v, None, None, None, None, None, *flat_params)
 
 
 class MomentumNetNoBackprop(nn.Module):
     """
     A class used to define a Momentum ResNet with the memory tricks
 
-    ...
-
-    Attributes
+    Parameters
     ----------
-    functions : list of nn, list of Sequential or Sequential
+    functions : list of modules, list of Sequential or Sequential
         a list of Sequential to define the transformation at each layer
     gamma : float
         the momentum term
-    init_speed : bool
-        if init_speed is True then specify an init_function
-    init_function : Sequential
+    init_speed : bool (default: False)
+        if init_speed is True then specify an init_function for the velocity v
+    init_function : Sequential (default: None)
+        to initialize the velocity to init_function(x) before the forward pass
+    is_residual : Bool (default: True)
+        if True then the blocks are residual
 
 
     Methods
@@ -151,7 +206,14 @@ class MomentumNetNoBackprop(nn.Module):
         maps x to the output of the network
     """
 
-    def __init__(self, functions, gamma, init_speed=False, init_function=None):
+    def __init__(
+        self,
+        functions,
+        gamma,
+        init_speed=False,
+        init_function=None,
+        is_residual=True,
+    ):
         super(MomentumNetNoBackprop, self).__init__()
         if gamma < 0 or gamma > 1:
             raise Exception("gamma has to be between 0 and 1")
@@ -163,6 +225,7 @@ class MomentumNetNoBackprop(nn.Module):
         for i, function in enumerate(functions):
             self.add_module(str(i), function)
         self.v = None
+        self.is_residual = is_residual
         if init_function is not None:
             self.add_module("init", init_function)
 
@@ -178,21 +241,20 @@ class MomentumNetNoBackprop(nn.Module):
         functions = self.functions
         for function in functions:
             params += list(function.parameters())
-        output = MomentumMemory.apply(
-            x, v, self.gamma, functions, init_function, function_args, *params
+        n_fun_args = len(function_args)
+        output = MomentumTransformMemory.apply(
+            x,
+            v,
+            self.gamma,
+            functions,
+            init_function,
+            self.is_residual,
+            n_fun_args,
+            *function_args,
+            *params,
         )
         self.v = v
         return output
-
-    def inverse(self, x):
-        v = self.v
-        gamma = self.gamma
-        with torch.no_grad():
-            for function in self.functions[::-1]:
-                x = x - v.val
-                v -= (1 - gamma) * function(x)
-                v /= gamma
-        return x
 
     @property
     def functions(self):
@@ -217,27 +279,51 @@ class MomentumNet(nn.Module):
     enabling learning without backpropagation. This process
     trades memory for computations.
 
-    ...
-
-    Attributes
+    Parameters
     ----------
-    functions : list of nn, list of Sequential or Sequential
-        a list of Sequential to define the transformation at each layer
+    functions : list of modules, list of Sequential or Sequential
+        a list of Sequential to define the transformation at each layer.
+        Each function in the list can take additional inputs. 'x' is assumed
+        to be the first input.
     gamma : float
         the momentum term
-    init_speed : bool
-        Whether to initialize v as 0 or as a function of the input.
-    init_function : Sequential
-        The initial function
-    use_backprop : bool
-        Whether to use backprop or not to compute the gradient of
-        the parameters.
-
+    init_speed : bool (default: False)
+        if init_speed is True then specify an init_function for the velocity v
+    init_function : Sequential (default: None)
+        to initialize the velocity to init_function(x) before the forward pass
+    use_backprop : bool (default: True)
+        if True then standard backpropagation is used,
+        if False activations are not
+        saved during the forward pass allowing memory savings
+    is_residual : Bool (default: True)
+        if True then the update rule is
+        v_{t + 1} = (1 - gamma) * v_t + gamma * f_t(x_t)
+        if False then the update rule is
+        v_{t + 1} = (1 - gamma) * v_t + gamma * (f_t(x_t) - x_t)
 
     Methods
     -------
-    forward(x, n_iters=None)
+    forward(x, *args, **kwargs)
         maps x to the output of the network
+
+    Examples
+    --------
+    >>> from torch import nn
+    >>> from momentumnet import MomentumNet
+    >>> hidden = 8
+    >>> d = 50
+    >>> function = nn.Sequential(nn.Linear(d, hidden),
+    ...                           nn.Tanh(), nn.Linear(hidden, d))
+    >>> mresnet = MomentumNet([function,] * 10, gamma=0.99)
+
+    Notes
+    -----
+    Implementation based on
+    *Michael E. Sander, Pierre Ablin, Mathieu Blondel,
+    Gabriel Peyre. Momentum Residual Neural Networks.
+    Proceedings of the 38th International Conference
+    on Machine Learning, PMLR 139:9276-9287*
+
     """
 
     def __init__(
@@ -247,21 +333,31 @@ class MomentumNet(nn.Module):
         init_speed=False,
         init_function=None,
         use_backprop=True,
+        is_residual=True,
     ):
+
         super(MomentumNet, self).__init__()
         if use_backprop:
             self.network = MomentumNetWithBackprop(
-                functions, gamma, init_speed, init_function
+                functions,
+                gamma,
+                init_speed,
+                init_function,
+                is_residual,
             )
         else:
             self.network = MomentumNetNoBackprop(
-                functions, gamma, init_speed, init_function
+                functions,
+                gamma,
+                init_speed,
+                init_function,
+                is_residual,
             )
         self.use_backprop = use_backprop
         self.gamma = gamma
         self.init_speed = init_speed
 
-    def forward(self, x, *args):
+    def forward(self, x, *args, **kwargs):
         return self.network.forward(x, *args)
 
     @property

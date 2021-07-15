@@ -1,0 +1,61 @@
+
+
+Examples using ``momentumnet.transform_to_momentumnet``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This illustrates on a more complex example how to replace an existing ResNet with a MomentumNet...">
+
+.. only:: html
+
+ .. figure:: /auto_examples/images/thumb/sphx_glr_drop_in_replacement_advanced_thumb.png
+     :alt: From ResNets to Momentum ResNets 3)
+
+     :ref:`sphx_glr_auto_examples_drop_in_replacement_advanced.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_auto_examples_drop_in_replacement_advanced.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This illustrates on two simple examples how to replace an existing ResNet with a MomentumNet.">
+
+.. only:: html
+
+ .. figure:: /auto_examples/images/thumb/sphx_glr_drop_in_replacement_thumb.png
+     :alt: From ResNets to Momentum ResNets 2)
+
+     :ref:`sphx_glr_auto_examples_drop_in_replacement.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_auto_examples_drop_in_replacement.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This is a tutorial to use the transform_to_momentumnet method:">
+
+.. only:: html
+
+ .. figure:: /auto_examples/images/thumb/sphx_glr_drop_in_replacement_tutorial_thumb.png
+     :alt: From ResNets to Momentum ResNets 1)
+
+     :ref:`sphx_glr_auto_examples_drop_in_replacement_tutorial.py`
+
+.. raw:: html
+
+    </div>
+
+.. only:: not html
+
+ * :ref:`sphx_glr_auto_examples_drop_in_replacement_tutorial.py`
