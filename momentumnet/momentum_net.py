@@ -284,7 +284,7 @@ class MomentumNet(nn.Module):
     functions : list of modules, list of Sequential or Sequential
         a list of Sequential to define the transformation at each layer.
         Each function in the list can take additional inputs. 'x' is assumed
-        to be the first input (see example 2).
+        to be the first input.
     gamma : float
         the momentum term
     init_speed : bool (default: False)
@@ -315,28 +315,6 @@ class MomentumNet(nn.Module):
     >>> function = nn.Sequential(nn.Linear(d, hidden),
     ...                           nn.Tanh(), nn.Linear(hidden, d))
     >>> mresnet = MomentumNet([function,] * 10, gamma=0.99)
-    >>> x = torch.randn(10, d)
-    >>> mresnet(x)
-
-    >>> from torch import nn
-    >>> class Custom(nn.Module):
-    >>> def __init__(self):
-    >>>     super(Custom, self).__init__()
-    >>>     self.layer1 = nn.Linear(3, 3)
-    >>>     self.layer2 = nn.Linear(3, 3)
-    >>>
-    >>> def forward(self, x, mem):  # Additional input mem
-    >>>     return self.layer1(x) + self.layer2(mem)
-    >>>
-    >>> functions = [Custom() for _ in range(5)]
-    >>>
-    >>> mresnet = MomentumNet(
-    >>>     functions,
-    >>>     gamma=0.9,
-    >>>     init_speed=init_speed,
-    >>>     init_function=init_function,
-    >>>     use_backprop=True,
-    >>> )
 
     Notes
     -----
