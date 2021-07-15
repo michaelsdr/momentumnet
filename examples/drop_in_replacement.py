@@ -1,9 +1,16 @@
 """
 ======================================================
-From ResNets to Momentum ResNets 1)
+From ResNets to Momentum ResNets 2)
 ======================================================
 
-This illustrates on two simple examples how to replace a ResNet with a MomentumNet 
+This illustrates on two simple examples how to replace an existing
+ResNet with a MomentumNet.
+
+
+Michael E. Sander, Pierre Ablin, Mathieu Blondel,
+Gabriel Peyre. Momentum Residual Neural Networks.
+Proceedings of the 38th International Conference 
+on Machine Learning, PMLR 139:9276-9287
 
 """  # noqa
 
@@ -24,7 +31,6 @@ x = torch.rand((64, 3, 7, 7), requires_grad=True)
 
 ##########################################
 # It naturally extends the original ResNet
-##########################################
 
 x = torch.rand((64, 3, 7, 7))
 resnet = resnet18()
@@ -39,7 +45,7 @@ print(((resnet(x) - mresnet(x)) ** 2).sum())
 
 transformer = torch.nn.Transformer(num_encoder_layers=6, num_decoder_layers=6)
 mtransformer = transform_to_momentumnet(
-    transformer,
+    transformer,  # Specify the sublayers to transform
     residual_layers=["encoder.layers", "decoder.layers"],
     gamma=0.99,
     use_backprop=False,

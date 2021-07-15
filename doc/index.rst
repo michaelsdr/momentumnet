@@ -6,7 +6,9 @@
 Momentum ResNets
 ================
 
-Official library for using Momentum Residual Neural Networks [1].
+Official library for using Momentum Residual Neural Networks [1]. These models extend to notion of ResNets
+to a larger class of deep learning models that consume less memory. They can be initialized with the
+same weights as a pretrained ResNet and are promising in fine-tuning applications.
 
 
 Installation
@@ -104,8 +106,11 @@ Use the `github issue tracker <https://github.com/michaelsdr/momentumnet/issues>
 Cite
 ----
 
-   [1] Michael E. Sander, Pierre Ablin, Mathieu Blondel, Gabriel Peyré
-      Momentum Residual Neural Networks In: Proc. of ICML 2021. https://arxiv.org/abs/2102.07870
+   [1] Michael E. Sander, Pierre Ablin, Mathieu Blondel, Gabriel Peyre. Momentum Residual Neural Networks.
+      Proceedings of the 38th International Conference
+      on Machine Learning, PMLR 139:9276-9287
+
+      https://arxiv.org/abs/2102.07870
 
 
 API

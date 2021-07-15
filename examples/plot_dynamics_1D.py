@@ -7,6 +7,13 @@ This example compares the dynamics of a ResNet and a Momentum ResNet. We try to 
 trajectories. Trajectories corresponding to the ResNet fail to cross. On the opposite, the Momentum ResNet 
 learns the desired mapping.
 
+
+Michael E. Sander, Pierre Ablin, Mathieu Blondel,
+Gabriel Peyre. Momentum Residual Neural Networks.
+Proceedings of the 38th International Conference 
+on Machine Learning, PMLR 139:9276-9287
+
+
 """  # noqa
 
 # Authors: Michael Sander, Pierre Ablin

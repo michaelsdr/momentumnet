@@ -13,7 +13,7 @@ from torch import nn
 
 def transform_to_momentumnet(
     model,
-    residual_layers=["layer1", "layer2", "layer3", "layer4"],
+    sub_layers=["layer1", "layer2", "layer3", "layer4"],
     keep_first_layer=True,
     gamma=0.9,
     use_backprop=False,
@@ -26,7 +26,7 @@ def transform_to_momentumnet(
     ----------
     model : a torch model
         The resnet one desires to turn into a Momentum ResNet.
-    residual_layers : a list of strings
+    sub_layers : a list of strings
         The name of the submodules of the model one desires to make invertible.
     keep_first_layer : bool (default: True)
         Whether to leave to leave the first layer
@@ -58,14 +58,14 @@ def transform_to_momentumnet(
     ...                                    num_decoder_layers=6)
     >>> layers = ["encoder.layers", "decoder.layers"]
     >>> mtransformer = transform_to_momentumnet(transformer,
-    ...                                         residual_layers=layers,
+    ...                                         sub_layers=layers,
     ...                                         gamma=0.99,
     ...                                         use_backprop=False,
     ...                                         keep_first_layer=False)
 
     """
     mresnet = deepcopy(model)
-    for residual_layer in residual_layers:
+    for residual_layer in sub_layers:
         splitted_key = residual_layer.split(".")
         parent_module = mresnet
         for i, key in enumerate(splitted_key):

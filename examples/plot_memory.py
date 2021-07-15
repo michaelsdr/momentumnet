@@ -30,10 +30,10 @@ torch.manual_seed(1)
 ##############################
 
 
-Depths = np.arange(1, 300, 200)
+Depths = np.arange(1, 200, 100)
 
 
-hidden = 4
+hidden = 1
 d = 2
 
 function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))

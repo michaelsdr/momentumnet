@@ -316,9 +316,10 @@ class MomentumNet(nn.Module):
     Notes
     -----
     Implementation based on
-    *Michael E. Sander, Pierre Ablin, Mathieu Blondel, Gabriel Peyre,
-    Momentum Residual Neural Networks
-    In: Proc. of ICML 2021.*
+    *Michael E. Sander, Pierre Ablin, Mathieu Blondel,
+    Gabriel Peyre. Momentum Residual Neural Networks.
+    Proceedings of the 38th International Conference
+    on Machine Learning, PMLR 139:9276-9287*
 
     """
 
