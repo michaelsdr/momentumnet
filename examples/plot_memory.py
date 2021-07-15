@@ -48,6 +48,7 @@ def train(net):
     Loss = (net(X) ** 2).mean()
     Loss.backward()
 
+
 Mem_list_mom = []
 
 for n_iters in Depths:
