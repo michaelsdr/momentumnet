@@ -78,6 +78,10 @@
 <li><a class="reference internal" href="#">Plotting the dynamics in 1D</a><ul>
 <li><a class="reference internal" href="#fix-random-seed-for-reproducible-figures">Fix random seed for reproducible figures</a></li>
 <li><a class="reference internal" href="#parameters-of-the-simulation">Parameters of the simulation</a></li>
+<li><a class="reference internal" href="#defining-the-functions-for-the-forward-pass">Defining the functions for the forward pass</a></li>
+<li><a class="reference internal" href="#defining-our-models">Defining our models</a></li>
+<li><a class="reference internal" href="#training-our-models-to-learn-a-non-homeomorphic-mapping">Training our models to learn a non-homeomorphic mapping</a></li>
+<li><a class="reference internal" href="#plotting-the-output">Plotting the output</a></li>
 </ul>
 </li>
 </ul>
@@ -120,21 +124,25 @@ to download the full example code</p>
 </div>
 <section class="sphx-glr-example-title" id="plotting-the-dynamics-in-1d">
 <span id="sphx-glr-auto-examples-plot-dynamics-1d-py"></span><h1>Plotting the dynamics in 1D<a class="headerlink" href="#plotting-the-dynamics-in-1d" title="Permalink to this headline">¶</a></h1>
-<p>This example compares the dynamics of a ResNet and a Momentum ResNet</p>
+<p>This example compares the dynamics of a ResNet and a Momentum ResNet. We try to learn a mapping with crossing
+trajectories. Trajectories corresponding to the ResNet fail to cross. On the opposite, the Momentum ResNet
+learns the desired mapping.</p>
+<p>Michael E. Sander, Pierre Ablin, Mathieu Blondel,
+Gabriel Peyre. Momentum Residual Neural Networks.
+Proceedings of the 38th International Conference
+on Machine Learning, PMLR 139:9276-9287</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Authors: Michael Sander, Pierre Ablin</span>
 <span class="c1"># License: MIT</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+
 <span class="kn">from</span> <span class="nn">momentumnet</span> <span class="kn">import</span> <a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class"><span class="n">MomentumNet</span></a>
 <span class="kn">from</span> <span class="nn">momentumnet.toy_datasets</span> <span class="kn">import</span> <span class="n">make_data_1D</span>
-<span class="kn">import</span> <span class="nn">os</span>
-
-<span class="k">if</span> <span class="ow">not</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.isdir" title="os.path.isdir" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span></a><span class="p">(</span><span class="s2">&quot;figures&quot;</span><span class="p">):</span>
-    <a href="https://docs.python.org/3/library/os.html#os.mkdir" title="os.mkdir" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">mkdir</span></a><span class="p">(</span><span class="s2">&quot;figures&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <section id="fix-random-seed-for-reproducible-figures">
@@ -143,7 +151,7 @@ to download the full example code</p>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;torch._C.Generator object at 0x7f1a92cbecb0&gt;
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;torch._C.Generator object at 0x7fe181cbbcf0&gt;
 </pre></div>
 </div>
 </section>
@@ -153,32 +161,40 @@ to download the full example code</p>
 <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_iters</span></a> <span class="o">=</span> <span class="mi">15</span>
 <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gamma</span></a> <span class="o">=</span> <span class="mf">0.99</span>
 <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">d</span></a> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">function</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">d</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">hidden</span></a><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">hidden</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">d</span></a><span class="p">))</span>
-<span class="n">function_res</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">d</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">hidden</span></a><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">hidden</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">d</span></a><span class="p">)</span>
-<span class="p">)</span>
-
-<a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mom_net</span></a> <span class="o">=</span> <a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class"><span class="n">MomentumNet</span></a><span class="p">(</span>
+</pre></div>
+</div>
+</section>
+<section id="defining-the-functions-for-the-forward-pass">
+<h2>Defining the functions for the forward pass<a class="headerlink" href="#defining-the-functions-for-the-forward-pass" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">function</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">d</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">hidden</span></a><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">hidden</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">d</span></a><span class="p">))</span>
+<span class="n">function_res</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="copy.deepcopy" class="sphx-glr-backref-module-copy sphx-glr-backref-type-py-function"><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span></a><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="defining-our-models">
+<h2>Defining our models<a class="headerlink" href="#defining-our-models" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mom_net</span></a> <span class="o">=</span> <a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class"><span class="n">MomentumNet</span></a><span class="p">(</span>
     <span class="p">[</span>
         <span class="n">function</span><span class="p">,</span>
-    <span class="p">],</span>
+    <span class="p">]</span>
+    <span class="o">*</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_iters</span></a><span class="p">,</span>
     <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gamma</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gamma</span></a><span class="p">,</span>
-    <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_iters</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_iters</span></a><span class="p">,</span>
-    <span class="n">learn_gamma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">init_speed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
 <span class="p">)</span>
 <a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">res_net</span></a> <span class="o">=</span> <a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class"><span class="n">MomentumNet</span></a><span class="p">(</span>
     <span class="p">[</span>
         <span class="n">function_res</span><span class="p">,</span>
-    <span class="p">],</span>
+    <span class="p">]</span>
+    <span class="o">*</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_iters</span></a><span class="p">,</span>
     <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gamma</span></a><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-    <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_iters</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_iters</span></a><span class="p">,</span>
-    <span class="n">learn_gamma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">init_speed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
 <span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">h</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">x</span></a><span class="p">):</span>
+</pre></div>
+</div>
+</section>
+<section id="training-our-models-to-learn-a-non-homeomorphic-mapping">
+<h2>Training our models to learn a non-homeomorphic mapping<a class="headerlink" href="#training-our-models-to-learn-a-non-homeomorphic-mapping" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">h</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">x</span></a><span class="p">):</span>
     <span class="k">return</span> <span class="o">-</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">x</span></a> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
 
 
@@ -188,9 +204,7 @@ to download the full example code</p>
 
 <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mom_net</span></a><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 
-<span class="c1"># Training</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MomentumNet -&gt;&quot;</span><span class="p">)</span>
 <span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">301</span><span class="p">):</span>
     <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
     <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">x</span></a> <span class="o">=</span> <span class="n">make_data_1D</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
@@ -198,16 +212,10 @@ to download the full example code</p>
     <span class="n">loss</span> <span class="o">=</span> <span class="n">Loss</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">x</span></a><span class="p">)</span>
     <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
     <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-    <span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;- &quot;</span> <span class="o">*</span> <span class="mi">20</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;itr </span><span class="si">%s</span><span class="s2">, loss = </span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">,</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()))</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;- &quot;</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
 
 <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">res_net</span></a><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ResNet --&gt;&quot;</span><span class="p">)</span>
 <span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2001</span><span class="p">):</span>
     <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
     <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">x</span></a> <span class="o">=</span> <span class="n">make_data_1D</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
@@ -215,15 +223,12 @@ to download the full example code</p>
     <span class="n">loss</span> <span class="o">=</span> <span class="n">Loss</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">x</span></a><span class="p">)</span>
     <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
     <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-    <span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;- &quot;</span> <span class="o">*</span> <span class="mi">20</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;itr </span><span class="si">%s</span><span class="s2">, loss = </span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">,</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()))</span>
-
-
-<span class="c1"># Plot the output</span>
-
-
-<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_plot</span></a> <span class="o">=</span> <span class="mi">8</span>
+</pre></div>
+</div>
+</section>
+<section id="plotting-the-output">
+<h2>Plotting the output<a class="headerlink" href="#plotting-the-output" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_plot</span></a> <span class="o">=</span> <span class="mi">8</span>
 
 <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">num_plots</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_plot</span></a>
 
@@ -243,16 +248,26 @@ to download the full example code</p>
 <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">preds</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
 
 <span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_iters</span></a> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mom_net</span></a> <span class="o">=</span> <a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class"><span class="n">MomentumNet</span></a><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">function</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="o">*</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">,</span>
+        <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gamma</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gamma</span></a><span class="p">,</span>
+        <span class="n">init_speed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-        <span class="n">pred_</span> <span class="o">=</span> <a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mom_net</span></a><span class="p">(</span><span class="n">x_</span><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_iters</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">)</span>
+
+        <span class="n">pred_</span> <span class="o">=</span> <a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mom_net</span></a><span class="p">(</span><span class="n">x_</span><span class="p">)</span>
         <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">preds</span></a><span class="p">[</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">]</span> <span class="o">=</span> <span class="n">pred_</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
 
 <a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.plot.html#matplotlib.pyplot.plot" title="matplotlib.pyplot.plot" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">preds</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">x_axis</span></a><span class="p">,</span> <span class="s2">&quot;-x&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>
 <a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.xticks.html#matplotlib.pyplot.xticks" title="matplotlib.pyplot.xticks" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">xticks</span></a><span class="p">([],</span> <span class="p">[])</span>
 <a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.yticks.html#matplotlib.pyplot.yticks" title="matplotlib.pyplot.yticks" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">yticks</span></a><span class="p">([],</span> <span class="p">[])</span>
+<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.title.html#matplotlib.pyplot.title" title="matplotlib.pyplot.title" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">title</span></a><span class="p">(</span><span class="s2">&quot;Momentum ResNet&quot;</span><span class="p">)</span>
 <a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.ylabel.html#matplotlib.pyplot.ylabel" title="matplotlib.pyplot.ylabel" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span></a><span class="p">(</span><span class="s2">&quot;Depth&quot;</span><span class="p">)</span>
 <a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.xlabel.html#matplotlib.pyplot.xlabel" title="matplotlib.pyplot.xlabel" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span></a><span class="p">(</span><span class="s2">&quot;Input&quot;</span><span class="p">)</span>
-<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.savefig.html#matplotlib.pyplot.savefig" title="matplotlib.pyplot.savefig" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span></a><span class="p">(</span><span class="s2">&quot;figures/mom_net_dynamics_1D.pdf&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 
 <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">num_plots</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_plot</span></a>
 
@@ -268,81 +283,35 @@ to download the full example code</p>
 
 <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">preds_res</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
 <span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_iters</span></a> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">res_net</span></a> <span class="o">=</span> <a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class"><span class="n">MomentumNet</span></a><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">function_res</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="o">*</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">,</span>
+        <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gamma</span></a><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">init_speed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span>
+
     <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-        <span class="n">pred_</span> <span class="o">=</span> <a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">res_net</span></a><span class="p">(</span><span class="n">x_</span><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_iters</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">)</span>
+        <span class="n">pred_</span> <span class="o">=</span> <a href="../generated/momentumnet.MomentumNet.html#momentumnet.MomentumNet" title="momentumnet.MomentumNet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">res_net</span></a><span class="p">(</span><span class="n">x_</span><span class="p">)</span>
         <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">preds_res</span></a><span class="p">[</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">i</span></a><span class="p">]</span> <span class="o">=</span> <span class="n">pred_</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
 
 <a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.plot.html#matplotlib.pyplot.plot" title="matplotlib.pyplot.plot" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">preds_res</span></a><span class="p">,</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">x_axis</span></a><span class="p">,</span> <span class="s2">&quot;-x&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>
 <a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.xticks.html#matplotlib.pyplot.xticks" title="matplotlib.pyplot.xticks" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">xticks</span></a><span class="p">([],</span> <span class="p">[])</span>
 <a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.yticks.html#matplotlib.pyplot.yticks" title="matplotlib.pyplot.yticks" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">yticks</span></a><span class="p">([],</span> <span class="p">[])</span>
+<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.title.html#matplotlib.pyplot.title" title="matplotlib.pyplot.title" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">title</span></a><span class="p">(</span><span class="s2">&quot;ResNet&quot;</span><span class="p">)</span>
 <a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.ylabel.html#matplotlib.pyplot.ylabel" title="matplotlib.pyplot.ylabel" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span></a><span class="p">(</span><span class="s2">&quot;Depth&quot;</span><span class="p">)</span>
 <a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.xlabel.html#matplotlib.pyplot.xlabel" title="matplotlib.pyplot.xlabel" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span></a><span class="p">(</span><span class="s2">&quot;Input&quot;</span><span class="p">)</span>
-<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.savefig.html#matplotlib.pyplot.savefig" title="matplotlib.pyplot.savefig" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span></a><span class="p">(</span><span class="s2">&quot;figures/res_net_dynamics_1D.pdf&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
 <ul class="sphx-glr-horizontal">
-<li><img alt="plot dynamics 1D" class="sphx-glr-multi-img" src="../_images/sphx_glr_plot_dynamics_1D_001.png" />
+<li><img alt="Momentum ResNet" class="sphx-glr-multi-img" src="../_images/sphx_glr_plot_dynamics_1D_001.png" />
 </li>
-<li><img alt="plot dynamics 1D" class="sphx-glr-multi-img" src="../_images/sphx_glr_plot_dynamics_1D_002.png" />
+<li><img alt="ResNet" class="sphx-glr-multi-img" src="../_images/sphx_glr_plot_dynamics_1D_002.png" />
 </li>
 </ul>
-<p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>MomentumNet -&gt;
-- - - - - - - - - - - - - - - - - - - -
-itr 0, loss = 0.830
-- - - - - - - - - - - - - - - - - - - -
-itr 100, loss = 0.104
-- - - - - - - - - - - - - - - - - - - -
-itr 200, loss = 0.053
-- - - - - - - - - - - - - - - - - - - -
-itr 300, loss = 0.030
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-ResNet --&gt;
-- - - - - - - - - - - - - - - - - - - -
-itr 0, loss = 0.203
-- - - - - - - - - - - - - - - - - - - -
-itr 100, loss = 0.165
-- - - - - - - - - - - - - - - - - - - -
-itr 200, loss = 0.126
-- - - - - - - - - - - - - - - - - - - -
-itr 300, loss = 0.169
-- - - - - - - - - - - - - - - - - - - -
-itr 400, loss = 0.174
-- - - - - - - - - - - - - - - - - - - -
-itr 500, loss = 0.137
-- - - - - - - - - - - - - - - - - - - -
-itr 600, loss = 0.131
-- - - - - - - - - - - - - - - - - - - -
-itr 700, loss = 0.122
-- - - - - - - - - - - - - - - - - - - -
-itr 800, loss = 0.138
-- - - - - - - - - - - - - - - - - - - -
-itr 900, loss = 0.164
-- - - - - - - - - - - - - - - - - - - -
-itr 1000, loss = 0.137
-- - - - - - - - - - - - - - - - - - - -
-itr 1100, loss = 0.124
-- - - - - - - - - - - - - - - - - - - -
-itr 1200, loss = 0.112
-- - - - - - - - - - - - - - - - - - - -
-itr 1300, loss = 0.165
-- - - - - - - - - - - - - - - - - - - -
-itr 1400, loss = 0.130
-- - - - - - - - - - - - - - - - - - - -
-itr 1500, loss = 0.139
-- - - - - - - - - - - - - - - - - - - -
-itr 1600, loss = 0.143
-- - - - - - - - - - - - - - - - - - - -
-itr 1700, loss = 0.135
-- - - - - - - - - - - - - - - - - - - -
-itr 1800, loss = 0.163
-- - - - - - - - - - - - - - - - - - - -
-itr 1900, loss = 0.144
-- - - - - - - - - - - - - - - - - - - -
-itr 2000, loss = 0.162
-</pre></div>
-</div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  27.476 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  29.994 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-dynamics-1d-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/2feafad2d2b0f8e8ac83cdc48963b2de/plot_dynamics_1D.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_dynamics_1D.py</span></code></a></p>
@@ -371,7 +340,7 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
     </p>
     <p>
         &copy; Copyright 2021, Michael Sander.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.1.<br/>
     </p>
   </div>
 </footer>

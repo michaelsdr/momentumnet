@@ -1,6 +1,0 @@
-﻿momentumnet.transform
-=====================
-
-.. currentmodule:: momentumnet
-
-.. autofunction:: transform

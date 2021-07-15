@@ -22,27 +22,33 @@
 Plotting the dynamics in 1D
 ==================================
 
-This example compares the dynamics of a ResNet and a Momentum ResNet
+This example compares the dynamics of a ResNet and a Momentum ResNet. We try to learn a mapping with crossing
+trajectories. Trajectories corresponding to the ResNet fail to cross. On the opposite, the Momentum ResNet 
+learns the desired mapping.
 
-.. GENERATED FROM PYTHON SOURCE LINES 9-24
+
+Michael E. Sander, Pierre Ablin, Mathieu Blondel,
+Gabriel Peyre. Momentum Residual Neural Networks.
+Proceedings of the 38th International Conference 
+on Machine Learning, PMLR 139:9276-9287
+
+.. GENERATED FROM PYTHON SOURCE LINES 18-32
 
 .. code-block:: default
 
 
     # Authors: Michael Sander, Pierre Ablin
     # License: MIT
+    import copy
 
     import torch
     import torch.nn as nn
     import numpy as np
     import matplotlib.pyplot as plt
     import torch.optim as optim
+
     from momentumnet import MomentumNet
     from momentumnet.toy_datasets import make_data_1D
-    import os
-
-    if not os.path.isdir("figures"):
-        os.mkdir("figures")
 
 
 
@@ -50,12 +56,13 @@ This example compares the dynamics of a ResNet and a Momentum ResNet
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 25-27
+
+.. GENERATED FROM PYTHON SOURCE LINES 33-35
 
 Fix random seed for reproducible figures
 ##########################################
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-30
+.. GENERATED FROM PYTHON SOURCE LINES 35-38
 
 .. code-block:: default
 
@@ -73,16 +80,16 @@ Fix random seed for reproducible figures
  .. code-block:: none
 
 
-    <torch._C.Generator object at 0x7f1a92cbecb0>
+    <torch._C.Generator object at 0x7fe181cbbcf0>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 31-33
+.. GENERATED FROM PYTHON SOURCE LINES 39-41
 
 Parameters of the simulation
 #############################
 
-.. GENERATED FROM PYTHON SOURCE LINES 33-163
+.. GENERATED FROM PYTHON SOURCE LINES 41-48
 
 .. code-block:: default
 
@@ -91,29 +98,78 @@ Parameters of the simulation
     n_iters = 15
     gamma = 0.99
     d = 1
+
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 49-51
+
+Defining the functions for the forward pass
+############################################
+
+.. GENERATED FROM PYTHON SOURCE LINES 51-55
+
+.. code-block:: default
+
+
     function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
-    function_res = nn.Sequential(
-        nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d)
-    )
+    function_res = copy.deepcopy(function)
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 56-58
+
+Defining our models
+####################
+
+.. GENERATED FROM PYTHON SOURCE LINES 58-76
+
+.. code-block:: default
+
 
     mom_net = MomentumNet(
         [
             function,
-        ],
+        ]
+        * n_iters,
         gamma=gamma,
-        n_iters=n_iters,
-        learn_gamma=False,
         init_speed=0,
     )
     res_net = MomentumNet(
         [
             function_res,
-        ],
+        ]
+        * n_iters,
         gamma=0.0,
-        n_iters=n_iters,
-        learn_gamma=False,
         init_speed=0,
     )
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 77-79
+
+Training our models to learn a non-homeomorphic mapping
+########################################################
+
+.. GENERATED FROM PYTHON SOURCE LINES 79-111
+
+.. code-block:: default
+
 
 
     def h(x):
@@ -126,9 +182,7 @@ Parameters of the simulation
 
     optimizer = optim.SGD(mom_net.parameters(), lr=0.01)
 
-    # Training
 
-    print("MomentumNet ->")
     for i in range(301):
         optimizer.zero_grad()
         x = make_data_1D(200)
@@ -136,16 +190,10 @@ Parameters of the simulation
         loss = Loss(pred, x)
         loss.backward()
         optimizer.step()
-        if i % 100 == 0:
-            print("- " * 20)
-            print("itr %s, loss = %.3f" % (i, loss.item()))
-
-    print("- " * 40)
 
     optimizer = optim.SGD(res_net.parameters(), lr=0.01)
 
 
-    print("ResNet -->")
     for i in range(2001):
         optimizer.zero_grad()
         x = make_data_1D(200)
@@ -153,12 +201,23 @@ Parameters of the simulation
         loss = Loss(pred, x)
         loss.backward()
         optimizer.step()
-        if i % 100 == 0:
-            print("- " * 20)
-            print("itr %s, loss = %.3f" % (i, loss.item()))
 
 
-    # Plot the output
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 112-114
+
+Plotting the output
+####################
+
+.. GENERATED FROM PYTHON SOURCE LINES 114-191
+
+.. code-block:: default
+
 
 
     n_plot = 8
@@ -181,16 +240,26 @@ Parameters of the simulation
     preds[0] = x_[:, 0]
 
     for i in range(1, n_iters + 1):
+        mom_net = MomentumNet(
+            [
+                function,
+            ]
+            * i,
+            gamma=gamma,
+            init_speed=0,
+        )
         with torch.no_grad():
-            pred_ = mom_net(x_, n_iters=i)
+
+            pred_ = mom_net(x_)
             preds[i] = pred_[:, 0]
 
     plt.plot(preds, x_axis, "-x", lw=2.5)
     plt.xticks([], [])
     plt.yticks([], [])
+    plt.title("Momentum ResNet")
     plt.ylabel("Depth")
     plt.xlabel("Input")
-    plt.savefig("figures/mom_net_dynamics_1D.pdf")
+    plt.show()
 
     num_plots = n_plot
 
@@ -206,16 +275,26 @@ Parameters of the simulation
 
     preds_res[0] = x_[:, 0]
     for i in range(1, n_iters + 1):
+        res_net = MomentumNet(
+            [
+                function_res,
+            ]
+            * i,
+            gamma=0.0,
+            init_speed=0,
+        )
+
         with torch.no_grad():
-            pred_ = res_net(x_, n_iters=i)
+            pred_ = res_net(x_)
             preds_res[i] = pred_[:, 0]
 
     plt.plot(preds_res, x_axis, "-x", lw=2.5)
     plt.xticks([], [])
     plt.yticks([], [])
+    plt.title("ResNet")
     plt.ylabel("Depth")
     plt.xlabel("Input")
-    plt.savefig("figures/res_net_dynamics_1D.pdf")
+    plt.show()
 
 
 
@@ -225,75 +304,15 @@ Parameters of the simulation
     *
 
       .. image:: /auto_examples/images/sphx_glr_plot_dynamics_1D_001.png
-          :alt: plot dynamics 1D
+          :alt: Momentum ResNet
           :class: sphx-glr-multi-img
 
     *
 
       .. image:: /auto_examples/images/sphx_glr_plot_dynamics_1D_002.png
-          :alt: plot dynamics 1D
+          :alt: ResNet
           :class: sphx-glr-multi-img
 
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    MomentumNet ->
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 0, loss = 0.830
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 100, loss = 0.104
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 200, loss = 0.053
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 300, loss = 0.030
-    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    ResNet -->
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 0, loss = 0.203
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 100, loss = 0.165
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 200, loss = 0.126
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 300, loss = 0.169
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 400, loss = 0.174
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 500, loss = 0.137
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 600, loss = 0.131
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 700, loss = 0.122
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 800, loss = 0.138
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 900, loss = 0.164
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 1000, loss = 0.137
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 1100, loss = 0.124
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 1200, loss = 0.112
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 1300, loss = 0.165
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 1400, loss = 0.130
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 1500, loss = 0.139
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 1600, loss = 0.143
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 1700, loss = 0.135
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 1800, loss = 0.163
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 1900, loss = 0.144
-    - - - - - - - - - - - - - - - - - - - - 
-    itr 2000, loss = 0.162
 
 
 
@@ -301,7 +320,7 @@ Parameters of the simulation
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  27.476 seconds)
+   **Total running time of the script:** ( 0 minutes  29.994 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_dynamics_1D.py:

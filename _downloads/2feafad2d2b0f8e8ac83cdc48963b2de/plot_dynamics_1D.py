@@ -3,24 +3,32 @@
 Plotting the dynamics in 1D
 ==================================
 
-This example compares the dynamics of a ResNet and a Momentum ResNet
+This example compares the dynamics of a ResNet and a Momentum ResNet. We try to learn a mapping with crossing
+trajectories. Trajectories corresponding to the ResNet fail to cross. On the opposite, the Momentum ResNet 
+learns the desired mapping.
+
+
+Michael E. Sander, Pierre Ablin, Mathieu Blondel,
+Gabriel Peyre. Momentum Residual Neural Networks.
+Proceedings of the 38th International Conference 
+on Machine Learning, PMLR 139:9276-9287
+
 
 """  # noqa
 
 # Authors: Michael Sander, Pierre Ablin
 # License: MIT
+import copy
 
 import torch
 import torch.nn as nn
 import numpy as np
 import matplotlib.pyplot as plt
 import torch.optim as optim
+
 from momentumnet import MomentumNet
 from momentumnet.toy_datasets import make_data_1D
-import os
 
-if not os.path.isdir("figures"):
-    os.mkdir("figures")
 ###########################################
 # Fix random seed for reproducible figures
 ###########################################
@@ -35,29 +43,39 @@ hidden = 16
 n_iters = 15
 gamma = 0.99
 d = 1
+
+
+#############################################
+# Defining the functions for the forward pass
+#############################################
+
 function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
-function_res = nn.Sequential(
-    nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d)
-)
+function_res = copy.deepcopy(function)
+
+#####################
+# Defining our models
+#####################
 
 mom_net = MomentumNet(
     [
         function,
-    ],
+    ]
+    * n_iters,
     gamma=gamma,
-    n_iters=n_iters,
-    learn_gamma=False,
     init_speed=0,
 )
 res_net = MomentumNet(
     [
         function_res,
-    ],
+    ]
+    * n_iters,
     gamma=0.0,
-    n_iters=n_iters,
-    learn_gamma=False,
     init_speed=0,
 )
+
+#########################################################
+# Training our models to learn a non-homeomorphic mapping
+#########################################################
 
 
 def h(x):
@@ -70,9 +88,7 @@ def Loss(pred, x):
 
 optimizer = optim.SGD(mom_net.parameters(), lr=0.01)
 
-# Training
 
-print("MomentumNet ->")
 for i in range(301):
     optimizer.zero_grad()
     x = make_data_1D(200)
@@ -80,16 +96,10 @@ for i in range(301):
     loss = Loss(pred, x)
     loss.backward()
     optimizer.step()
-    if i % 100 == 0:
-        print("- " * 20)
-        print("itr %s, loss = %.3f" % (i, loss.item()))
-
-print("- " * 40)
 
 optimizer = optim.SGD(res_net.parameters(), lr=0.01)
 
 
-print("ResNet -->")
 for i in range(2001):
     optimizer.zero_grad()
     x = make_data_1D(200)
@@ -97,12 +107,10 @@ for i in range(2001):
     loss = Loss(pred, x)
     loss.backward()
     optimizer.step()
-    if i % 100 == 0:
-        print("- " * 20)
-        print("itr %s, loss = %.3f" % (i, loss.item()))
 
-
-# Plot the output
+#####################
+# Plotting the output
+#####################
 
 
 n_plot = 8
@@ -125,16 +133,26 @@ preds = np.zeros((n_iters + 1, n_plot))
 preds[0] = x_[:, 0]
 
 for i in range(1, n_iters + 1):
+    mom_net = MomentumNet(
+        [
+            function,
+        ]
+        * i,
+        gamma=gamma,
+        init_speed=0,
+    )
     with torch.no_grad():
-        pred_ = mom_net(x_, n_iters=i)
+
+        pred_ = mom_net(x_)
         preds[i] = pred_[:, 0]
 
 plt.plot(preds, x_axis, "-x", lw=2.5)
 plt.xticks([], [])
 plt.yticks([], [])
+plt.title("Momentum ResNet")
 plt.ylabel("Depth")
 plt.xlabel("Input")
-plt.savefig("figures/mom_net_dynamics_1D.pdf")
+plt.show()
 
 num_plots = n_plot
 
@@ -150,13 +168,23 @@ preds_res = np.zeros((n_iters + 1, n_plot))
 
 preds_res[0] = x_[:, 0]
 for i in range(1, n_iters + 1):
+    res_net = MomentumNet(
+        [
+            function_res,
+        ]
+        * i,
+        gamma=0.0,
+        init_speed=0,
+    )
+
     with torch.no_grad():
-        pred_ = res_net(x_, n_iters=i)
+        pred_ = res_net(x_)
         preds_res[i] = pred_[:, 0]
 
 plt.plot(preds_res, x_axis, "-x", lw=2.5)
 plt.xticks([], [])
 plt.yticks([], [])
+plt.title("ResNet")
 plt.ylabel("Depth")
 plt.xlabel("Input")
-plt.savefig("figures/res_net_dynamics_1D.pdf")
+plt.show()
