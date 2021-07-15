@@ -16,14 +16,8 @@ from momentumnet import MomentumNet
 import matplotlib.pyplot as plt
 from memory_profiler import memory_usage
 import numpy as np
-import os
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-
-if not os.path.isdir("figures"):
-    os.mkdir("examples/figures")
-
 
 ###########################################
 # Fix random seed for reproducible figures
@@ -100,4 +94,3 @@ if __name__ == "__main__":
     x_ = plt.xlabel("Depth")
     plt.legend()
     plt.show()
-

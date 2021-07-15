@@ -11,7 +11,6 @@ learns the desired mapping.
 
 # Authors: Michael Sander, Pierre Ablin
 # License: MIT
-import os
 import copy
 
 import torch
@@ -22,7 +21,6 @@ import torch.optim as optim
 
 from momentumnet import MomentumNet
 from momentumnet.toy_datasets import make_data_1D
-
 
 ###########################################
 # Fix random seed for reproducible figures
@@ -71,6 +69,7 @@ res_net = MomentumNet(
 #########################################################
 # Training our models to learn a non-homeomorphic mapping
 #########################################################
+
 
 def h(x):
     return -(x ** 3)
@@ -143,7 +142,7 @@ for i in range(1, n_iters + 1):
 plt.plot(preds, x_axis, "-x", lw=2.5)
 plt.xticks([], [])
 plt.yticks([], [])
-plt.title('Momentum ResNet')
+plt.title("Momentum ResNet")
 plt.ylabel("Depth")
 plt.xlabel("Input")
 plt.show()
@@ -178,7 +177,7 @@ for i in range(1, n_iters + 1):
 plt.plot(preds_res, x_axis, "-x", lw=2.5)
 plt.xticks([], [])
 plt.yticks([], [])
-plt.title('ResNet')
+plt.title("ResNet")
 plt.ylabel("Depth")
 plt.xlabel("Input")
 plt.show()
