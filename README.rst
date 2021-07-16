@@ -127,6 +127,6 @@ If you use this code in your project, please cite::
 
     Michael E. Sander, Pierre Ablin, Mathieu Blondel, Gabriel Peyré
     Momentum Residual Neural Networks
-    In: Proc. of ICML 2021. 
+    Proceedings of the 38th International Conference on Machine Learning, PMLR 139:9276-9287
     https://arxiv.org/abs/2102.07870
 
