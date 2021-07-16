@@ -3,8 +3,8 @@
 Momentum ResNets on a digit learning task
 =========================================
 
-In this example we train a Momentum ResNet and a ResNet on the sklearn digit dataset
-
+In this example we train a Momentum ResNet and a ResNet
+on the sklearn digit dataset
 """
 
 # Authors: Michael Sander, Pierre Ablin
