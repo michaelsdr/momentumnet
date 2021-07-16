@@ -7,7 +7,7 @@ API Documentation
 .. currentmodule:: momentumnet
 
 Momentum Residual Residual Networks
-================================
+===================================
 
 Classes
 

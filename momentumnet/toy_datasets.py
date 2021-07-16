@@ -45,7 +45,7 @@ def make_circle(radius=1, N=100, label=0, noise=0.2):
     return x, y
 
 
-def make_data(N=100, n_r=4):
+def make_data(N=100, n_r=2):
     """Create the data to separate
 
 

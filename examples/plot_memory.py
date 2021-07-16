@@ -83,12 +83,8 @@ for n_iters in Depths:
 
 plt.figure(figsize=(8, 4))
 
-plt.plot(
-    Depths, Mem_list_res, label="ResNet", linewidth=4, color="darkblue"
-)
-plt.plot(
-    Depths, Mem_list_mom, label="MomentumNet", linewidth=4, color="red"
-)
+plt.plot(Depths, Mem_list_res, label="ResNet", linewidth=4, color="darkblue")
+plt.plot(Depths, Mem_list_mom, label="MomentumNet", linewidth=4, color="red")
 y_ = plt.ylabel("Memory (MiB)")
 x_ = plt.xlabel("Depth")
 plt.legend()

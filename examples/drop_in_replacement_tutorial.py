@@ -40,12 +40,16 @@ class ResBlock(nn.Module):
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.res_layer1 = ResBlock(nn.Sequential(
-            *[
-                nn.Sequential(nn.Linear(2, 10), nn.Tanh(), nn.Linear(10, 2))
-                for _ in range(3)
-            ]
-        ))
+        self.res_layer1 = ResBlock(
+            nn.Sequential(
+                *[
+                    nn.Sequential(
+                        nn.Linear(2, 10), nn.Tanh(), nn.Linear(10, 2)
+                    )
+                    for _ in range(3)
+                ]
+            )
+        )
         self.l1 = nn.Linear(2, 4)
         self.layer2 = nn.Sequential(
             *[

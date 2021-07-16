@@ -27,6 +27,7 @@ def transform_to_momentumnet(
     model : a torch model
         The resnet one desires to turn into a Momentum ResNet.
     sub_layers : a list of strings
+    (default ["layer1", "layer2", "layer3", "layer4"])
         The name of the submodules of the model one desires to make invertible.
     keep_first_layer : bool (default: True)
         Whether to leave to leave the first layer
@@ -49,7 +50,9 @@ def transform_to_momentumnet(
     >>> from momentumnet import transform_to_momentumnet
     >>> from torchvision.models import resnet18
     >>> resnet = resnet18(pretrained=True)
+    >>> layers = ["layer1", "layer2", "layer3", "layer4"]
     >>> mresnet = transform_to_momentumnet(resnet,
+    ...                                    sub_layers=layers,
     ...                                    gamma=0.99, use_backprop=False)
 
     >>> import torch

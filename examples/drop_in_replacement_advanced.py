@@ -38,8 +38,8 @@ v = ViT(
     heads=16,
     mlp_dim=2048,
     dropout=0.1,
-    emb_dropout=0.1
-    )
+    emb_dropout=0.1,
+)
 
 ################################################
 # We first rename transformer layer from v to be
@@ -61,7 +61,11 @@ v.transformer = torch.nn.Sequential(*v_modules)
 #################################################
 # Now we can transform it to its momentum version
 
-mv = transform_to_momentumnet(v, ['transformer'], gamma=0.9,
-                              keep_first_layer=False,
-                              use_backprop=False,
-                              add_skip_connection=True)
+mv = transform_to_momentumnet(
+    v,
+    ["transformer"],
+    gamma=0.9,
+    keep_first_layer=False,
+    use_backprop=False,
+    is_residual=True,
+)
