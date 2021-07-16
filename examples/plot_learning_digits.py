@@ -38,8 +38,8 @@ y_test = torch.tensor(y_test)
 # Architecture
 ##############################
 
-hidden = 16
-n_iters = 20
+hidden = 32
+n_iters = 10
 N = 1000
 d = X.shape[-1]
 
@@ -54,7 +54,7 @@ mresnet = MomentumNet(functions, gamma=0.5)
 net = nn.Sequential(mresnet, nn.Linear(64, 10))
 criterion = nn.CrossEntropyLoss()
 
-n_epochs = 120
+n_epochs = 75
 lr_list = np.ones(n_epochs) * 0.01
 
 optimizer = optim.Adam(mresnet.parameters(), lr=lr_list[0])
