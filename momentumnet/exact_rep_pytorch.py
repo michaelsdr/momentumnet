@@ -70,7 +70,8 @@ class TorchExactRep(object):
 
     def rational_mul(self, n, d):
         self.aux.push(self.intrep % d, d)  # Store remainder bits externally
-        self.intrep //= d  # Divide by denominator
+        # self.intrep //= d  # Divide by denominator
+        self.intrep = torch.div(self.intrep, d, rounding_mode='trunc')
         self.intrep *= n  # Multiply by numerator
         self.intrep += self.aux.pop(n)  # Pack bits into the remainder
 
@@ -137,7 +138,8 @@ class BitStore(object):
     def pop(self, M):
         """Retrieves the last integer stored."""
         N = self.store % M
-        self.store //= M
+        # self.store //= M
+        self.store = torch.div(self.store, M, rounding_mode='trunc')
         return N
 
     def __repr__(self):

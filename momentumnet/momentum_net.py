@@ -59,9 +59,7 @@ class MomentumNetWithBackprop(nn.Module):
             f = self.functions[i](x, *function_args)
             if not self.is_residual:
                 f = f - x
-            v = gamma * v + f * (
-                1 - gamma
-            )
+            v = gamma * v + f * (1 - gamma)
             x = x + v
         return x
 
@@ -308,6 +306,7 @@ class MomentumNet(nn.Module):
 
     Examples
     --------
+    >>> import torch
     >>> from torch import nn
     >>> from momentumnet import MomentumNet
     >>> hidden = 8
@@ -315,6 +314,9 @@ class MomentumNet(nn.Module):
     >>> function = nn.Sequential(nn.Linear(d, hidden),
     ...                           nn.Tanh(), nn.Linear(hidden, d))
     >>> mresnet = MomentumNet([function,] * 10, gamma=0.99)
+    >>> x = torch.randn(10, d)
+    >>> mresnet(x).shape
+    torch.Size([10, 50])
 
     Notes
     -----

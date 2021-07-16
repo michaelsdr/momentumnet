@@ -5,14 +5,14 @@ Examples using ``momentumnet.MomentumNet.parameters``
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example compares the dynamics of a ResNet and a Momentum ResNet. We try to learn a mapping...">
+    <div class="sphx-glr-thumbcontainer" tooltip="In this example we train a Momentum ResNet and a ResNet on the sklearn digit dataset">
 
 .. only:: html
 
- .. figure:: /auto_examples/images/thumb/sphx_glr_plot_dynamics_1D_thumb.png
-     :alt: Plotting the dynamics in 1D
+ .. figure:: /auto_examples/images/thumb/sphx_glr_plot_learning_digits_thumb.png
+     :alt: Momentum ResNets on a digit learning task
 
-     :ref:`sphx_glr_auto_examples_plot_dynamics_1D.py`
+     :ref:`sphx_glr_auto_examples_plot_learning_digits.py`
 
 .. raw:: html
 
@@ -20,4 +20,4 @@ Examples using ``momentumnet.MomentumNet.parameters``
 
 .. only:: not html
 
- * :ref:`sphx_glr_auto_examples_plot_dynamics_1D.py`
+ * :ref:`sphx_glr_auto_examples_plot_learning_digits.py`
