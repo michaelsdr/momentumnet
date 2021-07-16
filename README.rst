@@ -95,7 +95,7 @@ Importantly, this method also works with Pytorch Transformers module, specifying
    >>> import torch
    >>> from momentumnet import transform_to_momentumnet
    >>> transformer = torch.nn.Transformer(num_encoder_layers=6, num_decoder_layers=6)
-   >>> mtransformer = transform_to_momentumnet(transformer, residual_layers=["encoder.layers", "decoder.layers"], gamma=0.99,
+   >>> mtransformer = transform_to_momentumnet(transformer, sub_layers=["encoder.layers", "decoder.layers"], gamma=0.99,
    >>>                                          use_backprop=False, keep_first_layer=False)
 
 This initiates a Momentum Transformer with the same weights as the original Transformer.
