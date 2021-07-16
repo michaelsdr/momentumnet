@@ -48,9 +48,8 @@ mresnet = MomentumNet(
 
 criterion = nn.CrossEntropyLoss()
 
-n_epochs = 700
-lr_list = np.ones(n_epochs) * 0.2
-
+n_epochs = 30
+lr_list = np.ones(n_epochs) * 0.5
 
 optimizer = optim.Adam(mresnet.parameters(), lr=lr_list[0])
 
@@ -71,10 +70,6 @@ for i in range(n_epochs):
     loss = criterion(pred, y)
     loss.backward()
     optimizer.step()
-    if i % 100 == 0:
-        print("itr %s, loss = %.3f" % (i, loss.item()))
-        print("- " * 20)
-
 
 ##############################################
 # Plot the results

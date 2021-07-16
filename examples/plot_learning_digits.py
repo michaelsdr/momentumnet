@@ -35,11 +35,11 @@ y_train = torch.tensor(y_train)
 y_test = torch.tensor(y_test)
 
 ##############################
-# Parameters of the simulation
+# Architecture
 ##############################
 
 hidden = 16
-n_iters = 10
+n_iters = 20
 N = 1000
 d = X.shape[-1]
 
@@ -54,16 +54,15 @@ mresnet = MomentumNet(functions, gamma=0.5)
 net = nn.Sequential(mresnet, nn.Linear(64, 10))
 criterion = nn.CrossEntropyLoss()
 
-n_epochs = 1100
+n_epochs = 120
 lr_list = np.ones(n_epochs) * 0.01
-lr_list[800:] /= 5
-lr_list[1000:] /= 2
 
 optimizer = optim.Adam(mresnet.parameters(), lr=lr_list[0])
 
 ###################################
 # Training
 ###################################
+
 test_error_mresnet = []
 for i in range(n_epochs):
     for param_group in optimizer.param_groups:
@@ -73,7 +72,7 @@ for i in range(n_epochs):
     loss = criterion(output, y_train)
     loss.backward()
     optimizer.step()
-    if i % 100 == 0:
+    if i % 30 == 0:
         print("itr %s, loss = %.3f" % (i, loss.item()))
         print("- " * 20)
     if i % 1 == 0:
@@ -92,18 +91,12 @@ functions = [
     for _ in range(n_iters)
 ]
 
-# Network
 resnet = MomentumNet(functions, gamma=0.0)
 
 net = nn.Sequential(resnet, nn.Linear(64, 10))
 criterion = nn.CrossEntropyLoss()
 
 optimizer = optim.Adam(resnet.parameters(), lr=lr_list[0])
-
-
-###################################
-# Training
-###################################
 
 test_error_resnet = []
 for i in range(n_epochs):
@@ -114,7 +107,7 @@ for i in range(n_epochs):
     loss = criterion(output, y_train)
     loss.backward()
     optimizer.step()
-    if i % 300 == 0:
+    if i % 30 == 0:
         print("itr %s, loss = %.3f" % (i, loss.item()))
         print("- " * 20)
     if i % 1 == 0:
@@ -127,9 +120,9 @@ for i in range(n_epochs):
 # Plotting the learning curves
 #####################################
 
-plt.figure(figsize=(10, 5))
-plt.semilogy(test_error_mresnet, label="Momentum ResNet", color="red", lw=2.)
-plt.semilogy(test_error_resnet, label="ResNet", color="darkblue", lw=2.)
+plt.figure(figsize=(8, 4))
+plt.semilogy(test_error_mresnet, label="Momentum ResNet", color="red", lw=2.5)
+plt.semilogy(test_error_resnet, label="ResNet", color="darkblue", lw=2.5)
 plt.xlabel("Epochs")
 plt.ylabel("Test error")
 plt.legend()

@@ -54,15 +54,8 @@ and it should not give any error message.
 Quickstart
 ----------
 
-The main class is MomentumNet. It creates a Momentum ResNet that iterates
-
-.. math::
-
-    v_{t + 1} = (1 - \gamma) * v_t + \gamma * f_t(x_t) \\
-    x_{t + 1} = x_t + v_{t + 1}
-
-
-These forward equations can be reversed in closed-form,
+The main class is MomentumNet. It creates a Momentum ResNet for which
+forward equations can be reversed in closed-form,
 enabling learning without standard memory consuming backpropagation.
 This process trades memory for computations.
 
