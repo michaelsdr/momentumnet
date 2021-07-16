@@ -46,7 +46,7 @@ print(((resnet(x) - mresnet(x)) ** 2).sum())
 transformer = torch.nn.Transformer(num_encoder_layers=6, num_decoder_layers=6)
 mtransformer = transform_to_momentumnet(
     transformer,  # Specify the sublayers to transform
-    residual_layers=["encoder.layers", "decoder.layers"],
+    sub_layers=["encoder.layers", "decoder.layers"],
     gamma=0.99,
     use_backprop=False,
     keep_first_layer=False,

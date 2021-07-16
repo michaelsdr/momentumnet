@@ -122,7 +122,7 @@
   
   <section id="momentum-resnets">
 <h1>Momentum ResNets<a class="headerlink" href="#momentum-resnets" title="Permalink to this headline">¶</a></h1>
-<p>Official library for using Momentum Residual Neural Networks [1]. These models extend to notion of ResNets
+<p>Official library for using Momentum Residual Neural Networks [1]. These models extend ResNets
 to a larger class of deep learning models that consume less memory. They can be initialized with the
 same weights as a pretrained ResNet and are promising in fine-tuning applications.</p>
 <section id="installation">
@@ -180,7 +180,7 @@ so that activations are not saved during the forward pass, allowing smaller memo
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">momentumnet</span> <span class="kn">import</span> <span class="n">transform_to_momentumnet</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">transformer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Transformer</span><span class="p">(</span><span class="n">num_encoder_layers</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">num_decoder_layers</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mtransformer</span> <span class="o">=</span> <span class="n">transform_to_momentumnet</span><span class="p">(</span><span class="n">transformer</span><span class="p">,</span> <span class="n">residual_layers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;encoder.layers&quot;</span><span class="p">,</span> <span class="s2">&quot;decoder.layers&quot;</span><span class="p">],</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mtransformer</span> <span class="o">=</span> <span class="n">transform_to_momentumnet</span><span class="p">(</span><span class="n">transformer</span><span class="p">,</span> <span class="n">sub_layers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;encoder.layers&quot;</span><span class="p">,</span> <span class="s2">&quot;decoder.layers&quot;</span><span class="p">],</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>                                         <span class="n">use_backprop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">keep_first_layer</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>

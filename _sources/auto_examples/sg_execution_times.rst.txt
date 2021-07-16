@@ -5,16 +5,16 @@
 
 Computation times
 =================
-**04:04.214** total execution time for **auto_examples** files:
+**06:25.305** total execution time for **auto_examples** files:
 
 +-----------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_memory.py` (``plot_memory.py``)                                   | 01:48.192 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_separation_nested_rings.py` (``plot_separation_nested_rings.py``) | 02:15.477 | 0.0 MB |
 +-----------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_learning_digits.py` (``plot_learning_digits.py``)                 | 01:25.418 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_memory.py` (``plot_memory.py``)                                   | 01:57.412 | 0.0 MB |
 +-----------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_dynamics_1D.py` (``plot_dynamics_1D.py``)                         | 00:25.801 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_learning_digits.py` (``plot_learning_digits.py``)                 | 01:40.785 | 0.0 MB |
 +-----------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_separation_nested_rings.py` (``plot_separation_nested_rings.py``) | 00:24.803 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_dynamics_1D.py` (``plot_dynamics_1D.py``)                         | 00:31.631 | 0.0 MB |
 +-----------------------------------------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr_auto_examples_drop_in_replacement.py` (``drop_in_replacement.py``)                   | 00:00.000 | 0.0 MB |
 +-----------------------------------------------------------------------------------------------------+-----------+--------+

@@ -240,7 +240,7 @@ Plotting the learning curves
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 1 minutes  25.418 seconds)
+   **Total running time of the script:** ( 1 minutes  40.785 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_learning_digits.py:
