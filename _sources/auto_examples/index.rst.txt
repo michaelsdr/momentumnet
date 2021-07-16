@@ -59,6 +59,27 @@ Examples Gallery
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how a Momentum ResNet separates two nested rings">
+
+.. only:: html
+
+ .. figure:: /auto_examples/images/thumb/sphx_glr_plot_separation_nested_rings_thumb.png
+     :alt: Separation of nested rings using a Momentum ResNet.
+
+     :ref:`sphx_glr_auto_examples_plot_separation_nested_rings.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_separation_nested_rings
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="This example compares memory used when using a ResNet or a Momentum ResNet as a function of the...">
 
 .. only:: html
@@ -98,6 +119,27 @@ Examples Gallery
    :hidden:
 
    /auto_examples/drop_in_replacement_tutorial
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="In this example we train a Momentum ResNet and a ResNet on the sklearn digit dataset">
+
+.. only:: html
+
+ .. figure:: /auto_examples/images/thumb/sphx_glr_plot_learning_digits_thumb.png
+     :alt: Momentum ResNets on a digit learning task
+
+     :ref:`sphx_glr_auto_examples_plot_learning_digits.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_learning_digits
 
 .. raw:: html
 

@@ -68,8 +68,8 @@ Code adapted from https://github.com/lucidrains/vit-pytorch
         heads=16,
         mlp_dim=2048,
         dropout=0.1,
-        emb_dropout=0.1
-        )
+        emb_dropout=0.1,
+    )
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 45-47
@@ -107,15 +107,19 @@ Sequential form
 
 Now we can transform it to its momentum version
 
-.. GENERATED FROM PYTHON SOURCE LINES 63-68
+.. GENERATED FROM PYTHON SOURCE LINES 63-72
 
 .. code-block:: default
 
 
-    mv = transform_to_momentumnet(v, ['transformer'], gamma=0.9,
-                                  keep_first_layer=False,
-                                  use_backprop=False,
-                                  add_skip_connection=True)
+    mv = transform_to_momentumnet(
+        v,
+        ["transformer"],
+        gamma=0.9,
+        keep_first_layer=False,
+        use_backprop=False,
+        is_residual=True,
+    )
 
 
 .. rst-class:: sphx-glr-timing

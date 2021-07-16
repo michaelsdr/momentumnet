@@ -80,7 +80,7 @@ Fix random seed for reproducible figures
  .. code-block:: none
 
 
-    <torch._C.Generator object at 0x7fe181cbbcf0>
+    <torch._C.Generator object at 0x7ff16c94fcf0>
 
 
 
@@ -320,7 +320,7 @@ Plotting the output
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  29.994 seconds)
+   **Total running time of the script:** ( 0 minutes  25.801 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_dynamics_1D.py:

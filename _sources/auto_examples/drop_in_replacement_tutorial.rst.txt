@@ -46,7 +46,7 @@ on Machine Learning, PMLR 139:9276-9287
 Let us define a toy Neural Network
 ###################################
 
-.. GENERATED FROM PYTHON SOURCE LINES 25-73
+.. GENERATED FROM PYTHON SOURCE LINES 25-77
 
 .. code-block:: default
 
@@ -68,12 +68,16 @@ Let us define a toy Neural Network
     class Net(nn.Module):
         def __init__(self):
             super(Net, self).__init__()
-            self.res_layer1 = ResBlock(nn.Sequential(
-                *[
-                    nn.Sequential(nn.Linear(2, 10), nn.Tanh(), nn.Linear(10, 2))
-                    for _ in range(3)
-                ]
-            ))
+            self.res_layer1 = ResBlock(
+                nn.Sequential(
+                    *[
+                        nn.Sequential(
+                            nn.Linear(2, 10), nn.Tanh(), nn.Linear(10, 2)
+                        )
+                        for _ in range(3)
+                    ]
+                )
+            )
             self.l1 = nn.Linear(2, 4)
             self.layer2 = nn.Sequential(
                 *[
@@ -99,19 +103,19 @@ Let us define a toy Neural Network
     net = Net()
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 74-76
+.. GENERATED FROM PYTHON SOURCE LINES 78-80
 
 We want to transform it into its Momentum version
 ##################################################
 
-.. GENERATED FROM PYTHON SOURCE LINES 78-82
+.. GENERATED FROM PYTHON SOURCE LINES 82-86
 
 The first layer 'res_layer1' preserves dimension and is residual.
 It can be accessed through net.res_layer_1.functions so we will specify
 this attribute as the "sub_layers" parameter.
 One can transform this residual block into a momentum one as follow:
 
-.. GENERATED FROM PYTHON SOURCE LINES 82-92
+.. GENERATED FROM PYTHON SOURCE LINES 86-96
 
 .. code-block:: default
 
@@ -126,14 +130,14 @@ One can transform this residual block into a momentum one as follow:
     )
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 93-97
+.. GENERATED FROM PYTHON SOURCE LINES 97-101
 
 Note that layer2 is not residual but also preserves dimensions.
 It can be accessed through net.layer_2 so we will specify
 this attribute as the "sub_layers" parameter.
 One can transform it in the same way setting is_residual to False.
 
-.. GENERATED FROM PYTHON SOURCE LINES 97-107
+.. GENERATED FROM PYTHON SOURCE LINES 101-111
 
 .. code-block:: default
 
@@ -148,7 +152,7 @@ One can transform it in the same way setting is_residual to False.
     )
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 108-109
+.. GENERATED FROM PYTHON SOURCE LINES 112-113
 
 net, mnet1, and mnet have the same parameters.
 

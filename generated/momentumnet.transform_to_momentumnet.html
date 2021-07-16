@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>momentumnet.transform_to_momentumnet &#8212; momentumnet 0.9.dev documentation</title>
+    <title>momentumnet.transform_to_momentumnet &#8212; momentumnet 0.9 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
@@ -42,7 +42,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           momentumnet</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.9.dev</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.9</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -121,7 +121,8 @@
 <dd class="field-odd"><dl class="simple">
 <dt><strong>model</strong><span class="classifier">a torch model</span></dt><dd><p>The resnet one desires to turn into a Momentum ResNet.</p>
 </dd>
-<dt><strong>sub_layers</strong><span class="classifier">a list of strings</span></dt><dd><p>The name of the submodules of the model one desires to make invertible.</p>
+<dt><strong>sub_layers</strong><span class="classifier">a list of strings</span></dt><dd></dd>
+<dt><strong>(default [“layer1”, “layer2”, “layer3”, “layer4”])</strong></dt><dd><p>The name of the submodules of the model one desires to make invertible.</p>
 </dd>
 <dt><strong>keep_first_layer</strong><span class="classifier">bool (default: True)</span></dt><dd><p>Whether to leave to leave the first layer
 of each residual layer unchanged (useful if this first
@@ -146,7 +147,9 @@ layer changes the dimension of the input).</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">momentumnet</span> <span class="kn">import</span> <span class="n">transform_to_momentumnet</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torchvision.models</span> <span class="kn">import</span> <span class="n">resnet18</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">resnet</span> <span class="o">=</span> <span class="n">resnet18</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;layer1&quot;</span><span class="p">,</span> <span class="s2">&quot;layer2&quot;</span><span class="p">,</span> <span class="s2">&quot;layer3&quot;</span><span class="p">,</span> <span class="s2">&quot;layer4&quot;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mresnet</span> <span class="o">=</span> <span class="n">transform_to_momentumnet</span><span class="p">(</span><span class="n">resnet</span><span class="p">,</span>
+<span class="gp">... </span>                                   <span class="n">sub_layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span>
 <span class="gp">... </span>                                   <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span> <span class="n">use_backprop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>

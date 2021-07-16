@@ -71,7 +71,7 @@ Fix random seed for reproducible figures
  .. code-block:: none
 
 
-    <torch._C.Generator object at 0x7fe181cbbcf0>
+    <torch._C.Generator object at 0x7ff16c94fcf0>
 
 
 
@@ -80,7 +80,7 @@ Fix random seed for reproducible figures
 Parameters of the simulation
 #############################
 
-.. GENERATED FROM PYTHON SOURCE LINES 31-96
+.. GENERATED FROM PYTHON SOURCE LINES 31-92
 
 .. code-block:: default
 
@@ -139,12 +139,8 @@ Parameters of the simulation
 
     plt.figure(figsize=(8, 4))
 
-    plt.plot(
-        Depths, Mem_list_res, label="ResNet", linewidth=4, color="darkblue"
-    )
-    plt.plot(
-        Depths, Mem_list_mom, label="MomentumNet", linewidth=4, color="red"
-    )
+    plt.plot(Depths, Mem_list_res, label="ResNet", linewidth=4, color="darkblue")
+    plt.plot(Depths, Mem_list_mom, label="MomentumNet", linewidth=4, color="red")
     y_ = plt.ylabel("Memory (MiB)")
     x_ = plt.xlabel("Depth")
     plt.legend()
@@ -157,23 +153,13 @@ Parameters of the simulation
     :class: sphx-glr-single-img
 
 
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    /home/circleci/project/momentumnet/exact_rep_pytorch.py:73: UserWarning: floor_divide is deprecated, and will be removed in a future version of pytorch. It currently rounds toward 0 (like the 'trunc' function NOT 'floor'). This results in incorrect rounding for negative values.
-    To keep the current behavior, use torch.div(a, b, rounding_mode='trunc'), or for actual floor division, use torch.div(a, b, rounding_mode='floor'). (Triggered internally at  /pytorch/aten/src/ATen/native/BinaryOps.cpp:450.)
-      self.intrep //= d  # Divide by denominator
-
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 1 minutes  32.045 seconds)
+   **Total running time of the script:** ( 1 minutes  48.192 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_memory.py:
