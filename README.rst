@@ -27,7 +27,7 @@ pip
 
 To install ``momentumet``, you first need to install its dependencies::
 
-	$ pip install numpy matplotlib numexpr scipy
+	$ pip install numpy matplotlib torch
 
 Then install momentumnet with pip::
 
