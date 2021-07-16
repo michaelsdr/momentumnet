@@ -75,11 +75,10 @@ for i in range(n_epochs):
     if i % 30 == 0:
         print("itr %s, loss = %.3f" % (i, loss.item()))
         print("- " * 20)
-    if i % 1 == 0:
-        _, pred = mresnet(X_test).max(1)
-        test_error_mresnet.append(
-            (1 - pred.eq(y_test).sum().item() / y_test.shape[0]) * 100
-        )
+    _, pred = mresnet(X_test).max(1)
+    test_error_mresnet.append(
+        (1 - pred.eq(y_test).sum().item() / y_test.shape[0]) * 100
+    )
 
 
 #########################
@@ -110,11 +109,10 @@ for i in range(n_epochs):
     if i % 30 == 0:
         print("itr %s, loss = %.3f" % (i, loss.item()))
         print("- " * 20)
-    if i % 1 == 0:
-        _, pred = resnet(X_test).max(1)
-        test_error_resnet.append(
-            (1 - pred.eq(y_test).sum().item() / y_test.shape[0]) * 100
-        )
+    _, pred = resnet(X_test).max(1)
+    test_error_resnet.append(
+        (1 - pred.eq(y_test).sum().item() / y_test.shape[0]) * 100
+    )
 
 #####################################
 # Plotting the learning curves

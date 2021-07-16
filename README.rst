@@ -107,7 +107,7 @@ These are the dependencies to use momentumnet:
 
 * numpy (>=1.8)
 * matplotlib (>=1.3)
-* torch (>= 1.7)
+* torch (>= 1.9)
 * memory_profiler
 * vit_pytorch
 
