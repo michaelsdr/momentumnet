@@ -5,16 +5,14 @@
 
 Computation times
 =================
-**06:25.305** total execution time for **auto_examples** files:
+**14:51.951** total execution time for **auto_examples** files:
 
 +-----------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_separation_nested_rings.py` (``plot_separation_nested_rings.py``) | 02:15.477 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_memory.py` (``plot_memory.py``)                                   | 12:24.169 | 0.0 MB |
 +-----------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_memory.py` (``plot_memory.py``)                                   | 01:57.412 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_separation_nested_rings.py` (``plot_separation_nested_rings.py``) | 01:31.718 | 0.0 MB |
 +-----------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_learning_digits.py` (``plot_learning_digits.py``)                 | 01:40.785 | 0.0 MB |
-+-----------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_plot_dynamics_1D.py` (``plot_dynamics_1D.py``)                         | 00:31.631 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_plot_dynamics_1D.py` (``plot_dynamics_1D.py``)                         | 00:56.065 | 0.0 MB |
 +-----------------------------------------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr_auto_examples_drop_in_replacement.py` (``drop_in_replacement.py``)                   | 00:00.000 | 0.0 MB |
 +-----------------------------------------------------------------------------------------------------+-----------+--------+
