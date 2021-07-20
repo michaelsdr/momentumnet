@@ -26,7 +26,7 @@ from momentumnet import transform_to_momentumnet
 from torchvision.models import resnet18
 
 resnet = resnet18()
-mresnet18 = transform_to_momentumnet(resnet, gamma=0.99, use_backprop=False)
+mresnet18 = transform_to_momentumnet(resnet, gamma=0.9, use_backprop=False)
 
 ##########################################
 # It naturally extends the original ResNet
@@ -34,7 +34,7 @@ mresnet18 = transform_to_momentumnet(resnet, gamma=0.99, use_backprop=False)
 x = torch.rand((64, 3, 7, 7))
 resnet = resnet18()
 lx = resnet(x)
-mresnet = transform_to_momentumnet(resnet, gamma=0.0, use_backprop=False)
+mresnet = transform_to_momentumnet(resnet, gamma=0.0)
 # gamma = 0 should gives the exacts same model
 print(((resnet(x) - mresnet(x)) ** 2).sum())
 
@@ -47,7 +47,7 @@ transformer = torch.nn.Transformer(num_encoder_layers=6, num_decoder_layers=6)
 mtransformer = transform_to_momentumnet(
     transformer,  # Specify the sublayers to transform
     sub_layers=["encoder.layers", "decoder.layers"],
-    gamma=0.99,
+    gamma=0.9,
     use_backprop=False,
     keep_first_layer=False,
 )

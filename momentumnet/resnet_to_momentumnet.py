@@ -53,7 +53,7 @@ def transform_to_momentumnet(
     >>> layers = ["layer1", "layer2", "layer3", "layer4"]
     >>> mresnet = transform_to_momentumnet(resnet,
     ...                                    sub_layers=layers,
-    ...                                    gamma=0.99, use_backprop=False)
+    ...                                    gamma=0.9, use_backprop=False)
 
     >>> import torch
     >>> from momentumnet import transform_to_momentumnet
@@ -62,7 +62,7 @@ def transform_to_momentumnet(
     >>> layers = ["encoder.layers", "decoder.layers"]
     >>> mtransformer = transform_to_momentumnet(transformer,
     ...                                         sub_layers=layers,
-    ...                                         gamma=0.99,
+    ...                                         gamma=0.9,
     ...                                         use_backprop=False,
     ...                                         keep_first_layer=False)
 

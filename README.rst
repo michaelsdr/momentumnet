@@ -69,7 +69,7 @@ and the value of the momentum term, gamma.
    >>> hidden = 8
    >>> d = 500
    >>> function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
-   >>> mresnet = MomentumNet([function,] * 10, gamma=0.99)
+   >>> mresnet = MomentumNet([function,] * 10, gamma=0.9)
 
 Momentum ResNets are a drop-in replacement for ResNets
 ------------------------------------------------------
@@ -83,9 +83,9 @@ so that activations are not saved during the forward pass, allowing smaller memo
 
    >>> import torch
    >>> from momentumnet import transform_to_momentumnet
-   >>> from torchvision.models import resnet18
-   >>> resnet = resnet18(pretrained=True)
-   >>> mresnet18 = transform_to_momentumnet(resnet, gamma=0.99, use_backprop=False)
+   >>> from torchvision.models import resnet101
+   >>> resnet = resnet101(pretrained=True)
+   >>> mresnet101 = transform_to_momentumnet(resnet, gamma=0.9, use_backprop=False)
 
 
 Importantly, this method also works with Pytorch Transformers module, specifying the residual layers to be turned into their Momentum version.
@@ -95,7 +95,7 @@ Importantly, this method also works with Pytorch Transformers module, specifying
    >>> import torch
    >>> from momentumnet import transform_to_momentumnet
    >>> transformer = torch.nn.Transformer(num_encoder_layers=6, num_decoder_layers=6)
-   >>> mtransformer = transform_to_momentumnet(transformer, sub_layers=["encoder.layers", "decoder.layers"], gamma=0.99,
+   >>> mtransformer = transform_to_momentumnet(transformer, sub_layers=["encoder.layers", "decoder.layers"], gamma=0.9,
    >>>                                          use_backprop=False, keep_first_layer=False)
 
 This initiates a Momentum Transformer with the same weights as the original Transformer.
