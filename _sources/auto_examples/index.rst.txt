@@ -17,14 +17,14 @@ Examples Gallery
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This illustrates on two simple examples how to replace a ResNet with a MomentumNet ">
+    <div class="sphx-glr-thumbcontainer" tooltip="This illustrates on a more complex example how to replace an existing ResNet with a MomentumNet...">
 
 .. only:: html
 
- .. figure:: /auto_examples/images/thumb/sphx_glr_plot_drop_in_replacement_thumb.png
-     :alt: Momentum ResNets are a drop-in replacement for ResNets
+ .. figure:: /auto_examples/images/thumb/sphx_glr_drop_in_replacement_advanced_thumb.png
+     :alt: From ResNets to Momentum ResNets 3)
 
-     :ref:`sphx_glr_auto_examples_plot_drop_in_replacement.py`
+     :ref:`sphx_glr_auto_examples_drop_in_replacement_advanced.py`
 
 .. raw:: html
 
@@ -34,7 +34,49 @@ Examples Gallery
 .. toctree::
    :hidden:
 
-   /auto_examples/plot_drop_in_replacement
+   /auto_examples/drop_in_replacement_advanced
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This illustrates on two simple examples how to replace an existing ResNet with a MomentumNet.">
+
+.. only:: html
+
+ .. figure:: /auto_examples/images/thumb/sphx_glr_drop_in_replacement_thumb.png
+     :alt: From ResNets to Momentum ResNets 2)
+
+     :ref:`sphx_glr_auto_examples_drop_in_replacement.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/drop_in_replacement
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how a Momentum ResNet separates two nested rings">
+
+.. only:: html
+
+ .. figure:: /auto_examples/images/thumb/sphx_glr_plot_separation_nested_rings_thumb.png
+     :alt: Separation of nested rings using a Momentum ResNet.
+
+     :ref:`sphx_glr_auto_examples_plot_separation_nested_rings.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_separation_nested_rings
 
 .. raw:: html
 
@@ -59,7 +101,28 @@ Examples Gallery
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example compares the dynamics of a ResNet and a Momentum ResNet">
+    <div class="sphx-glr-thumbcontainer" tooltip="This is a tutorial to use the transform_to_momentumnet method:">
+
+.. only:: html
+
+ .. figure:: /auto_examples/images/thumb/sphx_glr_drop_in_replacement_tutorial_thumb.png
+     :alt: From ResNets to Momentum ResNets 1)
+
+     :ref:`sphx_glr_auto_examples_drop_in_replacement_tutorial.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/drop_in_replacement_tutorial
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example compares the dynamics of a ResNet and a Momentum ResNet. We try to learn a mapping...">
 
 .. only:: html
 

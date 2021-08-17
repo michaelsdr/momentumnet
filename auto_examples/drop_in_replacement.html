@@ -1,0 +1,199 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>From ResNets to Momentum ResNets 2) &#8212; momentumnet 0.9 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          momentumnet</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.9</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="index.html">Examples</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="https://github.com/michaelsdr/momentumnet">GitHub</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Documentation</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">From ResNets to Momentum ResNets 2)</a><ul>
+<li><a class="reference internal" href="#a-torchvision-model">A torchvision model</a></li>
+<li><a class="reference internal" href="#a-natural-language-transformer-model">A Natural Language Transformer model</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/auto_examples/drop_in_replacement.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container content-container">
+  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-drop-in-replacement-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="from-resnets-to-momentum-resnets-2">
+<span id="sphx-glr-auto-examples-drop-in-replacement-py"></span><h1>From ResNets to Momentum ResNets 2)<a class="headerlink" href="#from-resnets-to-momentum-resnets-2" title="Permalink to this headline">¶</a></h1>
+<p>This illustrates on two simple examples how to replace an existing
+ResNet with a MomentumNet.</p>
+<p>Michael E. Sander, Pierre Ablin, Mathieu Blondel,
+Gabriel Peyre. Momentum Residual Neural Networks.
+Proceedings of the 38th International Conference
+on Machine Learning, PMLR 139:9276-9287</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Authors: Michael Sander, Pierre Ablin</span>
+<span class="c1"># License: MIT</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">momentumnet</span> <span class="kn">import</span> <a href="../generated/momentumnet.transform_to_momentumnet.html#momentumnet.transform_to_momentumnet" title="momentumnet.transform_to_momentumnet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-function"><span class="n">transform_to_momentumnet</span></a>
+</pre></div>
+</div>
+<section id="a-torchvision-model">
+<h2>A torchvision model<a class="headerlink" href="#a-torchvision-model" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torchvision.models</span> <span class="kn">import</span> <span class="n">resnet18</span>
+
+<span class="n">resnet</span> <span class="o">=</span> <span class="n">resnet18</span><span class="p">()</span>
+<span class="n">mresnet18</span> <span class="o">=</span> <a href="../generated/momentumnet.transform_to_momentumnet.html#momentumnet.transform_to_momentumnet" title="momentumnet.transform_to_momentumnet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-function"><span class="n">transform_to_momentumnet</span></a><span class="p">(</span><span class="n">resnet</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">use_backprop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It naturally extends the original ResNet</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">((</span><span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+<span class="n">resnet</span> <span class="o">=</span> <span class="n">resnet18</span><span class="p">()</span>
+<span class="n">lx</span> <span class="o">=</span> <span class="n">resnet</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">mresnet</span> <span class="o">=</span> <a href="../generated/momentumnet.transform_to_momentumnet.html#momentumnet.transform_to_momentumnet" title="momentumnet.transform_to_momentumnet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-function"><span class="n">transform_to_momentumnet</span></a><span class="p">(</span><span class="n">resnet</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="c1"># gamma = 0 should gives the exacts same model</span>
+<span class="nb">print</span><span class="p">(((</span><span class="n">resnet</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">mresnet</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="a-natural-language-transformer-model">
+<h2>A Natural Language Transformer model<a class="headerlink" href="#a-natural-language-transformer-model" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">transformer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Transformer</span><span class="p">(</span><span class="n">num_encoder_layers</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">num_decoder_layers</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">mtransformer</span> <span class="o">=</span> <a href="../generated/momentumnet.transform_to_momentumnet.html#momentumnet.transform_to_momentumnet" title="momentumnet.transform_to_momentumnet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-function"><span class="n">transform_to_momentumnet</span></a><span class="p">(</span>
+    <span class="n">transformer</span><span class="p">,</span>  <span class="c1"># Specify the sublayers to transform</span>
+    <span class="n">sub_layers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;encoder.layers&quot;</span><span class="p">,</span> <span class="s2">&quot;decoder.layers&quot;</span><span class="p">],</span>
+    <span class="n">gamma</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">use_backprop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">keep_first_layer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-drop-in-replacement-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/0c2691998531f4b3d857a9d94875912f/drop_in_replacement.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">drop_in_replacement.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/63ec013bf14d753acbda3af7eac19e58/drop_in_replacement.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">drop_in_replacement.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+</div>
+
+<!-- Github "fork me" ribbon -->
+<a href="https://github.com/michaelsdr/momentumnet"><img style="position: absolute; top: 50px; right: 0; border: 0;"
+src="https://camo.githubusercontent.com/652c5b9acfaddf3a9c326fa6bde407b87f7be0f4/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67"
+alt="Fork me on GitHub"
+data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"></a>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Michael Sander.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

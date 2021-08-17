@@ -1,4 +1,4 @@
-momentumnet.MomentumNet
+﻿momentumnet.MomentumNet
 =======================
 
 .. currentmodule:: momentumnet
@@ -65,5 +65,6 @@ momentumnet.MomentumNet
       ~MomentumNet.dump_patches
       ~MomentumNet.functions
       ~MomentumNet.init_function
+      ~MomentumNet.training
    
    

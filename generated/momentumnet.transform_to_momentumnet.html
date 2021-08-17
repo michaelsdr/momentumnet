@@ -4,19 +4,19 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>momentumnet.transform_to_momentumnet &#8212; momentumnet 0.9.dev documentation</title>
-    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>momentumnet.transform_to_momentumnet &#8212; momentumnet 0.9 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="momentumnet.MomentumNet" href="momentumnet.MomentumNet.html" />
@@ -42,7 +42,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           momentumnet</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.9.dev</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.9</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -110,38 +110,64 @@
 
 <div class="container content-container">
   
-  <div class="section" id="momentumnet-transform-to-momentumnet">
+  <section id="momentumnet-transform-to-momentumnet">
 <h1>momentumnet.transform_to_momentumnet<a class="headerlink" href="#momentumnet-transform-to-momentumnet" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt id="momentumnet.transform_to_momentumnet">
-<code class="sig-prename descclassname">momentumnet.</code><code class="sig-name descname">transform_to_momentumnet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">residual_layers</span><span class="o">=</span><span class="default_value">['layer1', 'layer2', 'layer3', 'layer4']</span></em>, <em class="sig-param"><span class="n">keep_first_layer</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">gamma</span><span class="o">=</span><span class="default_value">0.9</span></em>, <em class="sig-param"><span class="n">use_backprop</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">add_skip_connection</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#momentumnet.transform_to_momentumnet" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="momentumnet.transform_to_momentumnet">
+<span class="sig-prename descclassname"><span class="pre">momentumnet.</span></span><span class="sig-name descname"><span class="pre">transform_to_momentumnet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['layer1',</span> <span class="pre">'layer2',</span> <span class="pre">'layer3',</span> <span class="pre">'layer4']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_first_layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_backprop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_residual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#momentumnet.transform_to_momentumnet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the MomentumNet counterpart of the model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>model</strong><span class="classifier">a torch model</span></dt><dd><p>The resnet one desires to turn into a Momentum ResNet.</p>
 </dd>
-<dt><strong>residual_layers</strong><span class="classifier">a list of strings</span></dt><dd><p>The name of the submodules of the model one desires to make invertible.</p>
+<dt><strong>sub_layers</strong><span class="classifier">a list of strings</span></dt><dd></dd>
+<dt><strong>(default [“layer1”, “layer2”, “layer3”, “layer4”])</strong></dt><dd><p>The name of the submodules of the model one desires to make invertible.</p>
 </dd>
 <dt><strong>keep_first_layer</strong><span class="classifier">bool (default: True)</span></dt><dd><p>Whether to leave to leave the first layer
 of each residual layer unchanged (useful if this first
-layer changes the dimension of the input)</p>
+layer changes the dimension of the input).</p>
 </dd>
 <dt><strong>gamma</strong><span class="classifier">float (default: 0.9)</span></dt><dd><p>The momentum term for the Momentum ResNet.</p>
 </dd>
 <dt><strong>use_backprop</strong><span class="classifier">bool (default: False)</span></dt><dd><p>If True then the Momentum ResNet has a smaller memory footprint.</p>
 </dd>
-<dt><strong>add_skip_connection</strong><span class="classifier">bool (default: False)</span></dt><dd><p>If True then the forward rule is x + f(x)</p>
+<dt><strong>is_residual</strong><span class="classifier">bool (default: False)</span></dt><dd><p>If True then the forward rule is x + f(x)</p>
 </dd>
-<dt><strong>Return</strong></dt><dd></dd>
-<dt><strong>——</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
 <dt><strong>mresnet</strong><span class="classifier">the MomentumNet ResNet counterpart of model</span></dt><dd></dd>
 </dl>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">momentumnet</span> <span class="kn">import</span> <span class="n">transform_to_momentumnet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torchvision.models</span> <span class="kn">import</span> <span class="n">resnet18</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resnet</span> <span class="o">=</span> <span class="n">resnet18</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;layer1&quot;</span><span class="p">,</span> <span class="s2">&quot;layer2&quot;</span><span class="p">,</span> <span class="s2">&quot;layer3&quot;</span><span class="p">,</span> <span class="s2">&quot;layer4&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mresnet</span> <span class="o">=</span> <span class="n">transform_to_momentumnet</span><span class="p">(</span><span class="n">resnet</span><span class="p">,</span>
+<span class="gp">... </span>                                   <span class="n">sub_layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span>
+<span class="gp">... </span>                                   <span class="n">gamma</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">use_backprop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">momentumnet</span> <span class="kn">import</span> <span class="n">transform_to_momentumnet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">transformer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Transformer</span><span class="p">(</span><span class="n">num_encoder_layers</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+<span class="gp">... </span>                                   <span class="n">num_decoder_layers</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;encoder.layers&quot;</span><span class="p">,</span> <span class="s2">&quot;decoder.layers&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mtransformer</span> <span class="o">=</span> <span class="n">transform_to_momentumnet</span><span class="p">(</span><span class="n">transformer</span><span class="p">,</span>
+<span class="gp">... </span>                                        <span class="n">sub_layers</span><span class="o">=</span><span class="n">layers</span><span class="p">,</span>
+<span class="gp">... </span>                                        <span class="n">gamma</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+<span class="gp">... </span>                                        <span class="n">use_backprop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="gp">... </span>                                        <span class="n">keep_first_layer</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
-</div>
+</section>
 
 
 </div>
@@ -159,7 +185,7 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
     </p>
     <p>
         &copy; Copyright 2021, Michael Sander.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.1.2.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
     </p>
   </div>
 </footer>
