@@ -38,7 +38,7 @@ The main class is MomentumNet. It creates a Momentum ResNet that iterates
 
 .. math::
 
-    v_{t + 1} = (1 - \gamma) * v_t + \gamma * f_t(x_t) \\
+    v_{t + 1} = \gamma * v_t + (1 - \gamma) * f_t(x_t) \\
     x_{t + 1} = x_t + v_{t + 1}
 
 
