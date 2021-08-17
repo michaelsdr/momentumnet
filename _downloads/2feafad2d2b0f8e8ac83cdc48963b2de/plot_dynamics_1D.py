@@ -3,21 +3,13 @@
 Plotting the dynamics in 1D
 ==================================
 
-This example compares the dynamics of a ResNet and a Momentum ResNet. We try to learn a mapping with crossing
-trajectories. Trajectories corresponding to the ResNet fail to cross. On the opposite, the Momentum ResNet 
-learns the desired mapping.
-
-
-Michael E. Sander, Pierre Ablin, Mathieu Blondel,
-Gabriel Peyre. Momentum Residual Neural Networks.
-Proceedings of the 38th International Conference 
-on Machine Learning, PMLR 139:9276-9287
-
+This example compares the dynamics of a ResNet and a Momentum ResNet
 
 """  # noqa
 
 # Authors: Michael Sander, Pierre Ablin
 # License: MIT
+import os
 import copy
 
 import torch
@@ -29,6 +21,8 @@ import torch.optim as optim
 from momentumnet import MomentumNet
 from momentumnet.toy_datasets import make_data_1D
 
+if not os.path.isdir("figures"):
+    os.mkdir("figures")
 ###########################################
 # Fix random seed for reproducible figures
 ###########################################
@@ -43,18 +37,8 @@ hidden = 16
 n_iters = 15
 gamma = 0.99
 d = 1
-
-
-#############################################
-# Defining the functions for the forward pass
-#############################################
-
 function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
 function_res = copy.deepcopy(function)
-
-#####################
-# Defining our models
-#####################
 
 mom_net = MomentumNet(
     [
@@ -73,10 +57,6 @@ res_net = MomentumNet(
     init_speed=0,
 )
 
-#########################################################
-# Training our models to learn a non-homeomorphic mapping
-#########################################################
-
 
 def h(x):
     return -(x ** 3)
@@ -88,7 +68,9 @@ def Loss(pred, x):
 
 optimizer = optim.SGD(mom_net.parameters(), lr=0.01)
 
+# Training
 
+print("MomentumNet ->")
 for i in range(301):
     optimizer.zero_grad()
     x = make_data_1D(200)
@@ -96,10 +78,16 @@ for i in range(301):
     loss = Loss(pred, x)
     loss.backward()
     optimizer.step()
+    if i % 100 == 0:
+        print("- " * 20)
+        print("itr %s, loss = %.3f" % (i, loss.item()))
+
+print("- " * 40)
 
 optimizer = optim.SGD(res_net.parameters(), lr=0.01)
 
 
+print("ResNet -->")
 for i in range(2001):
     optimizer.zero_grad()
     x = make_data_1D(200)
@@ -107,10 +95,12 @@ for i in range(2001):
     loss = Loss(pred, x)
     loss.backward()
     optimizer.step()
+    if i % 100 == 0:
+        print("- " * 20)
+        print("itr %s, loss = %.3f" % (i, loss.item()))
 
-#####################
-# Plotting the output
-#####################
+
+# Plot the output
 
 
 n_plot = 8
@@ -149,10 +139,9 @@ for i in range(1, n_iters + 1):
 plt.plot(preds, x_axis, "-x", lw=2.5)
 plt.xticks([], [])
 plt.yticks([], [])
-plt.title("Momentum ResNet")
 plt.ylabel("Depth")
 plt.xlabel("Input")
-plt.show()
+plt.savefig("figures/mom_net_dynamics_1D.pdf")
 
 num_plots = n_plot
 
@@ -184,7 +173,6 @@ for i in range(1, n_iters + 1):
 plt.plot(preds_res, x_axis, "-x", lw=2.5)
 plt.xticks([], [])
 plt.yticks([], [])
-plt.title("ResNet")
 plt.ylabel("Depth")
 plt.xlabel("Input")
-plt.show()
+plt.savefig("figures/res_net_dynamics_1D.pdf")

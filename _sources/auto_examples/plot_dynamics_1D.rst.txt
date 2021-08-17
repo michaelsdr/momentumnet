@@ -22,23 +22,16 @@
 Plotting the dynamics in 1D
 ==================================
 
-This example compares the dynamics of a ResNet and a Momentum ResNet. We try to learn a mapping with crossing
-trajectories. Trajectories corresponding to the ResNet fail to cross. On the opposite, the Momentum ResNet 
-learns the desired mapping.
+This example compares the dynamics of a ResNet and a Momentum ResNet
 
-
-Michael E. Sander, Pierre Ablin, Mathieu Blondel,
-Gabriel Peyre. Momentum Residual Neural Networks.
-Proceedings of the 38th International Conference 
-on Machine Learning, PMLR 139:9276-9287
-
-.. GENERATED FROM PYTHON SOURCE LINES 18-32
+.. GENERATED FROM PYTHON SOURCE LINES 9-26
 
 .. code-block:: default
 
 
     # Authors: Michael Sander, Pierre Ablin
     # License: MIT
+    import os
     import copy
 
     import torch
@@ -50,19 +43,15 @@ on Machine Learning, PMLR 139:9276-9287
     from momentumnet import MomentumNet
     from momentumnet.toy_datasets import make_data_1D
 
+    if not os.path.isdir("figures"):
+        os.mkdir("figures")
 
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 33-35
+.. GENERATED FROM PYTHON SOURCE LINES 27-29
 
 Fix random seed for reproducible figures
 ##########################################
 
-.. GENERATED FROM PYTHON SOURCE LINES 35-38
+.. GENERATED FROM PYTHON SOURCE LINES 29-32
 
 .. code-block:: default
 
@@ -70,26 +59,12 @@ Fix random seed for reproducible figures
     torch.manual_seed(1)
 
 
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-
-    <torch._C.Generator object at 0x7fa7b5780cf0>
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 39-41
+.. GENERATED FROM PYTHON SOURCE LINES 33-35
 
 Parameters of the simulation
 #############################
 
-.. GENERATED FROM PYTHON SOURCE LINES 41-48
+.. GENERATED FROM PYTHON SOURCE LINES 35-179
 
 .. code-block:: default
 
@@ -98,44 +73,8 @@ Parameters of the simulation
     n_iters = 15
     gamma = 0.99
     d = 1
-
-
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 49-51
-
-Defining the functions for the forward pass
-############################################
-
-.. GENERATED FROM PYTHON SOURCE LINES 51-55
-
-.. code-block:: default
-
-
     function = nn.Sequential(nn.Linear(d, hidden), nn.Tanh(), nn.Linear(hidden, d))
     function_res = copy.deepcopy(function)
-
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 56-58
-
-Defining our models
-####################
-
-.. GENERATED FROM PYTHON SOURCE LINES 58-76
-
-.. code-block:: default
-
 
     mom_net = MomentumNet(
         [
@@ -155,23 +94,6 @@ Defining our models
     )
 
 
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 77-79
-
-Training our models to learn a non-homeomorphic mapping
-########################################################
-
-.. GENERATED FROM PYTHON SOURCE LINES 79-111
-
-.. code-block:: default
-
-
-
     def h(x):
         return -(x ** 3)
 
@@ -182,7 +104,9 @@ Training our models to learn a non-homeomorphic mapping
 
     optimizer = optim.SGD(mom_net.parameters(), lr=0.01)
 
+    # Training
 
+    print("MomentumNet ->")
     for i in range(301):
         optimizer.zero_grad()
         x = make_data_1D(200)
@@ -190,10 +114,16 @@ Training our models to learn a non-homeomorphic mapping
         loss = Loss(pred, x)
         loss.backward()
         optimizer.step()
+        if i % 100 == 0:
+            print("- " * 20)
+            print("itr %s, loss = %.3f" % (i, loss.item()))
+
+    print("- " * 40)
 
     optimizer = optim.SGD(res_net.parameters(), lr=0.01)
 
 
+    print("ResNet -->")
     for i in range(2001):
         optimizer.zero_grad()
         x = make_data_1D(200)
@@ -201,23 +131,12 @@ Training our models to learn a non-homeomorphic mapping
         loss = Loss(pred, x)
         loss.backward()
         optimizer.step()
+        if i % 100 == 0:
+            print("- " * 20)
+            print("itr %s, loss = %.3f" % (i, loss.item()))
 
 
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 112-114
-
-Plotting the output
-####################
-
-.. GENERATED FROM PYTHON SOURCE LINES 114-191
-
-.. code-block:: default
-
+    # Plot the output
 
 
     n_plot = 8
@@ -256,10 +175,9 @@ Plotting the output
     plt.plot(preds, x_axis, "-x", lw=2.5)
     plt.xticks([], [])
     plt.yticks([], [])
-    plt.title("Momentum ResNet")
     plt.ylabel("Depth")
     plt.xlabel("Input")
-    plt.show()
+    plt.savefig("figures/mom_net_dynamics_1D.pdf")
 
     num_plots = n_plot
 
@@ -291,36 +209,14 @@ Plotting the output
     plt.plot(preds_res, x_axis, "-x", lw=2.5)
     plt.xticks([], [])
     plt.yticks([], [])
-    plt.title("ResNet")
     plt.ylabel("Depth")
     plt.xlabel("Input")
-    plt.show()
-
-
-
-.. rst-class:: sphx-glr-horizontal
-
-
-    *
-
-      .. image:: /auto_examples/images/sphx_glr_plot_dynamics_1D_001.png
-          :alt: Momentum ResNet
-          :class: sphx-glr-multi-img
-
-    *
-
-      .. image:: /auto_examples/images/sphx_glr_plot_dynamics_1D_002.png
-          :alt: ResNet
-          :class: sphx-glr-multi-img
-
-
-
-
+    plt.savefig("figures/res_net_dynamics_1D.pdf")
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  56.065 seconds)
+   **Total running time of the script:** ( 0 minutes  0.000 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_dynamics_1D.py:

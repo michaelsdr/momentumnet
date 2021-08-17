@@ -1,4 +1,4 @@
-﻿momentumnet.transform\_to\_momentumnet
+momentumnet.transform\_to\_momentumnet
 ======================================
 
 .. currentmodule:: momentumnet

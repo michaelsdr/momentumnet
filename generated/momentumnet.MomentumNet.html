@@ -4,19 +4,19 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
-    <title>momentumnet.MomentumNet &#8212; momentumnet 0.9 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>momentumnet.MomentumNet &#8212; momentumnet 0.9.dev documentation</title>
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="momentumnet.transform_to_momentumnet" href="momentumnet.transform_to_momentumnet.html" />
@@ -43,7 +43,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           momentumnet</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.9</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.9.dev</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -111,87 +111,52 @@
 
 <div class="container content-container">
   
-  <section id="momentumnet-momentumnet">
+  <div class="section" id="momentumnet-momentumnet">
 <h1>momentumnet.MomentumNet<a class="headerlink" href="#momentumnet-momentumnet" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="momentumnet.MomentumNet">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">momentumnet.</span></span><span class="sig-name descname"><span class="pre">MomentumNet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">functions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_speed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_backprop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_residual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#momentumnet.MomentumNet" title="Permalink to this definition">¶</a></dt>
+<dt id="momentumnet.MomentumNet">
+<em class="property">class </em><code class="sig-prename descclassname">momentumnet.</code><code class="sig-name descname">MomentumNet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">functions</span></em>, <em class="sig-param"><span class="n">gamma</span></em>, <em class="sig-param"><span class="n">init_speed</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">init_function</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_backprop</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#momentumnet.MomentumNet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a Momentum Residual Network.</p>
-<p>It iterates</p>
+<p>It iterates:</p>
 <p>v_{t + 1} = (1 - gamma) * v_t + gamma * f_t(x_t)
 x_{t + 1} = x_t + v_{t + 1}</p>
 <p>where the f_t are stored in <cite>functions</cite>.
 These forward equations can be reversed in closed-form,
 enabling learning without backpropagation. This process
 trades memory for computations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>functions</strong><span class="classifier">list of modules, list of Sequential or Sequential</span></dt><dd><p>a list of Sequential to define the transformation at each layer.
-Each function in the list can take additional inputs. ‘x’ is assumed
-to be the first input.</p>
-</dd>
-<dt><strong>gamma</strong><span class="classifier">float</span></dt><dd><p>the momentum term</p>
-</dd>
-<dt><strong>init_speed</strong><span class="classifier">bool (default: False)</span></dt><dd><p>if init_speed is True then specify an init_function for the velocity v</p>
-</dd>
-<dt><strong>init_function</strong><span class="classifier">Sequential (default: None)</span></dt><dd><p>to initialize the velocity to init_function(x) before the forward pass</p>
-</dd>
-<dt><strong>use_backprop</strong><span class="classifier">bool (default: True)</span></dt><dd><p>if True then standard backpropagation is used,
-if False activations are not
-saved during the forward pass allowing memory savings</p>
-</dd>
-<dt><strong>is_residual</strong><span class="classifier">Bool (default: True)</span></dt><dd><p>if True then the update rule is
-v_{t + 1} = (1 - gamma) * v_t + gamma * f_t(x_t)
-if False then the update rule is
-v_{t + 1} = (1 - gamma) * v_t + gamma * (f_t(x_t) - x_t)</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Implementation based on
-<em>Michael E. Sander, Pierre Ablin, Mathieu Blondel,
-Gabriel Peyre. Momentum Residual Neural Networks.
-Proceedings of the 38th International Conference
-on Machine Learning, PMLR 139:9276-9287</em></p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">momentumnet</span> <span class="kn">import</span> <span class="n">MomentumNet</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">hidden</span> <span class="o">=</span> <span class="mi">8</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="mi">50</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">function</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">hidden</span><span class="p">),</span>
-<span class="gp">... </span>                          <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mresnet</span> <span class="o">=</span> <span class="n">MomentumNet</span><span class="p">([</span><span class="n">function</span><span class="p">,]</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mresnet</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">torch.Size([10, 50])</span>
-</pre></div>
-</div>
+<p>…</p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>functions</strong></dt><dd></dd>
-<dt><strong>init_function</strong></dt><dd></dd>
+<dt><strong>functions</strong><span class="classifier">list of nn, list of Sequential or Sequential</span></dt><dd><p>a list of Sequential to define the transformation at each layer</p>
+</dd>
+<dt><strong>gamma</strong><span class="classifier">float</span></dt><dd><p>the momentum term</p>
+</dd>
+<dt><strong>init_speed</strong><span class="classifier">bool</span></dt><dd><p>Whether to initialize v as 0 or as a function of the input.</p>
+</dd>
+<dt><strong>init_function</strong><span class="classifier">Sequential</span></dt><dd><p>The initial function</p>
+</dd>
+<dt><strong>use_backprop</strong><span class="classifier">bool</span></dt><dd><p>Whether to use backprop or not to compute the gradient of
+the parameters.</p>
+</dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 47%" />
-<col style="width: 53%" />
+<col style="width: 44%" />
+<col style="width: 56%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><strong>forward(x, *args, **kwargs)</strong></p></td>
+<tr class="row-odd"><td><p><strong>forward(x, n_iters=None)</strong></p></td>
 <td><p>maps x to the output of the network</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py method">
-<dt class="sig sig-object py" id="momentumnet.MomentumNet.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">functions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_speed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_backprop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_residual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#momentumnet.MomentumNet.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="momentumnet.MomentumNet.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">functions</span></em>, <em class="sig-param"><span class="n">gamma</span></em>, <em class="sig-param"><span class="n">init_speed</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">init_function</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_backprop</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#momentumnet.MomentumNet.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p>
 </dd></dl>
 
@@ -238,7 +203,7 @@ on Machine Learning, PMLR 139:9276-9287</em></p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>()</p></td>
 <td><p>Casts all floating point parameters and buffers to <code class="docutils literal notranslate"><span class="pre">float</span></code> datatype.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code>(x, *args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code>(x, *args)</p></td>
 <td><p>Defines the computation performed at every call.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_buffer</span></code>(target)</p></td>
@@ -332,7 +297,7 @@ on Machine Learning, PMLR 139:9276-9287</em></p>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump_patches</span></code></p></td>
-<td><p>This allows better BC support for <code class="xref py py-meth docutils literal notranslate"><span class="pre">load_state_dict()</span></code>.</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">functions</span></code></p></td>
 <td><p></p></td>
@@ -344,7 +309,7 @@ on Machine Learning, PMLR 139:9276-9287</em></p>
 </table>
 </dd></dl>
 
-</section>
+</div>
 
 
 </div>
@@ -362,7 +327,7 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
     </p>
     <p>
         &copy; Copyright 2021, Michael Sander.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.1.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.1.2.<br/>
     </p>
   </div>
 </footer>
