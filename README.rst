@@ -1,4 +1,4 @@
-Momentum ResNets: Drop-in replacement for any ResNet with a significantly reduced memory footprint 
+Momentum ResNets: Drop-in replacement for any ResNet with reduced memory footprint 
 ==================================================================================================
 
 |GHActions|_ |PyPI|_ |Downloads|_
@@ -14,7 +14,7 @@ Momentum ResNets: Drop-in replacement for any ResNet with a significantly reduce
 
 This repository hosts Python code for Momentum ResNets.
 
-See the `documentation <https://michaelsdr.github.io/momentumnet/index.html>`_ and our `ICML 2021 paper <https://arxiv.org/abs/2102.07870>`_.
+See the `documentation <https://michaelsdr.github.io/momentumnet/index.html>`_, our `ICML 2021 paper <https://arxiv.org/abs/2102.07870>`_ and a `5 min presentation <https://www.youtube.com/watch?v=nu-YLFFIZds>`_.
 
 Model
 ---------
