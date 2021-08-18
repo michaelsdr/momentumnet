@@ -1,0 +1,212 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Momentum ResNets are a drop-in replacement for ResNets &#8212; momentumnet 0.9.dev documentation</title>
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          momentumnet</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.9.dev</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="index.html">Examples</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="https://github.com/michaelsdr/momentumnet">GitHub</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Documentation</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Momentum ResNets are a drop-in replacement for ResNets</a><ul>
+<li><a class="reference internal" href="#a-torchvision-model">A torchvision model</a></li>
+<li><a class="reference internal" href="#it-naturally-extends-the-original-resnet">It naturally extends the original ResNet</a></li>
+<li><a class="reference internal" href="#a-natural-language-transformer-model">A Natural Language Transformer model</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/auto_examples/plot_drop_in_replacement.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container content-container">
+  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-plot-drop-in-replacement-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="momentum-resnets-are-a-drop-in-replacement-for-resnets">
+<span id="sphx-glr-auto-examples-plot-drop-in-replacement-py"></span><h1>Momentum ResNets are a drop-in replacement for ResNets<a class="headerlink" href="#momentum-resnets-are-a-drop-in-replacement-for-resnets" title="Permalink to this headline">¶</a></h1>
+<p>This illustrates on two simple examples how to replace a ResNet with a MomentumNet</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Authors: Michael Sander, Pierre Ablin</span>
+<span class="c1"># License: MIT</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">momentumnet</span> <span class="kn">import</span> <a href="../generated/momentumnet.transform_to_momentumnet.html#momentumnet.transform_to_momentumnet" title="momentumnet.transform_to_momentumnet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-function"><a href="../generated/momentumnet.transform_to_momentumnet.html#momentumnet.transform_to_momentumnet" title="momentumnet.transform_to_momentumnet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-function"><a href="../generated/momentumnet.transform_to_momentumnet.html#momentumnet.transform_to_momentumnet" title="momentumnet.transform_to_momentumnet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-function"><span class="n">transform_to_momentumnet</span></a></a></a>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+<div class="section" id="a-torchvision-model">
+<h2>A torchvision model<a class="headerlink" href="#a-torchvision-model" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torchvision.models</span> <span class="kn">import</span> <span class="n">resnet101</span>
+
+<span class="n">resnet</span> <span class="o">=</span> <span class="n">resnet101</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">mresnet101</span> <span class="o">=</span> <a href="../generated/momentumnet.transform_to_momentumnet.html#momentumnet.transform_to_momentumnet" title="momentumnet.transform_to_momentumnet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-function"><a href="../generated/momentumnet.transform_to_momentumnet.html#momentumnet.transform_to_momentumnet" title="momentumnet.transform_to_momentumnet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-function"><a href="../generated/momentumnet.transform_to_momentumnet.html#momentumnet.transform_to_momentumnet" title="momentumnet.transform_to_momentumnet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-function"><span class="n">transform_to_momentumnet</span></a></a></a><span class="p">(</span><span class="n">resnet</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span> <span class="n">use_backprop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">((</span><span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">mresnet101</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="it-naturally-extends-the-original-resnet">
+<h2>It naturally extends the original ResNet<a class="headerlink" href="#it-naturally-extends-the-original-resnet" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">((</span><span class="mi">64</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+<span class="n">resnet</span> <span class="o">=</span> <span class="n">resnet101</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">lx</span> <span class="o">=</span> <span class="n">resnet</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">outputs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">ys</span> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.linspace.html#numpy.linspace" title="numpy.linspace" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><a href="https://numpy.org/doc/stable/reference/generated/numpy.linspace.html#numpy.linspace" title="numpy.linspace" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><a href="https://numpy.org/doc/stable/reference/generated/numpy.linspace.html#numpy.linspace" title="numpy.linspace" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">linspace</span></a></a></a><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">gamma</span> <span class="ow">in</span> <span class="n">ys</span><span class="p">:</span>
+    <span class="n">mresnet101</span> <span class="o">=</span> <a href="../generated/momentumnet.transform_to_momentumnet.html#momentumnet.transform_to_momentumnet" title="momentumnet.transform_to_momentumnet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-function"><a href="../generated/momentumnet.transform_to_momentumnet.html#momentumnet.transform_to_momentumnet" title="momentumnet.transform_to_momentumnet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-function"><a href="../generated/momentumnet.transform_to_momentumnet.html#momentumnet.transform_to_momentumnet" title="momentumnet.transform_to_momentumnet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-function"><span class="n">transform_to_momentumnet</span></a></a></a><span class="p">(</span><span class="n">resnet</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">)</span>
+    <span class="n">outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(((</span><span class="n">lx</span> <span class="o">-</span> <span class="n">mresnet101</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure" title="matplotlib.pyplot.figure" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure" title="matplotlib.pyplot.figure" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure" title="matplotlib.pyplot.figure" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">figure</span></a></a></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.plot.html#matplotlib.pyplot.plot" title="matplotlib.pyplot.plot" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.plot.html#matplotlib.pyplot.plot" title="matplotlib.pyplot.plot" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.plot.html#matplotlib.pyplot.plot" title="matplotlib.pyplot.plot" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">plot</span></a></a></a><span class="p">(</span>
+    <span class="n">ys</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span>
+<span class="p">)</span>
+<span class="n">y_</span> <span class="o">=</span> <a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.ylabel.html#matplotlib.pyplot.ylabel" title="matplotlib.pyplot.ylabel" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.ylabel.html#matplotlib.pyplot.ylabel" title="matplotlib.pyplot.ylabel" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.ylabel.html#matplotlib.pyplot.ylabel" title="matplotlib.pyplot.ylabel" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span></a></a></a><span class="p">(</span><span class="s2">&quot;Squared norm difference with the original output&quot;</span><span class="p">)</span>
+<span class="n">x_</span> <span class="o">=</span> <a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.xlabel.html#matplotlib.pyplot.xlabel" title="matplotlib.pyplot.xlabel" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.xlabel.html#matplotlib.pyplot.xlabel" title="matplotlib.pyplot.xlabel" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.xlabel.html#matplotlib.pyplot.xlabel" title="matplotlib.pyplot.xlabel" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span></a></a></a><span class="p">(</span><span class="s2">&quot;Gamma&quot;</span><span class="p">)</span>
+<a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a></a></a><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="a-natural-language-transformer-model">
+<h2>A Natural Language Transformer model<a class="headerlink" href="#a-natural-language-transformer-model" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">transformer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Transformer</span><span class="p">(</span><span class="n">num_encoder_layers</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">num_decoder_layers</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">mtransformer</span> <span class="o">=</span> <a href="../generated/momentumnet.transform_to_momentumnet.html#momentumnet.transform_to_momentumnet" title="momentumnet.transform_to_momentumnet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-function"><a href="../generated/momentumnet.transform_to_momentumnet.html#momentumnet.transform_to_momentumnet" title="momentumnet.transform_to_momentumnet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-function"><a href="../generated/momentumnet.transform_to_momentumnet.html#momentumnet.transform_to_momentumnet" title="momentumnet.transform_to_momentumnet" class="sphx-glr-backref-module-momentumnet sphx-glr-backref-type-py-function"><span class="n">transform_to_momentumnet</span></a></a></a><span class="p">(</span>
+    <span class="n">transformer</span><span class="p">,</span>
+    <span class="n">residual_layers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;encoder.layers&quot;</span><span class="p">,</span> <span class="s2">&quot;decoder.layers&quot;</span><span class="p">],</span>
+    <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span>
+    <span class="n">use_backprop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">keep_first_layer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-drop-in-replacement-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/a63f02f07cde3af54122ed6b031adf38/plot_drop_in_replacement.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_drop_in_replacement.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/20097ec63fe9a9ea52ece3677e0908d3/plot_drop_in_replacement.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_drop_in_replacement.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+</div>
+
+<!-- Github "fork me" ribbon -->
+<a href="https://github.com/michaelsdr/momentumnet"><img style="position: absolute; top: 50px; right: 0; border: 0;"
+src="https://camo.githubusercontent.com/652c5b9acfaddf3a9c326fa6bde407b87f7be0f4/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67"
+alt="Fork me on GitHub"
+data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"></a>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Michael Sander.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.1.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
