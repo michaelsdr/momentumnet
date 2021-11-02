@@ -13,20 +13,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: [3.7, 3.8, 3.9]
+        python: [3.7, 3.9]
+        torch-version: [1.9.0, 1.10.0]
     steps:
       - uses: actions/checkout@v2
       - uses: conda-incubator/setup-miniconda@v2
         with:
           python-version: ${{ matrix.python }}
           channels: conda-forge
-      - name: Installations
+      - name: Install
         run: |
           conda --version
           which python
           python setup.py install
           pip install flake8 check-manifest
           pip install pytest coverage pytest-sugar
+          pip install torch==${{ matrix.torch-version }}+cpu -f https://download.pytorch.org/whl/torch_stable.html --force-reinstall
       - name: Run Python unit tests
         run: |
           make

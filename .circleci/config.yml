@@ -24,7 +24,7 @@ jobs:
               echo ${CI_PULL_REQUEST//*pull\//} | tee merge.txt
               if [[ $(cat merge.txt) != "" ]]; then
                 echo "Merging $(cat merge.txt)";
-                git remote add upstream git://github.com/michaelsdr/momentumnet.git;
+                git remote add upstream https://github.com/michaelsdr/momentumnet.git;
                 git pull --ff-only upstream "refs/pull/$(cat merge.txt)/merge";
                 git fetch upstream main;
               fi
@@ -42,11 +42,17 @@ jobs:
             command: |
               /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1400x900x24 -ac +extension GLX +render -noreset;
         - run:
-            name: Get Python running
+            name: Install pip
             command: |
               python -m pip install --user --upgrade --progress-bar off pip
-              python -m pip install --user --upgrade --progress-bar off -r requirements.txt
-              python -m pip install --user --upgrade --progress-bar off -r doc/doc-requirements.txt
+        - run:
+            name: Install requirements
+            command: |
+              python -m pip install --user --upgrade --no-cache-dir --progress-bar off -r requirements.txt
+              python -m pip install --user --upgrade --no-cache-dir --progress-bar off -r doc/doc-requirements.txt
+        - run:
+            name: Install package
+            command: |
               python -m pip install --user -e .
         - save_cache:
             key: pip-cache

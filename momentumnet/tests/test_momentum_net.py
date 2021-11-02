@@ -71,6 +71,7 @@ def test_outputs_memory(init_speed):
     params_mom = tuple(mom_no_backprop.parameters())
     grad_mom_net = torch.autograd.grad(mom_net_output, (x,) + params_mom_net)
     grad_mom = torch.autograd.grad(mom_output, (x,) + params_mom)
+
     for grad_1, grad_2 in zip(grad_mom_net, grad_mom):
         assert torch.allclose(grad_1, grad_2, atol=1e-5, rtol=1e-3)
 
@@ -80,16 +81,16 @@ def test_outputs_memory_multiple_args(init_speed):
     class Custom(nn.Module):
         def __init__(self):
             super(Custom, self).__init__()
-            self.layer1 = nn.Linear(3, 3)
-            self.layer2 = nn.Linear(3, 3)
+            self.layer1 = nn.Linear(3, 3, bias=False)
+            self.layer2 = nn.Linear(3, 3, bias=False)
 
         def forward(self, x, mem):
             return self.layer1(x) + self.layer2(mem)
 
-    functions = [Custom() for _ in range(5)]
+    functions = [Custom() for _ in range(1)]
 
     if init_speed:
-        init_function = nn.Tanh()
+        init_function = nn.Linear(3, 3)
     else:
         init_function = None
     mom_no_backprop = MomentumNet(
@@ -112,9 +113,9 @@ def test_outputs_memory_multiple_args(init_speed):
         mom_net(x, mem), mom_no_backprop(x, mem), atol=1e-4, rtol=1e-3
     )
     x = torch.randn(10, 3, requires_grad=True)
-    mom_net_output = (mom_net(x, mem) ** 2 + mom_net(x, mem) ** 3).sum()
+    mom_net_output = (mom_net(x, mem) ** 2).sum()
     mom_output = (
-        mom_no_backprop(x, mem) ** 2 + mom_no_backprop(x, mem) ** 3
+        mom_no_backprop(x, mem) ** 2
     ).sum()
     params_mom_net = tuple(mom_net.parameters())
     params_mom = tuple(mom_no_backprop.parameters())
