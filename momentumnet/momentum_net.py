@@ -222,7 +222,7 @@ class MomentumNetNoBackprop(nn.Module):
         self.n_functions = len(functions)
         self.v = None
         self.is_residual = is_residual
-        if init_function is not None:
+        if init_function is not None and len(list(init_function.parameters())) > 0:
             self.add_module("init", init_function)
 
     def forward(self, x, *function_args):
