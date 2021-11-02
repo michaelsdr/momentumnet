@@ -1,12 +1,9 @@
 name: build_site
 
-on:
-  pull_request:
-  push:
-    branches: main
+on: push
 
 jobs:
-  Install:
+  install:
     runs-on: ubuntu-latest
     defaults:
       run:
