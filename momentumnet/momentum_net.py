@@ -220,8 +220,6 @@ class MomentumNetNoBackprop(nn.Module):
         self.gamma = gamma
         self.init_speed = init_speed
         self.n_functions = len(functions)
-        for i, function in enumerate(functions):
-            self.add_module(str(i), function)
         self.v = None
         self.is_residual = is_residual
         if init_function is not None:
