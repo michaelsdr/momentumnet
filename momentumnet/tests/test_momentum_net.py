@@ -10,7 +10,7 @@ from momentumnet import MomentumNet
 from numpy.testing import assert_raises
 
 
-torch.manual_seed(2)
+torch.manual_seed(1)
 
 
 @pytest.mark.parametrize("use_backprop", [True, False])
