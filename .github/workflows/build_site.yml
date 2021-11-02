@@ -19,35 +19,35 @@ jobs:
           echo "export OPENBLAS_NUM_THREADS=4" >> $BASH_ENV
           echo "BASH_ENV:"
           cat $BASH_ENV
-      - run:
-          name: Install pip
-          command: |
-            python -m pip install --user --upgrade --progress-bar off pip
-      - run:
-          name: Install requirements
-          command: |
-            python -m pip install --user --upgrade --progress-bar off -r requirements.txt
-            python -m pip install --user --upgrade --progress-bar off -r doc/doc-requirements.txt
-      - run:
-          name: Install package
-          command: |
-            python -m pip install --user -e .
-      # Look at what we have and fail early if there is some library conflict
-      - run:
-          name: Check installation
-          command: |
-            which python
-            python -c "import momentumnet"
-      # Build docs
-      - run:
-          name: make html
-          no_output_timeout: 30m
-          command: |
-            cd doc;
-            make clean;
-            make html;
-            cd ..;
-      # Deploy docs
+    - run:
+        name: Install pip
+        command: |
+          python -m pip install --user --upgrade --progress-bar off pip
+    - run:
+        name: Install requirements
+        command: |
+          python -m pip install --user --upgrade --progress-bar off -r requirements.txt
+          python -m pip install --user --upgrade --progress-bar off -r doc/doc-requirements.txt
+    - run:
+        name: Install package
+        command: |
+          python -m pip install --user -e .
+    # Look at what we have and fail early if there is some library conflict
+    - run:
+        name: Check installation
+        command: |
+          which python
+          python -c "import momentumnet"
+    # Build docs
+    - run:
+        name: make html
+        no_output_timeout: 30m
+        command: |
+          cd doc;
+          make clean;
+          make html;
+          cd ..;
+    # Deploy docs
     - name: Deploy to Github Pages if on Master
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master'}}
       uses: peaceiris/actions-gh-pages@v3
