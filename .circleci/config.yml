@@ -48,8 +48,8 @@ jobs:
         - run:
             name: Install requirements
             command: |
-              python -m pip install --user --upgrade --progress-bar off -r requirements.txt
-              python -m pip install --user --upgrade --progress-bar off -r doc/doc-requirements.txt
+              python -m pip install --user --upgrade --no-cache-dir --progress-bar off -r requirements.txt
+              python -m pip install --user --upgrade --no-cache-dir --progress-bar off -r doc/doc-requirements.txt
         - run:
             name: Install package
             command: |
