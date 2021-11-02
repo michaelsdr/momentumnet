@@ -1,0 +1,100 @@
+name: tests-and-docs
+
+on:
+  pull_request:
+  push:
+    branches: master
+
+jobs:
+  Install:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+        - checkout
+        - run:
+            name: Set BASH_ENV
+            command: |
+              echo "set -e" >> $BASH_ENV
+              echo "export DISPLAY=:99" >> $BASH_ENV
+              echo "export OPENBLAS_NUM_THREADS=4" >> $BASH_ENV
+              echo "BASH_ENV:"
+              cat $BASH_ENV
+        - run:
+            name: Merge with upstream
+            command: |
+              echo $(git log -1 --pretty=%B) | tee gitlog.txt
+              echo ${CI_PULL_REQUEST//*pull\//} | tee merge.txt
+              if [[ $(cat merge.txt) != "" ]]; then
+                echo "Merging $(cat merge.txt)";
+                git remote add upstream https://github.com/michaelsdr/momentumnet.git;
+                git pull --ff-only upstream "refs/pull/$(cat merge.txt)/merge";
+                git fetch upstream main;
+              fi
+        # Load our data
+        - restore_cache:
+            keys:
+              - pip-cache
+
+        - restore_cache:
+            keys:
+              - data-cache-0
+
+        - run:
+            name: Spin up Xvfb
+            command: |
+              /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1400x900x24 -ac +extension GLX +render -noreset;
+        - run:
+            name: Install pip
+            command: |
+              python -m pip install --user --upgrade --progress-bar off pip
+        - run:
+            name: Install requirements
+            command: |
+              python -m pip install --user --upgrade --progress-bar off -r requirements.txt
+              python -m pip install --user --upgrade --progress-bar off -r doc/doc-requirements.txt
+        - run:
+            name: Install package
+            command: |
+              python -m pip install --user -e .
+        - save_cache:
+            key: pip-cache
+            paths:
+              - ~/.cache/pip
+        # Look at what we have and fail early if there is some library conflict
+        - run:
+            name: Check installation
+            command: |
+              which python
+              python -c "import momentumnet"
+        # Build docs
+        - run:
+            name: make html
+            no_output_timeout: 30m
+            command: |
+              cd doc;
+              make clean;
+              make html;
+              cd ..;
+        # Deploy docs
+        - run:
+            name: deploy
+            command: |
+              if [[ ${CIRCLE_BRANCH} == "main" ]]; then
+                set -e
+                mkdir -p ~/.ssh
+                echo -e "Host *\nStrictHostKeyChecking no" > ~/.ssh/config
+                chmod og= ~/.ssh/config
+                cd doc;
+                pip install ghp-import;
+                make install
+              fi
+        # Save the outputs
+        - store_artifacts:
+            path: doc/_build/html/
+            destination: dev
+        - persist_to_workspace:
+            root: doc/_build
+            paths:
+              - html
