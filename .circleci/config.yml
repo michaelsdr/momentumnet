@@ -42,11 +42,15 @@ jobs:
             command: |
               /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1400x900x24 -ac +extension GLX +render -noreset;
         - run:
-            name: Get Python running
+            name: Install pip
             command: |
               python -m pip install --user --upgrade --progress-bar off pip
+        - run:
+            name: Install requirements
               python -m pip install --user --upgrade --progress-bar off -r requirements.txt
               python -m pip install --user --upgrade --progress-bar off -r doc/doc-requirements.txt
+        - run:
+            name: Install package
               python -m pip install --user -e .
         - save_cache:
             key: pip-cache
