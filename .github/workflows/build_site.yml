@@ -12,14 +12,6 @@ jobs:
     - name: Checking Out Repository
       uses: actions/checkout@v2
     - run:
-        name: Set BASH_ENV
-        command: |
-          echo "set -e" >> $BASH_ENV
-          echo "export DISPLAY=:99" >> $BASH_ENV
-          echo "export OPENBLAS_NUM_THREADS=4" >> $BASH_ENV
-          echo "BASH_ENV:"
-          cat $BASH_ENV
-    - run:
         name: Install pip
         command: |
           python -m pip install --user --upgrade --progress-bar off pip
