@@ -30,8 +30,6 @@ jobs:
             git pull --ff-only upstream "refs/pull/$(cat merge.txt)/merge";
             git fetch upstream main;
           fi
-
-        
       - run:
           name: Install pip
           command: |
