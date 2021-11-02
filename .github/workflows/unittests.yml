@@ -28,7 +28,7 @@ jobs:
           python setup.py install
           pip install flake8 check-manifest
           pip install pytest coverage pytest-sugar
-          pip install torch==${{ matrix.pytorch-version }}+cpu --force-reinstall
+          pip install torch==${{ matrix.torch-version }}+cpu --force-reinstall
       - name: Run Python unit tests
         run: |
           make
