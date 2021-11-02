@@ -1,9 +1,9 @@
-name: tests-and-docs
+name: build_site
 
 on:
   pull_request:
   push:
-    branches: master
+    branches: main
 
 jobs:
   Install:
