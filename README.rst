@@ -104,7 +104,7 @@ This initiates a Momentum Transformer with the same weights as the original Tran
 Memory savings when applying Momentum ResNets to Transformers
 -------------------------------------------------------------
 
-Here is a short `tutorial <https://colab.research.google.com/drive/1zAyNz2mSxCNcy-rIXLDYS8B2CJXqDYA3?usp=sharing>`_ showing the memory gains using Momentum Transformers.
+Here is a short `tutorial <https://colab.research.google.com/drive/1zAyNz2mSxCNcy-rIXLDYS8B2CJXqDYA3?usp=sharing>`_ showing the memory gains when using Momentum Transformers.
 
 
 
