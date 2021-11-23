@@ -100,6 +100,14 @@ Importantly, this method also works with Pytorch Transformers module, specifying
 
 This initiates a Momentum Transformer with the same weights as the original Transformer.
 
+
+Memory savings when applying Momentum ResNets to Transformers
+-------------------------------------------------------------
+
+Here is a short `tutorial <https://colab.research.google.com/drive/1zAyNz2mSxCNcy-rIXLDYS8B2CJXqDYA3?usp=sharing>`_. showing the memory gains using Momentum Transformers.
+
+
+
 Dependencies
 ------------
 
