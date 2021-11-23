@@ -71,7 +71,7 @@ Fix random seed for reproducible figures
  .. code-block:: none
 
 
-    <torch._C.Generator object at 0x7fd514213f10>
+    <torch._C.Generator object at 0x7f9cabc5ef10>
 
 
 
@@ -160,7 +160,7 @@ Parameters of the simulation
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 20 minutes  9.315 seconds)
+   **Total running time of the script:** ( 20 minutes  44.519 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_memory.py:
