@@ -3,56 +3,40 @@ import matplotlib.pyplot as plt
 import torch
 from momentumnet import transform_to_momentumnet
 
-res = []
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-n = 15
+seq_size = 15
 d = 512
 n_layers = 12
 m_batch_sizes = [128, 256, 512, 1024]
-
-
-for bs in m_batch_sizes:
-    src = torch.rand((n, bs, d)).to(device)
-    tgt = torch.rand((n, bs, d)).to(device)
-
-
-    def train(net):
-        Loss = (net(src, tgt) ** 2).mean()
-        Loss.backward()
-
-
-    transformer = torch.nn.Transformer(num_encoder_layers=n_layers, num_decoder_layers=n_layers).to(device)
-    mtransformer = transform_to_momentumnet(transformer, sub_layers=["encoder.layers", "decoder.layers"], gamma=0.95,
-                                            use_backprop=False, keep_first_layer=False)
-    train(mtransformer)
-    used_mem = torch.cuda.max_memory_allocated(device=device)
-    res.append(used_mem * 9.5367431640625e-7)
-
-res_mtransformer = np.asarray(res) / 1000
-
-res = []
-
 batch_sizes = [128, 256, 512]  # Without momentum, increased batch size would saturate the memory of the gpu
-for bs in batch_sizes:
-    src = torch.rand((n, bs, d)).to(device)
-    tgt = torch.rand((n, bs, d)).to(device)
 
 
-    def train(net):
-        Loss = (net(src, tgt) ** 2).mean()
-        Loss.backward()
+def train(net, src, tgt):
+    loss = (net(src, tgt) ** 2).mean()
+    loss.backward()
 
 
-    transformer = torch.nn.Transformer(num_encoder_layers=n_layers, num_decoder_layers=n_layers).to(device)
+def profile(net, batch_sizes):
+    res = []
+    for bs in batch_sizes:
+        src = torch.rand((seq_size, bs, d)).to(device)
+        tgt = torch.rand((seq_size, bs, d)).to(device)
 
-    train(transformer)
-    used_mem = torch.cuda.max_memory_allocated(device=device)
-    res.append(used_mem * 9.5367431640625e-7)
+        train(net, src, tgt)
+        used_mem = torch.cuda.max_memory_allocated(device=device)
+        res.append(used_mem * 9.5367431640625e-7)
+    res = np.asarray(res) / 1000
+    return res
 
-res_transformer = np.asarray(res) / 1000
 
+transformer = torch.nn.Transformer(num_encoder_layers=n_layers, num_decoder_layers=n_layers).to(device)
+mtransformer = transform_to_momentumnet(transformer, sub_layers=["encoder.layers", "decoder.layers"], gamma=0.95,
+                                        use_backprop=False, keep_first_layer=False)
+
+res_mtransformer = profile(mtransformer, m_batch_sizes)
+res_transformer = profile(transformer, batch_sizes)
 
 fig, ax = plt.subplots(1, 1, figsize=(5, 2.5))
 
