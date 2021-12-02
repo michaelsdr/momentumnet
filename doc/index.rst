@@ -6,9 +6,7 @@
 Momentum ResNets
 ================
 
-Official library for using Momentum Residual Neural Networks [1]. These models extend ResNets
-to a larger class of deep learning models that consume less memory. They can be initialized with the
-same weights as a pretrained ResNet and are promising in fine-tuning applications.
+Official library for using Momentum Residual Neural Networks [1]. These models extend any Residual architectures (for instance it also work with Transformers) to a larger class of deep learning models that consume less memory. They can be initialized with the same weights as a pretrained ResNet and are promising in fine-tuning applications.
 
 
 Installation
