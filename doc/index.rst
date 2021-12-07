@@ -38,7 +38,7 @@ The main class is MomentumNet. It creates a Momentum ResNet that iterates
 
 .. math::
 
-    v_{t + 1} = \gamma * v_t + (1 - \gamma) * f_t(x_t) \\
+    v_{t + 1} = \gamma \times v_t + (1 - \gamma) \times f_t(x_t) \\
     x_{t + 1} = x_t + v_{t + 1}
 
 
@@ -82,10 +82,10 @@ Importantly, this method also works with Pytorch Transformers module, specifying
    >>> import torch
    >>> from momentumnet import transform_to_momentumnet
    >>> transformer = torch.nn.Transformer(num_encoder_layers=6, num_decoder_layers=6)
-   >>> mtransformer = transform_to_momentumnet(transformer, sub_layers=["encoder.layers", "decoder.layers"], gamma=0.9,
-   >>>                                          use_backprop=False, keep_first_layer=False)
+   >>> mtransformer = transform_to_momentumnet(transformer, sub_layers=["encoder.layers", "decoder.layers"],
+   >>>                                         gamma=0.9, use_backprop=False, keep_first_layer=False)
 
-This initiates a Momentum Transformer with the same weights as the original Transformer.
+This initilizes a Momentum Transformer with the same weights as the original Transformer.
 
 Memory savings when applying Momentum ResNets to Transformers
 -------------------------------------------------------------
@@ -117,12 +117,3 @@ Cite
       on Machine Learning, PMLR 139:9276-9287
 
       https://arxiv.org/abs/2102.07870
-
-
-API
----
-
-.. toctree::
-    :maxdepth: 1
-
-    api.rst
