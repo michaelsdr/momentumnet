@@ -144,7 +144,7 @@ with <cite>pip</cite>. To upgrade, use the <code class="docutils literal notrans
 <p>The main class is MomentumNet. It creates a Momentum ResNet that iterates</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}v_{t + 1} &amp;= \gamma \times v_t + (1 - \gamma) \times f_t(x_t) \\
-x_{t + 1} = x_t + v_{t + 1}\end{split}\]</div>
+x_{t + 1} &amp;= x_t + v_{t + 1}\end{split}\]</div>
 <p>These forward equations can be reversed in closed-form.
 This enables backpropagation without standard memory consumption, since activations do not have to be stored.
 This process trades memory for computations.</p>
