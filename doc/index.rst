@@ -39,7 +39,7 @@ The main class is MomentumNet. It creates a Momentum ResNet that iterates
 .. math::
 
     v_{t + 1} &= \gamma \times v_t + (1 - \gamma) \times f_t(x_t) \\
-    x_{t + 1} = x_t + v_{t + 1}
+    x_{t + 1} &= x_t + v_{t + 1}
 
 
 These forward equations can be reversed in closed-form.
