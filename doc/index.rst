@@ -85,7 +85,7 @@ Importantly, this method also works with Pytorch Transformers module, specifying
    >>> mtransformer = transform_to_momentumnet(transformer, sub_layers=["encoder.layers", "decoder.layers"],
    >>>                                         gamma=0.9, use_backprop=False, keep_first_layer=False)
 
-This initilizes a Momentum Transformer with the same weights as the original Transformer.
+This initializes a Momentum Transformer with the same weights as the original Transformer.
 
 Memory savings when applying Momentum ResNets to Transformers
 -------------------------------------------------------------
