@@ -19,8 +19,6 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="momentumnet.transform_to_momentumnet" href="momentumnet.transform_to_momentumnet.html" />
-    <link rel="prev" title="API Documentation" href="../api.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -62,10 +60,7 @@
      href="../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Documentation</a></li>
-</ul>
-</ul>
+      aria-labelledby="dLabelGlobalToc"></ul>
 </li>
               
                 <li class="dropdown">
@@ -118,8 +113,10 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">momentumnet.</span></span><span class="sig-name descname"><span class="pre">MomentumNet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">functions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_speed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_backprop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_residual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#momentumnet.MomentumNet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a Momentum Residual Network.</p>
 <p>It iterates</p>
-<p>v_{t + 1} = (1 - gamma) * v_t + gamma * f_t(x_t)
-x_{t + 1} = x_t + v_{t + 1}</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">v_</span><span class="p">{</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">}</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">v_t</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">gamma</span><span class="p">)</span> <span class="o">*</span> <span class="n">f_t</span><span class="p">(</span><span class="n">x_t</span><span class="p">)</span>
+<span class="n">x_</span><span class="p">{</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">}</span> <span class="o">=</span> <span class="n">x_t</span> <span class="o">+</span> <span class="n">v_</span><span class="p">{</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">}</span>
+</pre></div>
+</div>
 <p>where the f_t are stored in <cite>functions</cite>.
 These forward equations can be reversed in closed-form,
 enabling learning without backpropagation. This process
@@ -368,7 +365,7 @@ data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_
     </p>
     <p>
         &copy; Copyright 2021, Michael Sander.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.1.<br/>
     </p>
   </div>
 </footer>
