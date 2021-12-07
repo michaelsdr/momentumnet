@@ -267,8 +267,10 @@ class MomentumNet(nn.Module):
 
     It iterates
 
-    v_{t + 1} = (1 - gamma) * v_t + gamma * f_t(x_t)
-    x_{t + 1} = x_t + v_{t + 1}
+    .. code:: python
+
+        v_{t + 1} = gamma * v_t + (1 - gamma) * f_t(x_t)
+        x_{t + 1} = x_t + v_{t + 1}
 
     where the f_t are stored in `functions`.
     These forward equations can be reversed in closed-form,
