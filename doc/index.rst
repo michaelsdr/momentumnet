@@ -38,12 +38,12 @@ The main class is MomentumNet. It creates a Momentum ResNet that iterates
 
 .. math::
 
-    v_{t + 1} = \gamma \times v_t + (1 - \gamma) \times f_t(x_t) \\
+    v_{t + 1} &= \gamma \times v_t + (1 - \gamma) \times f_t(x_t) \\
     x_{t + 1} = x_t + v_{t + 1}
 
 
-These forward equations can be reversed in closed-form,
-enabling learning without standard memory consuming backpropagation.
+These forward equations can be reversed in closed-form.
+This enables backpropagation without standard memory consumption, since activations do not have to be stored.
 This process trades memory for computations.
 
 To get started, you can create a toy Momentum ResNet by specifying the functions f for the forward pass
@@ -64,7 +64,7 @@ Momentum ResNets are a drop-in replacement for ResNets
 We can transform a ResNet into a MomentumNet with the same parameters in two lines of codes.
 For instance, the following code
 instantiates a Momentum ResNet with weights of a pretrained Resnet-101 on ImageNet. We set "use_backprop" to False
-so that activations are not saved during the forward pass, allowing smaller memory consumptions.
+so that activations are not saved during the forward pass, allowing smaller memory consumption.
 
 .. code:: python
 
