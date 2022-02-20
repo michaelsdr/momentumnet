@@ -136,7 +136,7 @@ class MomentumTransformMemory(torch.autograd.Function):
                 backward_list = []
                 for requires_grad, param in zip(
                     params_require_grad,
-                    fun_args + tuple(function.parameters()),
+                    fun_args + tuple(find_parameters(function)),
                 ):
                     if requires_grad:
                         backward_list.append(param)
@@ -151,7 +151,7 @@ class MomentumTransformMemory(torch.autograd.Function):
             if ctx.init_function is not None:
                 x = x.detach().requires_grad_(True)
                 f_eval = ctx.init_function(x)
-                params = tuple(ctx.init_function.parameters())
+                params = tuple(find_parameters(ctx.init_function))
                 vjps = torch.autograd.grad(
                     f_eval, params, torch.zeros_like(grad_x)
                 )
@@ -226,17 +226,17 @@ class MomentumNetNoBackprop(nn.Module):
             self.add_module("init", init_function)
 
     def forward(self, x, *function_args):
+        params = []
+        functions = self.functions
         if not self.init_speed:
             init_function = None
             v = torch.zeros_like(x)
-            params = []
         else:
             v = self.init_function(x)
-            params = list(self.init_function.parameters())
+            params += list(find_parameters(self.init_function))
             init_function = self.init_function
-        functions = self.functions
         for function in functions:
-            params += list(function.parameters())
+            params += list(find_parameters(function))
         n_fun_args = len(function_args)
         output = MomentumTransformMemory.apply(
             x,
@@ -253,12 +253,12 @@ class MomentumNetNoBackprop(nn.Module):
         return output
 
     @property
-    def functions(self):
-        return [self._modules[str(i)] for i in range(self.n_functions)]
-
-    @property
     def init_function(self):
         return self._modules["init"]
+
+    @property
+    def functions(self):
+        return [self._modules[str(i)] for i in range(self.n_functions)]
 
 
 class MomentumNet(nn.Module):
@@ -361,9 +361,26 @@ class MomentumNet(nn.Module):
         return self.network.forward(x, *args)
 
     @property
+    def init_function(self):
+        return self.network.init_function
+
+    @property
     def functions(self):
         return self.network.functions
 
-    @property
-    def init_function(self):
-        return self.network.init_function
+
+def find_parameters(module):
+
+    assert isinstance(module, nn.Module)
+
+    # If called within DataParallel, parameters won't appear in module.parameters().
+    if getattr(module, '_is_replica', False):
+
+        def find_tensor_attributes(module):
+            tuples = [(k, v) for k, v in module.__dict__.items() if torch.is_tensor(v) and v.requires_grad]
+            return tuples
+
+        gen = module._named_members(get_members_fn=find_tensor_attributes)
+        return [param for _, param in gen]
+    else:
+        return list(module.parameters())
