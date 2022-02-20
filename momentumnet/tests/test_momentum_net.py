@@ -114,9 +114,7 @@ def test_outputs_memory_multiple_args(init_speed):
     )
     x = torch.randn(10, 3, requires_grad=True)
     mom_net_output = (mom_net(x, mem) ** 2).sum()
-    mom_output = (
-        mom_no_backprop(x, mem) ** 2
-    ).sum()
+    mom_output = (mom_no_backprop(x, mem) ** 2).sum()
     params_mom_net = tuple(mom_net.parameters())
     params_mom = tuple(mom_no_backprop.parameters())
     grad_mom_net = torch.autograd.grad(mom_net_output, (x,) + params_mom_net)
