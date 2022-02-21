@@ -59,7 +59,7 @@ on Machine Learning, PMLR 139:9276-9287
  .. code-block:: none
 
 
-    <torch._C.Generator object at 0x7ff882191f10>
+    <torch._C.Generator object at 0x7f21aef1ea90>
 
 
 
@@ -176,7 +176,7 @@ Plot the results
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 2 minutes  40.179 seconds)
+   **Total running time of the script:** ( 0 minutes  4.536 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_separation_nested_rings.py:
