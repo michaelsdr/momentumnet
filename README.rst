@@ -17,7 +17,9 @@ This repository hosts Python code for Momentum ResNets.
 See the `documentation <https://michaelsdr.github.io/momentumnet/index.html>`_, our `ICML 2021 paper <https://arxiv.org/abs/2102.07870>`_ and a `5 min presentation <https://www.youtube.com/watch?v=4PQR7ErASNo>`_.
 
 Model
----------
+-----
+
+Official library for using Momentum Residual Neural Networks. These models extend any Residual architecture (for instance it also work with Transformers) to a larger class of deep learning models that consume less memory. They can be initialized with the same weights as a pretrained ResNet and are promising in fine-tuning applications.
 
 Installation
 ------------
