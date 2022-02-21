@@ -19,7 +19,7 @@ See the `documentation <https://michaelsdr.github.io/momentumnet/index.html>`_, 
 Model
 -----
 
-Official library for using Momentum Residual Neural Networks. These models extend any Residual architectures (for instance it also work with Transformers) to a larger class of deep learning models that consume less memory. They can be initialized with the same weights as a pretrained ResNet and are promising in fine-tuning applications.
+Official library for using Momentum Residual Neural Networks. These models extend any Residual architecture (for instance it also work with Transformers) to a larger class of deep learning models that consume less memory. They can be initialized with the same weights as a pretrained ResNet and are promising in fine-tuning applications.
 
 Installation
 ------------

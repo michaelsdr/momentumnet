@@ -233,10 +233,10 @@ class MomentumNetNoBackprop(nn.Module):
             v = torch.zeros_like(x)
         else:
             v = self.init_function(x)
-            params += list(find_parameters(self.init_function))
+            params += find_parameters(self.init_function)
             init_function = self.init_function
         for function in functions:
-            params += list(find_parameters(function))
+            params += find_parameters(function)
         n_fun_args = len(function_args)
         output = MomentumTransformMemory.apply(
             x,
@@ -370,7 +370,18 @@ class MomentumNet(nn.Module):
 
 
 def find_parameters(module):
+    """Find the parameters of the module
+    code from: https://github.com/rtqichen/torchdiffeq
 
+    Parameters
+    ----------
+    module : a torch module
+
+    Returns
+    -------
+    list : the list of parameters of the module
+
+    """
     assert isinstance(module, nn.Module)
 
     if getattr(module, "_is_replica", False):
