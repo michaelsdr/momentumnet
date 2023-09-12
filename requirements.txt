@@ -1,5 +1,5 @@
 numpy>=1.15
 torch>=1.9.0
-torchvision>=0.9
+torchvision>=0.15.2
 imageio
 vit_pytorch

@@ -6,13 +6,13 @@ import torch.nn as nn
 
 from momentumnet import transform_to_momentumnet, MomentumNet
 
-from torchvision.models import resnet101
+from torchvision.models import resnet18
 
 
 @pytest.mark.parametrize("use_backprop", [True, False])
 def test_resnet_vision(use_backprop):
     x = torch.randn((2, 3, 10, 10), requires_grad=True)
-    net = resnet101()
+    net = resnet18()
     net(x)
     momnet = transform_to_momentumnet(
         net, use_backprop=use_backprop, keep_first_layer=True
