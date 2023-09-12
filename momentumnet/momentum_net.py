@@ -3,6 +3,7 @@
 import torch
 import torch.nn as nn
 from .exact_rep_pytorch import TorchExactRep
+from memcnn import InvertibleModuleWrapper
 
 
 class MomentumNetWithBackprop(nn.Module):
@@ -70,6 +71,32 @@ class MomentumNetWithBackprop(nn.Module):
     @property
     def init_function(self):
         return self._modules["init"]
+
+
+class MomentumFwd(nn.Module):
+    def __init__(self, function, gamma, is_residual):
+        super().__init__()
+        self.function = function
+        self.gamma = gamma
+
+    def forward(self, x, v, fun_args):
+        v *= self.gamma
+        f = self.function(x, *fun_args)
+        if not self.is_residual:
+            f = f - x
+        v += (1 - self.gamma) * f
+        x = x + v.val
+        return x, v 
+
+    def inverse(self, x, v, fun_args):
+        x = x - v.val
+        if self.is_residual:
+            f_eval = self.function(x, *fun_args)
+        else:
+            f_eval = self.function(x, *fun_args) - x
+        v += -(1 - self.gamma) * f_eval
+        v /= self.gamma
+        return x, v
 
 
 class MomentumTransformMemory(torch.autograd.Function):
