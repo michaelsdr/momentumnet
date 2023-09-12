@@ -83,6 +83,7 @@ def test_outputs_transformer():
     for grad_1, grad_2 in zip(grad_mom_net, grad_mom):
         assert torch.allclose(grad_1, grad_2, atol=1e-4, rtol=1e-3)
 
+
 def test_outputs_bn():
     x = torch.randn((20, 3, 10, 10), requires_grad=True)
     net = nn.Sequential(*[nn.BatchNorm2d(3) for _ in range(10)])
