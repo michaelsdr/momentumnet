@@ -131,7 +131,11 @@ def test_outputs_gradients_resnets(depth):
             net, use_backprop=False, keep_first_layer=True
         )
     assert torch.allclose(mom_net(x), mom_no_backprop(x), atol=1e-4, rtol=1e-4)
+<<<<<<< HEAD
     x = torch.randn((20, 3, 50, 50), requires_grad=True)
+=======
+    x = torch.randn((20, 3, 100, 100), requires_grad=True)
+>>>>>>> 9d787a35be5572e082efac7c47dbeb3d4037836a
     mom_net_output = (mom_net(x) ** 2 + mom_net(x) ** 3).mean()
     mom_output = (mom_no_backprop(x) ** 2 + mom_no_backprop(x) ** 3).mean()
     params_mom_net = tuple(mom_net.parameters())
