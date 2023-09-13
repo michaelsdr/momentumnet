@@ -6,18 +6,22 @@ import torch.nn as nn
 
 from momentumnet import transform_to_momentumnet, MomentumNet
 
-from torchvision.models import resnet18
+from torchvision.models import resnet18, resnet101
 
 
-@pytest.mark.parametrize("use_backprop", [True, False])
-def test_resnet_vision(use_backprop):
+@pytest.mark.parametrize(
+    "use_backprop, depth", [(True, 18), (True, 101), (False, 18), (False, 101)]
+)
+def test_resnet_vision(use_backprop, depth):
+    print(depth)
     x = torch.randn((2, 3, 10, 10), requires_grad=True)
-    net = resnet18()
-    net(x)
+    if depth == 18:
+        net = resnet18()
+    else:
+        net = resnet101()
     momnet = transform_to_momentumnet(
         net, use_backprop=use_backprop, keep_first_layer=True
     )
-    momnet(x)
     momnet.train()
     loss = momnet(x).sum()
     loss.backward()
@@ -91,14 +95,10 @@ def test_outputs_bn():
     mom_no_backprop = MomentumNet(net, gamma=0.9, use_backprop=False)
     mom_net.eval()
     mom_no_backprop.eval()
-    assert torch.allclose(
-        mom_net(x), mom_no_backprop(x), atol=1e-4, rtol=1e-4
-    )
+    assert torch.allclose(mom_net(x), mom_no_backprop(x), atol=1e-4, rtol=1e-4)
     x = torch.randn((20, 3, 10, 10), requires_grad=True)
     mom_net_output = (mom_net(x) ** 2 + mom_net(x) ** 3).mean()
-    mom_output = (
-        mom_no_backprop(x) ** 2 + mom_no_backprop(x) ** 3
-    ).mean()
+    mom_output = (mom_no_backprop(x) ** 2 + mom_no_backprop(x) ** 3).mean()
     params_mom_net = tuple(mom_net.parameters())
     params_mom = tuple(mom_no_backprop.parameters())
     grad_mom = torch.autograd.grad(mom_output, params_mom)
