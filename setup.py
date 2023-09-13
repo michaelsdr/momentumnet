@@ -70,7 +70,7 @@ if __name__ == "__main__":
             "Programming Language :: Python :: 3",
         ],
         platforms="any",
-        python_requires=">=3.7",
+        python_requires=">=3.9",
         packages=package_tree("momentumnet"),
         install_requires=get_requirements(),
     )
