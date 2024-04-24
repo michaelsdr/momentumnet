@@ -29,7 +29,7 @@ class TorchExactRep(object):
             self.aux = BitStore(0, 0, store=store)
         else:
             if device is None:
-                device = val.device.type
+                device = val.device
             if shape is not None:
                 self.intrep = torch.zeros(
                     *shape, dtype=torch.long, device=device
